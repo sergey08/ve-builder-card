@@ -1,118 +1,59 @@
+![VE Builder Card](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png?logo=1.0.3)
+
 # VE Builder Card
 
-![VE Builder Card](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png)
+[English](https://github.com/sergey08/ve-builder-card/blob/main/README.md) · **Español**
 
-[English](README.md) · **Español**
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
-[![Open in HACS / Abrir en HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-**Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
+## Instalar con HACS
 
-Tarjeta de Home Assistant para construir un panel de vehículo totalmente configurable: imagen, carga, gastos y ahorro, ubicación y un mapa interactivo con presiones, marcha, puertas, capó y maletero abiertos. Configura cada bloque, entidad, nombre y distribución desde el editor visual. Versión **1.0.2 estable**. 22 pruebas automáticas superadas y revisión móvil confirmada por el mantenedor.
+Pulsa el botón anterior, confirma el repositorio personalizado y descarga la última versión estable. HACS debe estar instalado. También puedes añadir `https://github.com/sergey08/ve-builder-card` en HACS → Repositorios personalizados, con la categoría **Panel de control** (Dashboard).
 
-La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.
+Recarga la interfaz de Home Assistant después de instalar o actualizar. Si HACS no ha registrado el recurso, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo JavaScript en Ajustes → Paneles de control → Recursos.
 
-## Primeros pasos
+Añade **VE Builder Card** desde el selector de tarjetas. La vista previa utiliza valores de ejemplo para mostrar el diseño; elige tus entidades en el editor para ver datos reales. Solo se registra una entrada oficial; las copias locales antiguas pueden requerir eliminar el registro de su recurso anterior.
 
-1. Instala `dist/ve-builder-card.js` como recurso de tipo módulo.
-2. Recarga Home Assistant y busca **VE Builder Card** en **Añadir tarjeta**.
-3. Elige un título y añade un bloque. Cada copia es independiente.
-4. En cada campo selecciona la entidad y, si quieres, cambia nombre, icono, unidad y decimales.
-5. Personaliza apariencia y comportamiento. Pulsa **Guardar**.
+## Diseña tu tarjeta
 
-No hay sensores preasignados. Funciona con las entidades que proporcione tu integración: no se conecta directamente a ningún fabricante ni almacena credenciales.
+Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
 
-## Bloques
+Empieza con una plantilla de vehículo eléctrico, vehículo de combustión, gastos o mapa del vehículo. Las plantillas no traen sensores preasignados. Cada tarjeta tiene su propia configuración. El filtro opcional por dispositivo facilita encontrar entidades sin cambiar su dispositivo asignado.
 
-| Bloque | Configuración |
+| Apartado | Qué puedes configurar |
 | --- | --- |
-| Inicio | Imagen por URL o `/local/`, altura, campos, conector, estado de carga y potencia real |
-| Información | Valores, botones o barras; tamaño, estilo y anchura |
-| Carga | Campos numéricos configurables, incluida barra de potencia con escala propia |
-| Modos de carga | Controles `switch` e `input_boolean` |
-| Límites | Deslizadores `input_number`, usando los límites y pasos del helper |
-| Acciones | Interruptores, cerraduras y botones; detalles o acción explícita |
-| Mapa | `person` o `device_tracker`, zoom e historial |
-| Gastos y ahorro | Precios destacados, grupos de importes, unidades, decimales y comentario |
-| Mapa del vehículo | Presiones de las cuatro ruedas (bar/kPa/psi), marcha, cuatro puertas, capó y maletero; indicadores solo cuando están abiertos |
+| Inicio | Imagen del vehículo, campos compactos, conector, estado de carga y potencia real de carga |
+| Información | Valores, botones y barras de progreso con tamaño, anchura y aspecto configurables |
+| Carga | Campos numéricos y barra de potencia con escala propia |
+| Modos de carga | Controles switch e input_boolean |
+| Límites | Deslizadores input_number con el mínimo, máximo y paso del ayudante |
+| Acciones | Interruptores, cerraduras y botones con acciones al pulsar |
+| Mapa de ubicación | Mapa nativo de Home Assistant con entidades person o device_tracker, zoom e historial |
+| Gastos y ahorro | Precios de referencia de electricidad y combustible, grupos de importes, unidades, decimales y comentarios |
+| Mapa del vehículo | Presión de los cuatro neumáticos, marcha, cuatro puertas, capó y maletero sobre el esquema del coche; unidades de presión, fechas y comentarios |
 
-La manguera permanece fija con el conector conectado y sin carga. Para distinguir carga de espera configura también **Potencia real**. Cuando la entidad de carga coincide con el estado configurado y la potencia es positiva, la animación se activa. Si no se configura potencia, se usa solo el estado de carga. Se respeta la preferencia del sistema de reducir animaciones.
+### Mapa del vehículo
 
-## Instalación manual (disponible con este paquete)
+Asigna cada sensor de presión y elige bar, kPa o psi. Opcionalmente, añade la marcha y los sensores de apertura de las cuatro puertas, el capó y el maletero. Configura los valores que significan abierto y cerrado en tu integración. Los indicadores de apertura aparecen solo cuando el sensor configurado confirma que esa parte está abierta; los estados cerrado, desconocido o no disponible no muestran un indicador de apertura. El esquema muestra información; no acciona puertas ni cerraduras.
 
-Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
+### Visualización de la carga
 
-```yaml
-url: /local/ve-builder-card.js?v=1.0.2
-type: module
-```
+La manguera permanece visible y quieta cuando el coche está conectado sin recibir energía. Configura **Potencia real de carga** para distinguir la carga de la espera: si hay una entidad de potencia, la animación requiere estado de carga y potencia positiva. Sin ella, sigue únicamente el estado de carga. Se respeta la preferencia de movimiento reducido.
 
-Después añade una tarjeta manual o usa el selector visual:
+### Imágenes e idiomas
 
-```yaml
-type: custom:ve-builder-card
-title: Mi vehículo
-blocks:
-  - id: information
-    type: fields
-    title: Estado
-    fields: []
-```
+Utiliza una URL de imagen o una ruta `/local/` de Home Assistant en el apartado Inicio. La interfaz admite **español e inglés**, sigue automáticamente el idioma de Home Assistant y permite elegirlo desde el editor. Los títulos, nombres de campos y comentarios personalizados se conservan tal como los escribas.
 
-El editor permite rellenar esta configuración sin escribir YAML. Cambia la versión de la URL cuando actualices manualmente.
+## Instalación manual
 
-## Instalación con HACS
+Descarga `ve-builder-card.js` de la [última versión](https://github.com/sergey08/ve-builder-card/releases/latest), cópialo a `/config/www/ve-builder-card.js` y registra `/local/ve-builder-card.js` como módulo JavaScript. El tipo de tarjeta es `custom:ve-builder-card`.
 
-1. Abre HACS → Repositorios personalizados.
-2. Añade `https://github.com/sergey08/ve-builder-card` con categoría **Dashboard**.
-3. Busca **VE Builder Card**, descarga la última versión estable y recarga Home Assistant.
-4. Si el recurso no se registra automáticamente, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo.
-5. Añade la tarjeta desde el selector visual.
+## Actualizaciones y ayuda
 
-[Ver repositorio en HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados. La instalación como repositorio personalizado no implica que la tarjeta ya esté en el catálogo general de HACS.
 
-La estructura está preparada para HACS; la instalación de la candidata numerada mediante HACS está verificada. Las versiones numeradas se publican automáticamente tras las comprobaciones. Las candidatas se marcan como versiones previas. No forma parte del catálogo predeterminado de HACS.
+Para contribuir, `npm run check` comprueba la sintaxis JavaScript, ejecuta las pruebas automáticas y genera el archivo distribuible. La instalación mediante HACS y el funcionamiento en móvil se han confirmado en la instalación del mantenedor. Las pruebas automáticas no sustituyen la revisión visual en distintos dispositivos; consulta la [lista de validación](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.md).
 
-## Notas de uso
-
-- Los campos sin lectura muestran **Sin datos**, nunca un cero inventado.
-- Las barras necesitan un máximo mayor que el mínimo.
-- La imagen debe ser una URL HTTP(S) o una ruta local de Home Assistant. No se incluye ninguna fotografía de vehículo.
-- Las presiones requieren que el sensor indique `bar`, `kPa` o `psi`.
-- Gastos y ahorros se muestran desde los sensores; la tarjeta no calcula ni suma ahorros.
-- El mapa requiere coordenadas en la entidad y usa la tarjeta nativa de Home Assistant.
-- Una orden enviada no implica que el vehículo haya confirmado la acción. La tarjeta espera el estado de la integración.
-
-## Desarrollo
-
-Node.js 20 o posterior. La compilación no necesita descargar dependencias:
-
-```sh
-npm run check
-```
-
-El código se divide en `src/core.js`, `src/card.js`, `src/editor.js` y `src/styles.js`. El generador produce un único archivo autocontenido en `dist/`.
-
-## Estado de validación
-
-Hay pruebas automatizadas de datos, conversiones, configuración y acciones. La revisión visual con componentes reales de Home Assistant, HACS y la matriz móvil/escritorio siguen pendientes. Consulta [docs/QA.md](docs/QA.md).
-
-Esta versión usa un formato nuevo con propiedades por bloque y el elemento `custom:ve-builder-card`. El prototipo `custom:vehicle-builder-card-v1` se mantiene separado. No hay migración automática: no reemplaces su tipo sin adaptar la configuración.
-
-El logo del proyecto combina fondo azul oscuro y símbolos de vehículo y panel en cian, azul y violeta. Generado para este proyecto. Código y recursos bajo licencia MIT.
-
-## Plantillas iniciales
-
-En Editar, abre Plantillas iniciales y elige Vehículo eléctrico, Gasolina / GNC, Gastos y ahorro o Neumáticos. Después selecciona tus entidades. Se añaden bloques conservando los configurados; solo se reemplaza el inicio vacío. Arrastra las asas visibles de bloques, campos y grupos de gastos para ordenar. Se resalta el destino. Con teclado: enfoca el título y usa Alt + Arriba/Abajo. Los decimales de información y potencia están en Opciones avanzadas. El arrastre está pendiente de validación en Home Assistant.
-
-## Ayudas de edición
-
-Deshacer/Rehacer conserva hasta 50 cambios durante la sesión de edición. Al reabrir el editor se reinicia el historial. En Datos de cada campo puedes elegir un dispositivo para filtrar las entidades; la entidad actual se mantiene hasta que la cambies. Quita el filtro para acceder a helpers o entidades de otros dispositivos. El filtro solo ayuda a editar y no forma parte de la configuración guardada.
-
-## Mapa del vehículo
-
-El bloque de neumáticos admite ahora cuatro puertas, capó, maletero y marcha. En Editar asigna las entidades opcionales en Puertas, capó y maletero y en Marcha. Para sensores binarios usa on/off; para covers, open/closed. Solo se resaltan elementos confirmados como abiertos. Los cerrados, sin datos o no coincidentes no tienen indicador. Las puertas abiertas se dibujan hacia fuera en rojo. No hay cajas de estado debajo del dibujo. Pulsa un elemento para ver sus detalles. La marcha se muestra como la comunica la integración. Se conservan los sensores y conversiones de neumáticos.
-
-## Versión estable 1.0
-
-Consulta las [notas en inglés y español](docs/RELEASE-1.0.2.md). 22 pruebas automáticas superadas y revisión móvil confirmada. No se realizó una revisión visual independiente de escritorio. Selecciona v1.0.2 en HACS.
+Licencia MIT.

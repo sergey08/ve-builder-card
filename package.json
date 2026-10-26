@@ -1,9 +1,15 @@
 {
   "name": "ve-builder-card",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
-  "scripts": {"build": "node scripts/build.mjs", "test": "node --test", "check": "node --check src/card.js && node --check src/editor.js && npm test && npm run build"},
-  "engines": {"node": ">=20"},
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "check": "node --check src/card.js && node --check src/editor.js && npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "license": "MIT"
 }

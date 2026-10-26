@@ -2,7 +2,7 @@
 
 # Validación antes de publicar
 
-## Automatizado
+Pruebas automáticas: ejecuta `npm run check`. El mantenedor ha confirmado la instalación mediante HACS y el funcionamiento en móvil. Esta lista sirve para repetir las comprobaciones; no implica que cada caso esté validado en todos los dispositivos.
 
 Ejecutar `npm run check`. Verifica valores ausentes, barras fuera de rango, unidades de presión, imágenes, independencia de configuraciones y controles compatibles. Estas pruebas no sustituyen las de interfaz.
 
@@ -26,3 +26,5 @@ Ejecutar `npm run check`. Verifica valores ausentes, barras fuera de rango, unid
 No declarar una versión estable hasta completar esta lista. El repositorio necesita README, licencia, manifest, distribución, release y documentación de compatibilidad. No incluir configuraciones privadas ni credenciales.
 
 - Verificar idioma automático y selección español/inglés; conservar títulos y notas personalizados al cambiar de idioma.
+
+- Revisar el esquema del vehículo: cuatro presiones, conversiones, fechas, notas, marcha y sensores de apertura. Solo deben aparecer indicadores de puertas, capó y maletero confirmados abiertos.
