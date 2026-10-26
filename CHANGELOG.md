@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.3
+
+- Fix compiled card rendering: preserve the escaping function reference. Add a runtime test of the distributed bundle.
+- Corregido el renderizado de la tarjeta compilada: referencia correcta a la función de escape. Añadida una prueba de ejecución del archivo distribuido.
+
 ## 0.1.0-beta.2
 
 English:
