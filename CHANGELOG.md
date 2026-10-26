@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 1.0.0-rc.1
+
+- First 1.0 release candidate; feature freeze. Bilingual release notes and automatic numbered prerelease publication. Manual acceptance checks remain pending.
+- Primera candidata a 1.0; funciones congeladas. Notas bilingües y publicación automática de versiones numeradas. Comprobaciones manuales de aceptación pendientes.
+
 ## 0.1.0-beta.10
 
 - Show vehicle body indicators only when open; remove the status boxes below the diagram.

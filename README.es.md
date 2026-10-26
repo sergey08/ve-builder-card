@@ -8,7 +8,7 @@
 
 **Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
 
-Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.10** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
+Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **1.0.0-rc.1** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
 
 La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.
 
@@ -43,7 +43,7 @@ La manguera permanece fija con el conector conectado y sin carga. Para distingui
 Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
 
 ```yaml
-url: /local/ve-builder-card.js?v=0.1.0-beta.10
+url: /local/ve-builder-card.js?v=1.0.0-rc.1
 type: module
 ```
 
@@ -71,7 +71,7 @@ El editor permite rellenar esta configuración sin escribir YAML. Cambia la vers
 
 [Ver repositorio en HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
-La estructura está preparada para HACS; la primera instalación real sigue pendiente de validación. Esta beta se distribuye desde `main`. No forma parte del catálogo predeterminado de HACS y aún no tiene una release publicada.
+La estructura está preparada para HACS; la primera instalación real sigue pendiente de validación. Las versiones numeradas se publican automáticamente tras las comprobaciones. Las candidatas se marcan como versiones previas. No forma parte del catálogo predeterminado de HACS.
 
 ## Notas de uso
 
@@ -112,3 +112,7 @@ Deshacer/Rehacer conserva hasta 50 cambios durante la sesión de edición. Al re
 ## Mapa del vehículo
 
 El bloque de neumáticos admite ahora cuatro puertas, capó, maletero y marcha. En Editar asigna las entidades opcionales en Puertas, capó y maletero y en Marcha. Para sensores binarios usa on/off; para covers, open/closed. Solo se resaltan elementos confirmados como abiertos. Los cerrados, sin datos o no coincidentes no tienen indicador. Las puertas abiertas se dibujan hacia fuera en rojo. No hay cajas de estado debajo del dibujo. Pulsa un elemento para ver sus detalles. La marcha se muestra como la comunica la integración. Se conservan los sensores y conversiones de neumáticos.
+
+## Candidata a 1.0
+
+Consulta las [notas en inglés y español](docs/RELEASE-1.0.0-rc.1.md). Pruebas automáticas superadas; comprobaciones manuales pendientes. Selecciona v1.0.0-rc.1 en HACS cuando esté publicada (activa versiones previas si es necesario).

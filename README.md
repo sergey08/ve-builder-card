@@ -8,7 +8,7 @@
 
 **Install with HACS:** click the button, confirm the custom repository and select Download. HACS must already be installed.
 
-Build an electric vehicle dashboard in Home Assistant with a visual block editor. **0.1.0-beta.10**: automated checks pass; visual validation and a clean HACS installation are still pending.
+Build an electric vehicle dashboard in Home Assistant with a visual block editor. **1.0.0-rc.1**: automated checks pass; visual validation and a clean HACS installation are still pending.
 
 The interface supports **English and Spanish**. It follows Home Assistant automatically, or you can choose a language in Edit. Custom titles, field names and notes remain exactly as you enter them.
 
@@ -22,7 +22,7 @@ The interface supports **English and Spanish**. It follows Home Assistant automa
 
 [Open repository in HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
-This is a custom repository, outside the default HACS catalogue. This beta is distributed from `main`; no release is published yet. The first real installation remains to be validated.
+This is a custom repository, outside the default HACS catalogue. Numbered releases are published automatically after validation. Release candidates are marked as prereleases. The first real installation remains to be validated.
 
 ## Build your dashboard
 
@@ -47,7 +47,7 @@ The cable remains visible and still when connected without energy flow. Configur
 Copy `dist/ve-builder-card.js` to `/config/www/ve-builder-card.js` and add a module resource:
 
 ```yaml
-url: /local/ve-builder-card.js?v=0.1.0-beta.10
+url: /local/ve-builder-card.js?v=1.0.0-rc.1
 type: module
 ```
 
@@ -101,3 +101,7 @@ Undo/Redo retains up to 50 changes during the current editing session. Reopening
 ## Vehicle map
 
 The tyre block now also supports four doors, bonnet, boot and gear. In Edit, assign optional entities under Doors, bonnet and boot and Gear. For binary sensors use on/off; for covers use open/closed. Only confirmed open parts are highlighted. Closed, unavailable and unmatched states have no body overlay. Open doors swing outward and turn red. There are no status boxes below the diagram. Click a part for entity details. Gear is displayed as reported by the integration. Tyre sensors and conversion settings remain compatible.
+
+## 1.0 release candidate
+
+See [English / Spanish release notes](docs/RELEASE-1.0.0-rc.1.md). Automated checks pass; manual acceptance checks are pending. Select v1.0.0-rc.1 in HACS after publication (enable prerelease versions if needed).

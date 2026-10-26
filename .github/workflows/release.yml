@@ -1,9 +1,15 @@
 name: Release
 on:
   push:
+    branches: [main]
+    paths: ['package.json', '.github/workflows/release.yml']
     tags: ['v*']
+  workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: ve-builder-release
+  cancel-in-progress: false
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -13,7 +19,29 @@ jobs:
         with:
           node-version: '22'
       - run: npm run check
-      - name: Publish release asset
+      - run: git diff --exit-code -- dist/
+      - name: Publish numbered release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/ve-builder-card.js --generate-notes --prerelease
+          RELEASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          VERSION=$(node -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version')
+          TAG="v$VERSION"
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "$TAG" ]]; then
+            echo "Tag and package version must match"
+            exit 1
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release already exists: $TAG"
+            exit 0
+          fi
+          OPTIONS=()
+          if [[ "$VERSION" == *-* ]]; then OPTIONS+=(--prerelease); fi
+          NOTES="docs/RELEASE-$VERSION.md"
+          if [[ -f "$NOTES" ]]; then
+            OPTIONS+=(--notes-file "$NOTES")
+          else
+            OPTIONS+=(--generate-notes)
+          fi
+          gh release create "$TAG" dist/ve-builder-card.js --target "$RELEASE_SHA" --title "VE Builder Card $VERSION" "${OPTIONS[@]}"
