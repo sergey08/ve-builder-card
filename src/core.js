@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.0.4';
+export const VERSION = '1.1.0';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -68,4 +68,39 @@ export function openingState(state,config={}){
  if(!state||['unknown','unavailable',''].includes(state.state))return 'unknown';
  const value=String(state.state).toLowerCase(),open=String(config.open_value??'on').toLowerCase(),closed=String(config.closed_value??'off').toLowerCase();
  if(value===open)return 'open';if(value===closed)return 'closed';return 'unknown';
+}
+
+// Suggestions are restricted to one selected device. Ambiguous matches stay empty.
+export function suggestVehicleEntities(device,registry=[],states={}) {
+ const result={};if(!device)return result;
+ const entries=registry.filter(e=>e.device_id===device&&!e.disabled_by&&states[e.entity_id]);
+ const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[_-]/g,' ');
+ const specs={fuel:['sensor',/fuel level|nivel.*combustible/],charging:['binary_sensor',/charging|cargando/],battery:['sensor',/battery|bateria|state of charge|\bsoc\b/,/12v|12 v|auxiliary|health|salud|soh/],range:['sensor',/range|autonomia|remaining distance/],odometer:['sensor',/odometer|odometro|total mileage/],power:['sensor',/charg.*power|power.*charg|potencia.*carga/],gear:['sensor',/gear|marcha/],connector:['binary_sensor',/plug|connector|conector/],bonnet:['binary_sensor',/bonnet|hood|capo/],trunk:['binary_sensor',/trunk|boot|maletero/]};
+ for(const [role,[domain,yes,no]]of Object.entries(specs)){
+  const matches=entries.filter(e=>{const s=states[e.entity_id],name=norm(e.entity_id+' '+(s.attributes?.friendly_name??''));return e.entity_id.startsWith(domain+'.')&&yes.test(name)&&(!no||!no.test(name))&&(!({battery:['%'],power:['W','kW'],range:['km','mi'],odometer:['km','mi']}[role])||({battery:['%'],power:['W','kW'],range:['km','mi'],odometer:['km','mi']}[role]).includes(s.attributes?.unit_of_measurement));});
+  if(matches.length===1)result[role]=matches[0].entity_id;
+ }
+ for(const [pos,label]of Object.entries(POSITIONS)){
+  const side=pos.endsWith('left')?/left|izquierd/:/right|derech/;const axle=pos.startsWith('front')?/front|delanter/:/rear|traser/;
+  for(const [role,domain,kind]of [['pressure_'+pos,'sensor',/pressure|presion/],['door_'+pos,'binary_sensor',/door|puerta/]]){
+   const matches=entries.filter(e=>{const n=norm(e.entity_id+' '+(states[e.entity_id].attributes?.friendly_name??''));return e.entity_id.startsWith(domain+'.')&&kind.test(n)&&side.test(n)&&axle.test(n);});
+   if(matches.length===1)result[role]=matches[0].entity_id;
+  }
+ }
+ return result;
+}
+export function vehicleWizardBlocks(kind,sections,chosen,states={},lang='es') {
+ const blocks=[];const field=(role,name,options={})=>{const entity=chosen[role];if(!entity)return null;return {...newField(),entity,name:translate(name,lang),...options};};
+ const overview=newBlock('start');overview.title=translate(overview.title,lang);overview.fields=[field(kind==='combustion'?'fuel':'battery',kind==='combustion'?'Combustible':'Batería'),field('range','Autonomía'),field('odometer','Odómetro')].filter(Boolean);
+ if(kind==='combustion'){overview.show_cable=false;overview.show_status=false;overview.animate=false;}
+ else if(sections.charging){overview.connector_entity=chosen.connector||'';overview.power_entity=chosen.power||'';overview.charging_entity=chosen.charging||'';overview.charging_value='on';}
+ blocks.push(overview);
+ if(kind==='electric'&&sections.charging&&chosen.power){const b=newBlock('power');b.title=translate(b.title,lang);const unit=states[chosen.power]?.attributes?.unit_of_measurement;b.fields=[field('power','Potencia de carga',{display:'bar',min:0,max:unit==='kW'?7.4:7400})];blocks.push(b);}
+ if(sections.vehicle){const b=newBlock('tyres');b.title=translate(b.title,lang);b.positions={};b.body_parts={};
+  for(const pos of Object.keys(POSITIONS))if(chosen['pressure_'+pos])b.positions[pos]=chosen['pressure_'+pos];
+  for(const part of Object.keys(BODY_PARTS)){const id=chosen[part==='bonnet'||part==='trunk'?part:'door_'+part];if(id)b.body_parts[part]={entity:id,open_value:'on',closed_value:'off'};}
+  b.gear_entity=chosen.gear||'';blocks.push(b);
+ }
+ if(sections.location&&chosen.location){const b=newBlock('map');b.title=translate('Ubicación',lang);b.entity=chosen.location;blocks.push(b);}
+ return blocks;
 }

@@ -1,5 +1,11 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Dispositivo del vehículo':'Vehicle device',
+ 'Asistente inicial':'Setup assistant','Tipo de vehículo':'Vehicle type','Incluir carga':'Include charging','Incluir mapa del vehículo':'Include vehicle map','Incluir ubicación':'Include location','Buscar entidades':'Find entities','Volver':'Back','Añadir apartados revisados':'Add reviewed blocks','Presión':'Pressure',
+ 'Elige un dispositivo y revisa las sugerencias. No se envían órdenes al vehículo. Los apartados existentes se conservan.':'Choose a device and review the suggestions. No commands are sent to the vehicle. Existing blocks are preserved.',
+ 'Revisa cada entidad. Las coincidencias ambiguas quedan vacías. Puedes cambiarlas o dejarlas sin asignar.':'Review each entity. Ambiguous matches remain empty. You can change them or leave them unassigned.',
+ 'No se pudo consultar el dispositivo. Inténtalo de nuevo.':'Could not query the device. Please try again.',
+
  'Vista de ejemplo':'Example preview','Tu vehículo, a tu manera':'Your vehicle, your way','Datos de ejemplo. Abre Editar y elige una plantilla para empezar.':'Sample data. Open Edit and choose a template to get started.',
  'Mapa del vehículo':'Vehicle map','Puertas, capó y maletero':'Doors, bonnet and boot','Marcha':'Gear','Sensor de marcha':'Gear sensor','Nombre de la marcha':'Gear label','Estado que significa abierto':'State that means open','Estado que significa cerrado':'State that means closed','Abierto':'Open','Cerrado':'Closed','Capó':'Bonnet','Maletero':'Boot','Puerta delantera izquierda':'Front left door','Puerta delantera derecha':'Front right door','Puerta trasera izquierda':'Rear left door','Puerta trasera derecha':'Rear right door',
  '↶ Deshacer':'↶ Undo','↷ Rehacer':'↷ Redo','Filtrar entidades por dispositivo (opcional)':'Filter entities by device (optional)','No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.':'Could not load the filter. You can choose an entity without filtering.',

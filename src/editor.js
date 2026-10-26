@@ -1,12 +1,12 @@
 import {language,translate,translateSchema} from './i18n.js';
-import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS} from './core.js';
+import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks} from './core.js';
 
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
 const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:'box'}}});
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
-const LABELS={gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
+const LABELS={kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
 const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 export class VEBuilderEditor extends HTMLElement {
@@ -71,6 +71,24 @@ export class VEBuilderEditor extends HTMLElement {
     // The empty starter is a placeholder; configured blocks are always preserved.
     if(this.config.blocks.length===1){const b=this.config.blocks[0];if(b.type==='start'&&!b.fields?.length&&!b.image&&!b.connector_entity&&!b.charging_entity&&!b.power_entity)this.config.blocks=[];}
     this.config.blocks.push(...blocks);this.openKey=blocks[0].id;this.emit();this.render();
+  }
+  wizardPanel(parent){
+    this.wizard??={kind:'electric',device:'',charging:true,vehicle:true,location:false};const w=this.wizard;
+    const box=this.panel(parent,'setup-wizard','Asistente inicial',this.config.blocks.length===0||this.config.blocks.length===1&&!this.config.blocks[0].fields?.length);
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un dispositivo y revisa las sugerencias. No se envían órdenes al vehículo. Los apartados existentes se conservan.');box.append(hint);
+    if(!w.review){
+      this.form(box,{...w,wizard_device:w.device},[select('kind',{electric:'Vehículo eléctrico',combustion:'Gasolina / GNC'}),{name:'wizard_device',selector:{device:{}}},bool('charging'),bool('vehicle'),bool('location')],patch=>{if('wizard_device' in patch){w.device=patch.wizard_device;delete patch.wizard_device;}Object.assign(w,patch);});
+      const button=this.button(box,'Buscar entidades',async()=>{button.disabled=true;try{const registry=await this._hass.callWS({type:'config/entity_registry/list'});this.entityRegistry=registry;w.chosen=suggestVehicleEntities(w.device,registry,this._hass.states);w.review=true;w.error=false;this.openKey='setup-wizard';this.render();}catch{w.error=true;button.disabled=false;const msg=document.createElement('p');msg.textContent=this.t('No se pudo consultar el dispositivo. Inténtalo de nuevo.');box.append(msg);}});
+      return;
+    }
+    const hint2=document.createElement('p');hint2.className='muted';hint2.textContent=this.t('Revisa cada entidad. Las coincidencias ambiguas quedan vacías. Puedes cambiarlas o dejarlas sin asignar.');box.append(hint2);
+    const specs=[[w.kind==='combustion'?'fuel':'battery',w.kind==='combustion'?'Combustible':'Batería','sensor'],['range','Autonomía','sensor'],['odometer','Odómetro','sensor']];
+    if(w.kind==='electric'&&w.charging)specs.push(['power','Potencia de carga','sensor'],['connector','Sensor del conector','binary_sensor'],['charging','Entidad del estado de carga','binary_sensor']);
+    if(w.vehicle){specs.push(['gear','Marcha','sensor'],['bonnet','Capó','binary_sensor'],['trunk','Maletero','binary_sensor']);for(const [pos,label]of Object.entries(POSITIONS)){specs.push(['pressure_'+pos,this.t('Presión')+' · '+this.t(label),'sensor'],['door_'+pos,BODY_PARTS[pos],'binary_sensor']);}}
+    if(w.location)specs.push(['location','Ubicación',['person','device_tracker']]);
+    for(const [role,label,domain]of specs){const name=document.createElement('p');name.textContent=this.t(label);box.append(name);this.form(box,{entity:w.chosen[role]||''},[entity('entity',domain)],patch=>{w.chosen[role]=patch.entity||'';});}
+    this.button(box,'Volver',()=>{w.review=false;this.openKey='setup-wizard';this.render();});
+    this.button(box,'Añadir apartados revisados',()=>{const blocks=vehicleWizardBlocks(w.kind,w,w.chosen,this._hass?.states,this.lang);if(this.config.blocks.length===1){const b=this.config.blocks[0];if(b.type==='start'&&!b.fields?.length&&!b.image&&!b.connector_entity&&!b.charging_entity&&!b.power_entity)this.config.blocks=[];}this.config.blocks.push(...blocks);w.review=false;this.openKey=blocks[0].id;this.emit();this.render();});
   }
   templates(parent){
     const box=this.panel(parent,'templates','Plantillas iniciales',this.config.blocks.length===0);
@@ -151,6 +169,7 @@ export class VEBuilderEditor extends HTMLElement {
     this.form(root,{language:'auto',...this.config},[text('title'),select('language',{auto:'Automatic / Automático',en:'English',es:'Español'})],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
     this.historyToolbar(root);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
+    this.wizardPanel(root);
     this.templates(root);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
