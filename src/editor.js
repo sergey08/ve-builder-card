@@ -96,8 +96,8 @@ export class VEBuilderEditor extends HTMLElement {
     for(const [kind,label]of Object.entries({electric:'Vehículo eléctrico',combustion:'Gasolina / GNC',expenses:'Gastos y ahorro',tyres:'Mapa del vehículo'}))this.button(box,label,()=>this.addTemplate(kind));
     const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.');box.append(tip);
   }
-  colorEditor(parent,owner,key,id){
-    const panel=this.panel(parent,id+'-colors','Colores según el valor');
+  colorEditor(parent,owner,key,id,title='Colores según el valor'){
+    const panel=this.panel(parent,id+'-colors',title);
     const colors=owner[key]??{};
     this.form(panel,colors,[bool('enabled')],patch=>{owner[key]={...owner[key],...patch};this.emit();this.render();});
     if(!colors.enabled)return;
@@ -152,6 +152,8 @@ export class VEBuilderEditor extends HTMLElement {
       this.form(panel,block,[entity('entity',['person','device_tracker']),numeric('zoom',1,20),numeric('hours',0,168)],patch=>{Object.assign(block,patch);this.emit();});
     }else if(block.type==='tyres'){
       this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
+      this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero');
+      this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero');
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Parte delantera arriba. Asigna cada sensor a la rueda que corresponde. La unidad de origen se obtiene del sensor.');panel.append(hint);
       block.positions??={};this.form(panel,block.positions,Object.keys(POSITIONS).map(key=>entity(key,'sensor')),patch=>{Object.assign(block.positions,patch);this.emit();});
       this.form(panel,block,[select('unit',{bar:'bar',kPa:'kPa',psi:'psi'}),numeric('decimals',0,3),bool('show_dates')],patch=>{Object.assign(block,patch);this.emit();});

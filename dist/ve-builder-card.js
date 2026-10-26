@@ -2,6 +2,7 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Colores de presión · eje delantero':'Pressure colours · front axle','Colores de presión · eje trasero':'Pressure colours · rear axle',
  'Colores según el valor':'Value-based colours','Activar colores por valor':'Enable value-based colours','Avisar cuando el valor sea':'Warn when the value is','Umbral de aviso · ámbar':'Warning threshold · amber','Umbral crítico · rojo':'Critical threshold · red','Bajo · batería o presión':'Low · battery or pressure','Alto · consumo o temperatura':'High · consumption or temperature',
  'Normal: verde. Aviso: ámbar. Crítico: rojo. Los umbrales incluyen el valor indicado y usan la unidad mostrada. Sin datos no se aplica color.':'Normal: green. Warning: amber. Critical: red. Thresholds include the specified value and use the displayed unit. Missing data has no colour.',
  'Revisa el orden de los umbrales: bajo requiere crítico menor o igual que aviso; alto, mayor o igual.':'Check threshold order: low requires critical at or below warning; high requires critical at or above warning.',
@@ -43,7 +44,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.2.0-beta.1';
+const VERSION = '1.2.0-beta.2';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -307,8 +308,8 @@ class VEBuilderEditor extends HTMLElement {
     for(const [kind,label]of Object.entries({electric:'Vehículo eléctrico',combustion:'Gasolina / GNC',expenses:'Gastos y ahorro',tyres:'Mapa del vehículo'}))this.button(box,label,()=>this.addTemplate(kind));
     const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.');box.append(tip);
   }
-  colorEditor(parent,owner,key,id){
-    const panel=this.panel(parent,id+'-colors','Colores según el valor');
+  colorEditor(parent,owner,key,id,title='Colores según el valor'){
+    const panel=this.panel(parent,id+'-colors',title);
     const colors=owner[key]??{};
     this.form(panel,colors,[bool('enabled')],patch=>{owner[key]={...owner[key],...patch};this.emit();this.render();});
     if(!colors.enabled)return;
@@ -363,6 +364,8 @@ class VEBuilderEditor extends HTMLElement {
       this.form(panel,block,[entity('entity',['person','device_tracker']),numeric('zoom',1,20),numeric('hours',0,168)],patch=>{Object.assign(block,patch);this.emit();});
     }else if(block.type==='tyres'){
       this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
+      this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero');
+      this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero');
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Parte delantera arriba. Asigna cada sensor a la rueda que corresponde. La unidad de origen se obtiene del sensor.');panel.append(hint);
       block.positions??={};this.form(panel,block.positions,Object.keys(POSITIONS).map(key=>entity(key,'sensor')),patch=>{Object.assign(block.positions,patch);this.emit();});
       this.form(panel,block,[select('unit',{bar:'bar',kPa:'kPa',psi:'psi'}),numeric('decimals',0,3),bool('show_dates')],patch=>{Object.assign(block,patch);this.emit();});
@@ -439,7 +442,7 @@ class VEBuilderCard extends HTMLElement {
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
     const coords={front_left:[57,85],front_right:[303,85],rear_left:[57,260],rear_right:[303,260]},unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';
-    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit);return `<g class="tyre ${this.severity({colors:block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${block.show_dates===false?'':`<text x="${x}" y="${y+38}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
+    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit);return `<g class="tyre ${this.severity({colors:block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${block.show_dates===false?'':`<text x="${x}" y="${y+38}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
     const parts=Object.entries(BODY_PARTS).filter(([key])=>block.body_parts?.[key]?.entity).map(([key,label])=>{const f=block.body_parts[key],status=openingState(this.state[f.entity],f);return {key,f,label:f.name||this.t(label),status,text:this.t(status==='open'?'Abierto':status==='closed'?'Cerrado':'Sin datos')};});
     const shapes=parts.filter(part=>part.status==='open').map(({key,f,label,status,text})=>{let shape='';const left=key.endsWith('left'),x=left?126:234,y=key.startsWith('front')?120:192;
       if(['bonnet','trunk'].includes(key)){const y=key==='bonnet'?55:285;shape=`<rect x="144" y="${y}" width="72" height="32" rx="12"/>`;}

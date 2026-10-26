@@ -86,3 +86,12 @@ test('conditional colours render for values, power bars and converted tyre press
  card.hass={language:'en',states:{'sensor.battery':{state:'15'},'sensor.power':{state:'5000'},'sensor.pressure':{state:'210',attributes:{unit_of_measurement:'kPa'}}}};
  assert.match(card.shadowRoot.innerHTML,/configurable-field[^\"]*value-critical/);assert.match(card.shadowRoot.innerHTML,/power-panel value-warning/);assert.match(card.shadowRoot.innerHTML,/tyre value-critical/);
 });
+test('tyre colours use independent axle thresholds with shared fallback',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card');const card=new Card();const shared={enabled:true,direction:'low',warning:2.4,critical:2.2};
+ const block={type:'tyres',unit:'bar',positions:{front_left:'sensor.front',rear_left:'sensor.rear'},pressure_colors:shared,pressure_colors_rear:{...shared,warning:2.6,critical:2.4}};
+ card.setConfig({blocks:[block]});card.hass={language:'en',states:{'sensor.front':{state:'250',attributes:{unit_of_measurement:'kPa'}},'sensor.rear':{state:'250',attributes:{unit_of_measurement:'kPa'}}}};
+ assert.match(card.shadowRoot.innerHTML,/class="tyre value-normal"[^>]*data-entity="sensor.front"/);
+ assert.match(card.shadowRoot.innerHTML,/class="tyre value-warning"[^>]*data-entity="sensor.rear"/);
+});
