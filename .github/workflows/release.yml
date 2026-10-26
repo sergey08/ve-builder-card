@@ -1,3 +1,4 @@
+# Validate the complete source tree before publishing.
 name: Release
 on:
   push:

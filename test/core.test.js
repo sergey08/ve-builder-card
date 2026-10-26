@@ -1,0 +1,18 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {number,percentage,pressure,imageUrl,normalize,newField,newBlock,actionFor,validate,stateText,format} from '../src/core.js';
+test('unavailable and empty data never become zero',()=>{for(const v of [null,undefined,'','  ','unknown','unavailable'])assert.equal(number(v),null);assert.equal(number('0'),0);assert.equal(stateText({state:'unavailable'}),'Sin datos');assert.equal(format(null),'Sin datos');});
+test('bars clamp values and reject invalid ranges',()=>{assert.equal(percentage(200,0,100),100);assert.equal(percentage(-1,0,100),0);assert.equal(percentage(20,20,20),null);assert.equal(percentage('unknown'),null);});
+test('tyres convert supported units and reject unknown units',()=>{assert.equal(pressure(250,'kPa'),2.5);assert.ok(Math.abs(pressure(36.2594,'psi')-2.5)<0.001);assert.equal(pressure(2.5,'bar','kPa'),250);assert.equal(pressure(20,'unknown'),null);});
+test('image URLs allow local/http images without script protocols',()=>{assert.equal(imageUrl('/local/car.webp'),'/local/car.webp');for(const s of ['javascript:alert(1)','data:text/html,evil','//evil.test'])assert.equal(imageUrl(s),'');});
+test('normalization does not mutate original or share instances',()=>{const original={title:'A',blocks:[{id:'x',type:'fields',fields:[{id:'x',entity:'sensor.test'}]}]};const a=normalize(original),b=normalize(original);assert.equal(original.blocks[0].fields[0].id,'x');assert.notEqual(a.blocks[0].id,a.blocks[0].fields[0].id);a.blocks[0].fields[0].name='B';assert.equal(b.blocks[0].fields[0].name,undefined);});
+test('actions require supported domain, valid state, and control permission',()=>{assert.equal(actionFor('sensor.test',{state:'on'}),null);assert.equal(actionFor('switch.test',{state:'unavailable'}),null);assert.equal(actionFor('lock.test',{state:'locked',attributes:{control_allowed:false}}),null);assert.equal(actionFor('lock.test',{state:'locked'}).service,'unlock');assert.equal(actionFor('switch.test',{state:'off'}).service,'turn_on');assert.equal(actionFor('switch.test',{state:'on'},'more-info'),null);});
+test('new generic configurations contain no personal entities',()=>{for(const type of ['start','fields','power','limits','actions','modes','map','tyres','expenses']){const b=newBlock(type);assert.ok(!JSON.stringify(b).includes('xpeng'));assert.ok(!JSON.stringify(b).includes('135818'));}assert.equal(newField().entity,'');});
+test('validation explains missing entities and bad bar ranges',()=>{const c={blocks:[{type:'fields',fields:[{name:'Batería',entity:'',display:'bar',min:90,max:10}]}]};assert.equal(validate(c).length,2);});
+test('vehicle openings distinguish open, closed, unavailable and unmatched states',async()=>{
+ const {openingState}=await import('../src/core.js');
+ assert.equal(openingState({state:'on'}),'open');assert.equal(openingState({state:'off'}),'closed');
+ for(const state of ['unknown','unavailable','opening','unexpected'])assert.equal(openingState({state}),'unknown');
+ assert.equal(openingState(undefined),'unknown');assert.equal(openingState({state:'open'},{open_value:'open',closed_value:'closed'}),'open');
+ assert.equal(openingState({state:'closed'},{open_value:'open',closed_value:'closed'}),'closed');
+});
