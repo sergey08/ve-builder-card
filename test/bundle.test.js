@@ -30,3 +30,27 @@ test('distributed bundle renders configured cards with real state data',()=>{
   if(block.type==='start')assert.match(card.shadowRoot.innerHTML,/compact-value/);
  }
 });
+test('charging cable distinguishes disconnected, idle, active and missing power',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card');
+ for(const [plug,charging,power,visible,animated]of [['off','Idle','0',false,false],['on','Idle','0',true,false],['on','Charging','0',true,false],['on','Charging','7400',true,true],['on','Charging','unavailable',true,false]]){
+  const card=new Card();card.setConfig({blocks:[{id:'start',type:'start',image:'/local/car.png',connector_entity:'binary_sensor.plug',charging_entity:'sensor.charging',power_entity:'sensor.power',fields:[]}]});
+  card.hass={language:'en',states:{'binary_sensor.plug':{state:plug},'sensor.charging':{state:charging},'sensor.power':{state:power}}};
+  assert.equal(card.shadowRoot.innerHTML.includes('<svg class="charge-cable'),visible);
+  assert.equal(card.shadowRoot.innerHTML.includes('charge-cable cable-animated'),animated);
+ }
+});
+test('all six body openings render only confirmed open states and escape gear text',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card');
+ for(const value of ['on','off','unknown','unavailable']){
+  const keys=['front_left','front_right','rear_left','rear_right','bonnet','trunk'];
+  const body_parts=Object.fromEntries(keys.map(k=>[k,{entity:'binary_sensor.'+k}]));
+  const states=Object.fromEntries(keys.map(k=>['binary_sensor.'+k,{state:value}]));states['sensor.gear']={state:'<P>'};
+  const card=new Card();card.setConfig({blocks:[{id:'map',type:'tyres',positions:{},body_parts,gear_entity:'sensor.gear'}]});card.hass={language:'en',states};
+  assert.equal((card.shadowRoot.innerHTML.match(/<g class="body-part /g)??[]).length,value==='on'?6:0);
+  assert.ok(card.shadowRoot.innerHTML.includes('&lt;P&gt;'));assert.ok(!card.shadowRoot.innerHTML.includes('>NaN<'));
+ }
+});
