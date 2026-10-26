@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import vm from 'node:vm';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles} from '../src/styles.js';
 test('distributed bundle renders configured cards with real state data',()=>{
  execFileSync(process.execPath,['scripts/build.mjs']);
  const registry=new Map();
@@ -103,4 +104,11 @@ test('recommended cold pressures display per axle and convert units without inve
  assert.equal((card.shadowRoot.innerHTML.match(/Rec\. en frío: 2,5 bar/g)??[]).length,2);assert.equal((card.shadowRoot.innerHTML.match(/Rec\. en frío: 2,7 bar/g)??[]).length,2);
  card.setConfig({blocks:[{...block,unit:'kPa'}]});assert.match(card.shadowRoot.innerHTML,/250 kPa/);assert.match(card.shadowRoot.innerHTML,/270 kPa/);
  card.setConfig({blocks:[{type:'tyres',unit:'bar'}]});assert.doesNotMatch(card.shadowRoot.innerHTML,/class="recommended"/);
+});
+
+test('distributed card includes every stylesheet, including colours and opening indicators',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'fields',fields:[{entity:'sensor.battery'}]}]});card.hass={language:'en',states:{'sensor.battery':{state:'48'}}};
+ for(const [name,css]of Object.entries({styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles}))assert.ok(card.shadowRoot.innerHTML.includes(css),name+' must reach the browser');
 });
