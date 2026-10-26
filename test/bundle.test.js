@@ -95,3 +95,12 @@ test('tyre colours use independent axle thresholds with shared fallback',()=>{
  assert.match(card.shadowRoot.innerHTML,/class="tyre value-normal"[^>]*data-entity="sensor.front"/);
  assert.match(card.shadowRoot.innerHTML,/class="tyre value-warning"[^>]*data-entity="sensor.rear"/);
 });
+test('recommended cold pressures display per axle and convert units without invented defaults',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();
+ const block={type:'tyres',unit:'bar',recommended_front_bar:2.5,recommended_rear_bar:2.7,show_dates:true};card.setConfig({blocks:[block]});card.hass={language:'es',states:{}};
+ assert.equal((card.shadowRoot.innerHTML.match(/Rec\. en frío: 2,5 bar/g)??[]).length,2);assert.equal((card.shadowRoot.innerHTML.match(/Rec\. en frío: 2,7 bar/g)??[]).length,2);
+ card.setConfig({blocks:[{...block,unit:'kPa'}]});assert.match(card.shadowRoot.innerHTML,/250 kPa/);assert.match(card.shadowRoot.innerHTML,/270 kPa/);
+ card.setConfig({blocks:[{type:'tyres',unit:'bar'}]});assert.doesNotMatch(card.shadowRoot.innerHTML,/class="recommended"/);
+});

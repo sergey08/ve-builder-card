@@ -50,3 +50,5 @@ export const valueColorStyles = `
 .value-normal .limit-heading strong,.value-warning .limit-heading strong,.value-critical .limit-heading strong{color:var(--ve-value-color)}
 .car .tyre.value-normal .pressure,.car .tyre.value-warning .pressure,.car .tyre.value-critical .pressure{fill:var(--ve-value-color)}
 `;
+
+export const recommendationStyles = `.car .recommended{fill:var(--secondary-text-color);font-size:9px;font-weight:400}`;

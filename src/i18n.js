@@ -1,5 +1,8 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Rec. en frío':'Cold rec.','Presiones recomendadas':'Recommended pressures','Presión recomendada delante · bar (en frío)':'Recommended front pressure · bar (cold)','Presión recomendada detrás · bar (en frío)':'Recommended rear pressure · bar (cold)',
+ 'Introduce las presiones en frío de la etiqueta del vehículo. Se guardan en bar y se convierten a la unidad mostrada. Vacío o 0 oculta la referencia.':'Enter cold pressures from the vehicle label. Stored in bar and converted to the display unit. Empty or 0 hides the reference.',
+
  'Colores de presión · eje delantero':'Pressure colours · front axle','Colores de presión · eje trasero':'Pressure colours · rear axle',
  'Colores según el valor':'Value-based colours','Activar colores por valor':'Enable value-based colours','Avisar cuando el valor sea':'Warn when the value is','Umbral de aviso · ámbar':'Warning threshold · amber','Umbral crítico · rojo':'Critical threshold · red','Bajo · batería o presión':'Low · battery or pressure','Alto · consumo o temperatura':'High · consumption or temperature',
  'Normal: verde. Aviso: ámbar. Crítico: rojo. Los umbrales incluyen el valor indicado y usan la unidad mostrada. Sin datos no se aplica color.':'Normal: green. Warning: amber. Critical: red. Thresholds include the specified value and use the displayed unit. Missing data has no colour.',

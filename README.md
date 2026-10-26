@@ -68,6 +68,8 @@ In a numeric field, expand **Value-based colours** and enable it. Select low or 
 
 You can configure independent **front axle** and **rear axle** colours. Without an override, an axle uses shared colours; a disabled override leaves it uncoloured. Thresholds are visual alerts, not inflation pressures or official tolerances.
 
+In **Recommended pressures**, enter cold front and rear pressures in bar. A small reference appears below each reading and converts to the display unit. Empty or 0 hides it. Use your vehicle label.
+
 ---
 
 <a id="espanol"></a>
@@ -141,3 +143,5 @@ Abre **Asistente inicial** en el editor visual, elige el tipo de vehículo y el 
 Dentro de un campo numérico, abre **Colores según el valor** y actívalo. Elige valores bajos o altos y los umbrales de aviso y crítico. Ejemplo de batería: bajo, aviso 40 y crítico 20 muestra verde por encima del 40%, ámbar entre el 20% y el 40% (sin incluir el 20%) y rojo al 20% o menos. Los umbrales incluyen el valor indicado. Para neumáticos, configura los colores en el Mapa del vehículo usando su unidad de presentación. Sin datos no se aplica color. Es opcional y no cambia la configuración existente. [Mejoras pendientes](https://github.com/sergey08/ve-builder-card/blob/main/docs/ROADMAP.md).
 
 Puedes configurar colores independientes para **eje delantero** y **eje trasero**. Sin configuración propia, cada eje usa los colores comunes; si desactivas su configuración propia, ese eje queda sin colorear. Los umbrales son avisos visuales, no presiones de inflado ni tolerancias oficiales.
+
+En **Presiones recomendadas**, introduce los valores en frío para delante y detrás, en bar. Aparecen en pequeño bajo cada lectura y se convierten si cambias la unidad mostrada. Vacío o 0 oculta la referencia. Usa la etiqueta de tu vehículo.
