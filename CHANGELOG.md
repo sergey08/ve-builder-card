@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.4
+
+- Restore compact information pills, state-aware mode/action controls and a unified charging-power panel. All entities and labels remain editable.
+- Recuperadas las etiquetas compactas, controles de modos/acciones con estado y un panel de potencia integrado. Entidades y nombres siguen siendo editables.
+
 ## 0.1.0-beta.3
 
 - Fix compiled card rendering: preserve the escaping function reference. Add a runtime test of the distributed bundle.

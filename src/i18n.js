@@ -1,5 +1,6 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Activo':'Active','Inactivo':'Inactive','Apagado':'Off','Bloqueado':'Locked','Desbloqueado':'Unlocked','Potencia de carga':'Charging power',
  'Inicio':'Overview','Información':'Information','Modos de carga':'Charging modes','Carga':'Charging','Límites':'Limits','Acciones':'Actions','Mapa':'Map','Gastos y ahorro':'Costs and savings','Neumáticos':'Tyres',
  'Delantera izquierda':'Front left','Delantera derecha':'Front right','Trasera izquierda':'Rear left','Trasera derecha':'Rear right',
  'Título':'Title','Nombre visible (opcional)':'Display name (optional)','Entidad':'Entity','Icono':'Icon','Presentación':'Display','Tamaño':'Size','Estilo':'Style','Anchura':'Width','Al pulsar':'On tap','Pedir confirmación':'Ask for confirmation','Decimales':'Decimal places','Unidad (opcional; se obtiene del sensor)':'Unit (optional; read from sensor)','Formato del dato':'Value format','Mínimo':'Minimum','Máximo':'Maximum',

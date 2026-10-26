@@ -16,11 +16,16 @@ test('distributed bundle renders configured cards with real state data',()=>{
   {type:'start',fields:[{id:'f',entity:'sensor.battery',name:'Battery'}],image:'/local/car.png'},
   {type:'expenses',prices:[{id:'p',entity:'sensor.battery',name:'Price'}],groups:[]},
   {type:'tyres',positions:{front_left:'sensor.battery'}},
+  {type:'power',fields:[{id:'power',entity:'sensor.battery',name:'Power',display:'bar',max:100},{id:'detail',entity:'sensor.battery',name:'Today'}]},
+  {type:'modes',fields:[{id:'mode',entity:'input_boolean.solar',name:'Solar',tap:'toggle'}]},
   {type:'fields',fields:[{id:'f',entity:'sensor.battery',name:'Battery'}]}
  ]){
   const card=new Card();card.setConfig({title:'Test car',blocks:[{id:'block',...block}]});
-  card.hass={language:'en',states:{'sensor.battery':{state:'53',attributes:{unit_of_measurement:'%'},last_updated:'2026-10-26T10:00:00Z'}}};
+  card.hass={language:'en',states:{'input_boolean.solar':{state:'on',attributes:{}},'sensor.battery':{state:'53',attributes:{unit_of_measurement:'%'},last_updated:'2026-10-26T10:00:00Z'}}};
   assert.match(card.shadowRoot.innerHTML,/<ha-card>/);
   assert.match(card.shadowRoot.innerHTML,/Test car/);
+  if(block.type==='power'){assert.match(card.shadowRoot.innerHTML,/class="power-panel"/);assert.match(card.shadowRoot.innerHTML,/class="power-detail"/);}
+  if(block.type==='modes')assert.match(card.shadowRoot.innerHTML,/mode-active/);
+  if(block.type==='start')assert.match(card.shadowRoot.innerHTML,/compact-value/);
  }
 });
