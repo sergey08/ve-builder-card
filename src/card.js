@@ -77,11 +77,14 @@ export class VEBuilderCard extends HTMLElement {
   }
   render(){
     if(!this._hass||!this.config)return;
-    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this.shadowRoot.innerHTML=this.showcase();return;}
-    // Updates do not rebuild a slider while the user is adjusting it.
+    // HA state objects are immutable: compare only entities used by this card.
+    // Avoid serialising every attribute and repainting the sample on unrelated updates.
     if(this._editingSlider)return;
-    const signature=JSON.stringify([this.lang,this._configSignature,[...this._entities].map(id=>this.state[id])]);
-    if(!this._dirty&&signature===this._signature){this.syncMaps();return;}this._dirty=false;this._signature=signature;
+    const states=[...this._entities].map(id=>this.state[id]);
+    const unchanged=!this._dirty&&this._renderLanguage===this.lang&&this._renderUser===this._hass.user&&this._renderStates?.length===states.length&&states.every((state,i)=>state===this._renderStates[i]);
+    if(unchanged){if(this._mapHosts?.length)this.syncMaps();return;}
+    this._dirty=false;this._renderStates=states;this._renderLanguage=this.lang;this._renderUser=this._hass.user;
+    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       return `<section data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
@@ -91,7 +94,8 @@ export class VEBuilderCard extends HTMLElement {
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
     this.shadowRoot.querySelectorAll('[data-entity]').forEach(el=>{const open=()=>this.moreInfo(el.dataset.entity);el.addEventListener('click',open);el.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();open();}});});
     this.shadowRoot.querySelectorAll('[data-limit]').forEach(el=>{el.addEventListener('input',()=>{this._editingSlider=true;const f=fields.find(f=>f.id===el.dataset.limit);[...this.shadowRoot.querySelectorAll('[data-limit-label]')].find(label=>label.dataset.limitLabel===el.dataset.limit).textContent=`${format(el.value,f.decimals)} ${f.unit??this.state[f.entity]?.attributes.unit_of_measurement??''}`;});el.addEventListener('change',async()=>{const f=fields.find(f=>f.id===el.dataset.limit);try{await this._hass.callService('input_number','set_value',{entity_id:f.entity,value:Number(el.value)});this.feedback=this.t('Límite enviado.');}catch{this.feedback=this.t('No se pudo guardar el límite.');}finally{this._editingSlider=false;this._dirty=true;this.render();}});el.addEventListener('blur',()=>{if(this._editingSlider){this._editingSlider=false;this.render();}});});
-    this.syncMaps();
+    this._mapHosts=[...this.shadowRoot.querySelectorAll('[data-map]')];
+    if(this._mapHosts.length)this.syncMaps();
   }
   async activate(field){
     if(!field||this.pending)return;
@@ -105,7 +109,7 @@ export class VEBuilderCard extends HTMLElement {
   confirmAction(name){return new Promise(resolve=>{const dialog=document.createElement('dialog');dialog.innerHTML=`<p>${this.lang==='es'?'¿Ejecutar':'Run'} ${escape(name)}?</p><button data-yes>${this.t('Confirmar')}</button><button data-no>${this.t('Cancelar')}</button>`;this.shadowRoot.append(dialog);let done=false;const finish=value=>{if(done)return;done=true;dialog.remove();resolve(value);};dialog.querySelector('[data-yes]').onclick=()=>finish(true);dialog.querySelector('[data-no]').onclick=()=>finish(false);dialog.oncancel=()=>finish(false);dialog.showModal();});}
   async syncMaps(){
     if(!this.shadowRoot||!this.config)return;
-    for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(!block?.entity){host.textContent=this.t('Elige la entidad de ubicación en Editar.');continue;}if(host.card){host.card.hass=this._hass;continue;}if(host.loading)continue;host.loading=true;try{const helpers=await window.loadCardHelpers();if(!host.isConnected)continue;const card=helpers.createCardElement({type:'map',entities:[block.entity],default_zoom:Number(block.zoom)||14,hours_to_show:Number(block.hours)||0});card.hass=this._hass;host.replaceChildren(card);host.card=card;host.mapConfig=JSON.stringify(block);}catch{host.textContent=this.t('No se pudo cargar el mapa. Recarga el panel.');}finally{host.loading=false;}}
+    for(const host of this._mapHosts??[]){const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(!block?.entity){host.textContent=this.t('Elige la entidad de ubicación en Editar.');continue;}if(host.card){host.card.hass=this._hass;continue;}if(host.loading)continue;host.loading=true;try{const helpers=await window.loadCardHelpers();if(!host.isConnected)continue;const card=helpers.createCardElement({type:'map',entities:[block.entity],default_zoom:Number(block.zoom)||14,hours_to_show:Number(block.hours)||0});card.hass=this._hass;host.replaceChildren(card);host.card=card;host.mapConfig=JSON.stringify(block);}catch{host.textContent=this.t('No se pudo cargar el mapa. Recarga el panel.');}finally{host.loading=false;}}
   }
 }
 if(!customElements.get('ve-builder-card'))customElements.define('ve-builder-card',VEBuilderCard);

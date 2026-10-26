@@ -38,7 +38,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.1.0';
+const VERSION = '1.1.1-beta.1';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -196,10 +196,10 @@ class VEBuilderEditor extends HTMLElement {
   setConfig(config){
     const normalized=normalize(config);
     if(this.config&&JSON.stringify(this.config)===JSON.stringify(normalized))return;
-    this.config=normalized;this.history=[];this.future=[];this.checkpoint=clone(normalized);this.render();
+    this._warningConfig=null;this.config=normalized;this.history=[];this.future=[];this.checkpoint=clone(normalized);this.render();
   }
   set hass(hass){const previous=this.lang;this._hass=hass;if(this.config&&previous!==this.lang)this.render();this.shadowRoot?.querySelectorAll('ha-form').forEach(form=>form.hass=hass);this.updateWarnings();}
-  emit(){this.recordHistory();this.dispatchEvent(new CustomEvent('config-changed',{detail:{config:clone(this.config)},bubbles:true,composed:true}));this.updateWarnings();}
+  emit(){this._warningConfig=null;this.recordHistory();this.dispatchEvent(new CustomEvent('config-changed',{detail:{config:clone(this.config)},bubbles:true,composed:true}));this.updateWarnings();}
   recordHistory(){
     if(!this.checkpoint){this.checkpoint=clone(this.config);return;}
     if(JSON.stringify(this.checkpoint)===JSON.stringify(this.config))return;
@@ -227,7 +227,7 @@ class VEBuilderEditor extends HTMLElement {
     if(device&&this.entityRegistry){schema.selector.entity.include_entities=this.entityRegistry.filter(item=>item.device_id===device&&(!domain||(Array.isArray(domain)?domain:[domain]).includes(item.entity_id.split('.')[0]))).map(item=>item.entity_id);}
     return schema;
   }
-  updateWarnings(){const container=this.shadowRoot?.querySelector('.warnings');if(!container||!this.config)return;const issues=validate(this.config,this._hass);container.textContent=this.t(issues.length?`${issues.length} ajuste(s) pendiente(s): ${issues.slice(0,5).join(' ')}${issues.length>5?' …':''}`:'Configuración lista. Pulsa Guardar para conservar los cambios.');}
+  updateWarnings(){const container=this.shadowRoot?.querySelector('.warnings');if(!container||!this.config)return;if(this._warningConfig!==this.config){this._warningEntities=[...new Set(JSON.stringify(this.config).match(/[a-z_]+\.[a-z0-9_]+/g)??[])];this._warningConfig=this.config;this._warningStates=null;}const states=this._warningEntities.map(id=>this._hass?.states?.[id]);if(this._warningContainer===container&&this._warningLanguage===this.lang&&this._warningStates?.length===states.length&&states.every((v,i)=>v===this._warningStates[i]))return;this._warningStates=states;this._warningContainer=container;this._warningLanguage=this.lang;const issues=validate(this.config,this._hass);container.textContent=this.t(issues.length?`${issues.length} ajuste(s) pendiente(s): ${issues.slice(0,5).join(' ')}${issues.length>5?' …':''}`:'Configuración lista. Pulsa Guardar para conservar los cambios.');}
   button(parent,label,fn,danger=false){const button=document.createElement('button');button.type='button';button.textContent=this.t(label);if(danger)button.className='danger';button.onclick=fn;parent.append(button);return button;}
   panel(parent,key,title,open=false){const panel=document.createElement('details');panel.dataset.key=key;panel.open=open;const summary=document.createElement('summary');summary.textContent=this.t(title);panel.append(summary);parent.append(panel);return panel;}
   form(parent,data,schema,change){
@@ -441,11 +441,14 @@ class VEBuilderCard extends HTMLElement {
   }
   render(){
     if(!this._hass||!this.config)return;
-    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this.shadowRoot.innerHTML=this.showcase();return;}
-    // Updates do not rebuild a slider while the user is adjusting it.
+    // HA state objects are immutable: compare only entities used by this card.
+    // Avoid serialising every attribute and repainting the sample on unrelated updates.
     if(this._editingSlider)return;
-    const signature=JSON.stringify([this.lang,this._configSignature,[...this._entities].map(id=>this.state[id])]);
-    if(!this._dirty&&signature===this._signature){this.syncMaps();return;}this._dirty=false;this._signature=signature;
+    const states=[...this._entities].map(id=>this.state[id]);
+    const unchanged=!this._dirty&&this._renderLanguage===this.lang&&this._renderUser===this._hass.user&&this._renderStates?.length===states.length&&states.every((state,i)=>state===this._renderStates[i]);
+    if(unchanged){if(this._mapHosts?.length)this.syncMaps();return;}
+    this._dirty=false;this._renderStates=states;this._renderLanguage=this.lang;this._renderUser=this._hass.user;
+    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       return `<section data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
@@ -455,7 +458,8 @@ class VEBuilderCard extends HTMLElement {
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
     this.shadowRoot.querySelectorAll('[data-entity]').forEach(el=>{const open=()=>this.moreInfo(el.dataset.entity);el.addEventListener('click',open);el.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();open();}});});
     this.shadowRoot.querySelectorAll('[data-limit]').forEach(el=>{el.addEventListener('input',()=>{this._editingSlider=true;const f=fields.find(f=>f.id===el.dataset.limit);[...this.shadowRoot.querySelectorAll('[data-limit-label]')].find(label=>label.dataset.limitLabel===el.dataset.limit).textContent=`${format(el.value,f.decimals)} ${f.unit??this.state[f.entity]?.attributes.unit_of_measurement??''}`;});el.addEventListener('change',async()=>{const f=fields.find(f=>f.id===el.dataset.limit);try{await this._hass.callService('input_number','set_value',{entity_id:f.entity,value:Number(el.value)});this.feedback=this.t('Límite enviado.');}catch{this.feedback=this.t('No se pudo guardar el límite.');}finally{this._editingSlider=false;this._dirty=true;this.render();}});el.addEventListener('blur',()=>{if(this._editingSlider){this._editingSlider=false;this.render();}});});
-    this.syncMaps();
+    this._mapHosts=[...this.shadowRoot.querySelectorAll('[data-map]')];
+    if(this._mapHosts.length)this.syncMaps();
   }
   async activate(field){
     if(!field||this.pending)return;
@@ -469,7 +473,7 @@ class VEBuilderCard extends HTMLElement {
   confirmAction(name){return new Promise(resolve=>{const dialog=document.createElement('dialog');dialog.innerHTML=`<p>${this.lang==='es'?'¿Ejecutar':'Run'} ${escape(name)}?</p><button data-yes>${this.t('Confirmar')}</button><button data-no>${this.t('Cancelar')}</button>`;this.shadowRoot.append(dialog);let done=false;const finish=value=>{if(done)return;done=true;dialog.remove();resolve(value);};dialog.querySelector('[data-yes]').onclick=()=>finish(true);dialog.querySelector('[data-no]').onclick=()=>finish(false);dialog.oncancel=()=>finish(false);dialog.showModal();});}
   async syncMaps(){
     if(!this.shadowRoot||!this.config)return;
-    for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(!block?.entity){host.textContent=this.t('Elige la entidad de ubicación en Editar.');continue;}if(host.card){host.card.hass=this._hass;continue;}if(host.loading)continue;host.loading=true;try{const helpers=await window.loadCardHelpers();if(!host.isConnected)continue;const card=helpers.createCardElement({type:'map',entities:[block.entity],default_zoom:Number(block.zoom)||14,hours_to_show:Number(block.hours)||0});card.hass=this._hass;host.replaceChildren(card);host.card=card;host.mapConfig=JSON.stringify(block);}catch{host.textContent=this.t('No se pudo cargar el mapa. Recarga el panel.');}finally{host.loading=false;}}
+    for(const host of this._mapHosts??[]){const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(!block?.entity){host.textContent=this.t('Elige la entidad de ubicación en Editar.');continue;}if(host.card){host.card.hass=this._hass;continue;}if(host.loading)continue;host.loading=true;try{const helpers=await window.loadCardHelpers();if(!host.isConnected)continue;const card=helpers.createCardElement({type:'map',entities:[block.entity],default_zoom:Number(block.zoom)||14,hours_to_show:Number(block.hours)||0});card.hass=this._hass;host.replaceChildren(card);host.card=card;host.mapConfig=JSON.stringify(block);}catch{host.textContent=this.t('No se pudo cargar el mapa. Recarga el panel.');}finally{host.loading=false;}}
   }
 }
 if(!customElements.get('ve-builder-card'))customElements.define('ve-builder-card',VEBuilderCard);

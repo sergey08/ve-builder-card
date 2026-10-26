@@ -15,10 +15,10 @@ export class VEBuilderEditor extends HTMLElement {
   setConfig(config){
     const normalized=normalize(config);
     if(this.config&&JSON.stringify(this.config)===JSON.stringify(normalized))return;
-    this.config=normalized;this.history=[];this.future=[];this.checkpoint=clone(normalized);this.render();
+    this._warningConfig=null;this.config=normalized;this.history=[];this.future=[];this.checkpoint=clone(normalized);this.render();
   }
   set hass(hass){const previous=this.lang;this._hass=hass;if(this.config&&previous!==this.lang)this.render();this.shadowRoot?.querySelectorAll('ha-form').forEach(form=>form.hass=hass);this.updateWarnings();}
-  emit(){this.recordHistory();this.dispatchEvent(new CustomEvent('config-changed',{detail:{config:clone(this.config)},bubbles:true,composed:true}));this.updateWarnings();}
+  emit(){this._warningConfig=null;this.recordHistory();this.dispatchEvent(new CustomEvent('config-changed',{detail:{config:clone(this.config)},bubbles:true,composed:true}));this.updateWarnings();}
   recordHistory(){
     if(!this.checkpoint){this.checkpoint=clone(this.config);return;}
     if(JSON.stringify(this.checkpoint)===JSON.stringify(this.config))return;
@@ -46,7 +46,7 @@ export class VEBuilderEditor extends HTMLElement {
     if(device&&this.entityRegistry){schema.selector.entity.include_entities=this.entityRegistry.filter(item=>item.device_id===device&&(!domain||(Array.isArray(domain)?domain:[domain]).includes(item.entity_id.split('.')[0]))).map(item=>item.entity_id);}
     return schema;
   }
-  updateWarnings(){const container=this.shadowRoot?.querySelector('.warnings');if(!container||!this.config)return;const issues=validate(this.config,this._hass);container.textContent=this.t(issues.length?`${issues.length} ajuste(s) pendiente(s): ${issues.slice(0,5).join(' ')}${issues.length>5?' …':''}`:'Configuración lista. Pulsa Guardar para conservar los cambios.');}
+  updateWarnings(){const container=this.shadowRoot?.querySelector('.warnings');if(!container||!this.config)return;if(this._warningConfig!==this.config){this._warningEntities=[...new Set(JSON.stringify(this.config).match(/[a-z_]+\.[a-z0-9_]+/g)??[])];this._warningConfig=this.config;this._warningStates=null;}const states=this._warningEntities.map(id=>this._hass?.states?.[id]);if(this._warningContainer===container&&this._warningLanguage===this.lang&&this._warningStates?.length===states.length&&states.every((v,i)=>v===this._warningStates[i]))return;this._warningStates=states;this._warningContainer=container;this._warningLanguage=this.lang;const issues=validate(this.config,this._hass);container.textContent=this.t(issues.length?`${issues.length} ajuste(s) pendiente(s): ${issues.slice(0,5).join(' ')}${issues.length>5?' …':''}`:'Configuración lista. Pulsa Guardar para conservar los cambios.');}
   button(parent,label,fn,danger=false){const button=document.createElement('button');button.type='button';button.textContent=this.t(label);if(danger)button.className='danger';button.onclick=fn;parent.append(button);return button;}
   panel(parent,key,title,open=false){const panel=document.createElement('details');panel.dataset.key=key;panel.open=open;const summary=document.createElement('summary');summary.textContent=this.t(title);panel.append(summary);parent.append(panel);return panel;}
   form(parent,data,schema,change){

@@ -66,3 +66,15 @@ test('picker preview is labelled sample data and hides the legacy entry',()=>{
  assert.match(card.shadowRoot.innerHTML,/Sample data/);assert.match(card.shadowRoot.innerHTML,/<svg/);assert.doesNotMatch(card.shadowRoot.innerHTML,/data-field=/);
  assert.equal(window.customCards.filter(c=>c.type==='ve-builder-card').length,1);assert.ok(!window.customCards.some(c=>c.type==='vehicle-builder-card-v1'));assert.ok(window.customCards.some(c=>c.type==='unrelated-card'));
 });
+test('mobile update path skips unrelated events and preserves sample preview DOM',()=>{
+ const registry=new Map();let paints=0;
+ class Element{attachShadow(){this.shadowRoot={set innerHTML(value){paints++;},querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card');const card=new Card();card.setConfig({blocks:[]});card.hass={language:'es',states:{}};const initial=paints;
+ for(let i=0;i<100;i++)card.hass={language:'es',states:{'sensor.unrelated':{state:String(i)}}};assert.equal(paints,initial);
+ card.hass={language:'en',states:{}};assert.equal(paints,initial+1);
+ const state={state:'80',attributes:{unit_of_measurement:'%'}};
+ card.setConfig({blocks:[{type:'fields',fields:[{entity:'sensor.battery'}]}]});card.hass={language:'en',states:{'sensor.battery':state}};const configured=paints;
+ for(let i=0;i<100;i++)card.hass={language:'en',states:{'sensor.battery':state,'sensor.unrelated':{state:String(i)}}};assert.equal(paints,configured);
+ card.hass={language:'en',states:{'sensor.battery':{...state,state:'81'}}};assert.equal(paints,configured+1);
+});
