@@ -7,7 +7,7 @@
 - Editor más cómodo en móvil: buscador de campos y menos opciones desplegadas.
 - Personalizar el mapa del vehículo: orientación, colores y posición de indicadores.
 
-En pruebas: colores por valor, versión 1.2.0-beta.1.
+Disponible en la versión estable 1.2.0: colores por valor, umbrales de presión por eje y referencias de presión recomendada en frío.
 
 ## English
 
@@ -16,4 +16,4 @@ En pruebas: colores por valor, versión 1.2.0-beta.1.
 - More comfortable mobile editor: field search and fewer expanded options.
 - Vehicle map customisation: orientation, colours and indicator positions.
 
-In testing: value-based colours, version 1.2.0-beta.1.
+Available in stable 1.2.0: value-based colours, per-axle pressure thresholds and recommended cold pressure references.
