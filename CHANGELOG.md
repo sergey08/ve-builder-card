@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.8
+
+- Add session-local undo/redo (50 edits) and an optional per-field device filter, without changing selected entities.
+- Deshacer/rehacer durante la edición (50 cambios) y filtro opcional por dispositivo en cada campo, sin cambiar las entidades seleccionadas.
+
 ## 0.1.0-beta.7
 
 - Drag fields, expense groups and blocks using visible handles and highlighted drop targets. Replace move buttons with Alt + arrow keyboard support.

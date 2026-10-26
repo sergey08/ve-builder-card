@@ -2,6 +2,7 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ '↶ Deshacer':'↶ Undo','↷ Rehacer':'↷ Redo','Filtrar entidades por dispositivo (opcional)':'Filter entities by device (optional)','No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.':'Could not load the filter. You can choose an entity without filtering.',
  'Arrastra para ordenar. Con teclado: Alt + flechas.':'Drag to reorder. Keyboard: Alt + arrow keys.',
  'Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.':'Drag a field, group or block handle to change its position. Keyboard: Alt + arrow keys.',
  'Plantillas iniciales':'Starter templates','Vehículo eléctrico':'Electric vehicle','Gasolina / GNC':'Petrol / CNG','Opciones avanzadas':'Advanced options','Arrastra para ordenar':'Drag to reorder','Deshacer último cambio de estructura':'Undo last structure change',
@@ -29,7 +30,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '0.1.0-beta.7';
+const VERSION = '0.1.0-beta.8';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Neumáticos'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -125,7 +126,7 @@ const select=(name,options)=>({name,selector:{select:{options:Object.entries(opt
 const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:'box'}}});
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
-const LABELS={language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
+const LABELS={device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
 const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 class VEBuilderEditor extends HTMLElement {
@@ -134,10 +135,37 @@ class VEBuilderEditor extends HTMLElement {
   setConfig(config){
     const normalized=normalize(config);
     if(this.config&&JSON.stringify(this.config)===JSON.stringify(normalized))return;
-    this.config=normalized;this.render();
+    this.config=normalized;this.history=[];this.future=[];this.checkpoint=clone(normalized);this.render();
   }
   set hass(hass){const previous=this.lang;this._hass=hass;if(this.config&&previous!==this.lang)this.render();this.shadowRoot?.querySelectorAll('ha-form').forEach(form=>form.hass=hass);this.updateWarnings();}
-  emit(){this.dispatchEvent(new CustomEvent('config-changed',{detail:{config:clone(this.config)},bubbles:true,composed:true}));this.updateWarnings();}
+  emit(){this.recordHistory();this.dispatchEvent(new CustomEvent('config-changed',{detail:{config:clone(this.config)},bubbles:true,composed:true}));this.updateWarnings();}
+  recordHistory(){
+    if(!this.checkpoint){this.checkpoint=clone(this.config);return;}
+    if(JSON.stringify(this.checkpoint)===JSON.stringify(this.config))return;
+    this.history??=[];this.history.push(this.checkpoint);if(this.history.length>50)this.history.shift();this.future=[];this.checkpoint=clone(this.config);this.updateHistoryButtons();
+  }
+  travelHistory(direction){
+    const source=direction==='undo'?this.history:this.future,target=direction==='undo'?this.future:this.history;
+    if(!source?.length)return;target.push(clone(this.config));this.config=clone(source.pop());this.checkpoint=clone(this.config);this.emit();this.render();
+  }
+  updateHistoryButtons(){
+    for(const [key,list]of [['undo',this.history],['redo',this.future]]){const button=this.shadowRoot?.querySelector('[data-history="'+key+'"]');if(button)button.disabled=!list?.length;}
+  }
+  historyToolbar(parent){
+    const bar=document.createElement('div');bar.className='toolbar';
+    for(const [key,label]of [['undo','↶ Deshacer'],['redo','↷ Rehacer']]){const button=this.button(bar,label,()=>this.travelHistory(key));button.dataset.history=key;}
+    parent.append(bar);this.updateHistoryButtons();
+  }
+  async filterDevice(id,device){
+    this.deviceFilters??={};this.deviceFilters[id]=device||'';this.deviceFilterError=false;
+    if(device&&!this.entityRegistry){try{this.entityRegistry=await this._hass.callWS({type:'config/entity_registry/list'});}catch{this.deviceFilters[id]='';this.deviceFilterError=true;}}
+    this.render();
+  }
+  entitySchema(name,domain,device){
+    const schema=entity(name,domain);
+    if(device&&this.entityRegistry){schema.selector.entity.include_entities=this.entityRegistry.filter(item=>item.device_id===device&&(!domain||(Array.isArray(domain)?domain:[domain]).includes(item.entity_id.split('.')[0]))).map(item=>item.entity_id);}
+    return schema;
+  }
   updateWarnings(){const container=this.shadowRoot?.querySelector('.warnings');if(!container||!this.config)return;const issues=validate(this.config,this._hass);container.textContent=this.t(issues.length?`${issues.length} ajuste(s) pendiente(s): ${issues.slice(0,5).join(' ')}${issues.length>5?' …':''}`:'Configuración lista. Pulsa Guardar para conservar los cambios.');}
   button(parent,label,fn,danger=false){const button=document.createElement('button');button.type='button';button.textContent=this.t(label);if(danger)button.className='danger';button.onclick=fn;parent.append(button);return button;}
   panel(parent,key,title,open=false){const panel=document.createElement('details');panel.dataset.key=key;panel.open=open;const summary=document.createElement('summary');summary.textContent=this.t(title);panel.append(summary);parent.append(panel);return panel;}
@@ -176,7 +204,8 @@ class VEBuilderEditor extends HTMLElement {
       this.reorderHandle(row,fields,index,key);
       const data=this.panel(row,field.id+'-data','Datos',true);
       const domain=kind==='limit'?'input_number':kind==='action'?['switch','input_boolean','lock','button']:kind==='mode'?['switch','input_boolean']:undefined;
-      const schema=[entity('entity',domain),text('name')];if(kind!=='limit')schema.push({name:'icon',selector:{icon:{}}});
+      this.form(data,{device:this.deviceFilters?.[field.id]??''},[{name:'device',selector:{device:{}}}],patch=>this.filterDevice(field.id,patch.device));
+      const schema=[this.entitySchema('entity',domain,this.deviceFilters?.[field.id]),text('name')];if(kind!=='limit')schema.push({name:'icon',selector:{icon:{}}});
       if(['info','expense','price','power'].includes(kind))schema.push(...(['expense','price'].includes(kind)?[numeric('decimals',0,6)]:[]),text('unit'));
       if(kind==='info')schema.push(select('format',{auto:'Automático',connection:'Conectado / desconectado',presence:'Presencia'}));
       this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);row.querySelector('summary').textContent=field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo';this.emit();if(domainChanged)this.render();});
@@ -231,6 +260,8 @@ class VEBuilderEditor extends HTMLElement {
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
     this.form(root,{language:'auto',...this.config},[text('title'),select('language',{auto:'Automatic / Automático',en:'English',es:'Español'})],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
+    this.historyToolbar(root);
+    if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.templates(root);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);

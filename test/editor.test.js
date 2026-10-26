@@ -21,3 +21,19 @@ test('reordering works in both directions and preserves field and group data',()
  for(const [id,index]of [['missing',1],['a',-1],['a',3],['a',0]])assert.equal(editor.moveItem(items,id,index),false);
  assert.equal(emitted,2);
 });
+test('undo and redo retain complete configuration and reset redo after a new edit',()=>{
+ const editor=new VEBuilderEditor();editor.render=()=>{};editor.updateHistoryButtons=()=>{};editor.emit=()=>editor.recordHistory();
+ editor.setConfig({title:'A',blocks:[{id:'one',type:'fields',fields:[]}]});
+ editor.config.title='B';editor.emit();editor.config.blocks=[];editor.emit();
+ editor.travelHistory('undo');assert.equal(editor.config.blocks.length,1);assert.equal(editor.config.title,'B');
+ editor.travelHistory('undo');assert.equal(editor.config.title,'A');
+ editor.travelHistory('redo');assert.equal(editor.config.title,'B');
+ editor.config.title='C';editor.emit();assert.equal(editor.future.length,0);
+ editor.setConfig(structuredClone(editor.config));assert.equal(editor.history.length,2);
+});
+test('device filter intersects device entities with permitted domains',()=>{
+ const editor=new VEBuilderEditor();editor.entityRegistry=[{entity_id:'sensor.a',device_id:'car'},{entity_id:'switch.a',device_id:'car'},{entity_id:'sensor.b',device_id:'house'}];
+ assert.deepEqual(editor.entitySchema('entity','sensor','car').selector.entity.include_entities,['sensor.a']);
+ assert.deepEqual(editor.entitySchema('entity',undefined,'car').selector.entity.include_entities,['sensor.a','switch.a']);
+ assert.equal(editor.entitySchema('entity','sensor','').selector.entity.include_entities,undefined);
+});

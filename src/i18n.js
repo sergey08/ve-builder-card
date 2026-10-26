@@ -1,5 +1,6 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ '↶ Deshacer':'↶ Undo','↷ Rehacer':'↷ Redo','Filtrar entidades por dispositivo (opcional)':'Filter entities by device (optional)','No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.':'Could not load the filter. You can choose an entity without filtering.',
  'Arrastra para ordenar. Con teclado: Alt + flechas.':'Drag to reorder. Keyboard: Alt + arrow keys.',
  'Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.':'Drag a field, group or block handle to change its position. Keyboard: Alt + arrow keys.',
  'Plantillas iniciales':'Starter templates','Vehículo eléctrico':'Electric vehicle','Gasolina / GNC':'Petrol / CNG','Opciones avanzadas':'Advanced options','Arrastra para ordenar':'Drag to reorder','Deshacer último cambio de estructura':'Undo last structure change',
