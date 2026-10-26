@@ -24,7 +24,7 @@ test('distributed bundle renders configured cards with real state data',()=>{
   card.hass={language:'en',states:{'input_boolean.solar':{state:'on',attributes:{}},'sensor.battery':{state:'53',attributes:{unit_of_measurement:'%'},last_updated:'2026-10-26T10:00:00Z'}}};
   assert.match(card.shadowRoot.innerHTML,/<ha-card>/);
   assert.match(card.shadowRoot.innerHTML,/Test car/);
-  if(block.type==='power'){assert.match(card.shadowRoot.innerHTML,/class="power-panel"/);assert.match(card.shadowRoot.innerHTML,/class="power-detail"/);}
+  if(block.type==='power'){assert.match(card.shadowRoot.innerHTML,/class="power-panel"/);assert.match(card.shadowRoot.innerHTML,/class="power-detail /);}
   if(block.type==='modes')assert.match(card.shadowRoot.innerHTML,/mode-active/);
   if(block.type==='start')assert.match(card.shadowRoot.innerHTML,/compact-value/);
  }

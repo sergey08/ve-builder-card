@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.5
+
+- Restore charging panel layout: right-aligned current, surplus above the scale, compact units and separated energy/time rows.
+- Recuperada la distribución del panel de carga: intensidad a la derecha, excedentes encima de la escala, unidades pequeñas y filas de energía/tiempo separadas.
+
 ## 0.1.0-beta.4
 
 - Restore compact information pills, state-aware mode/action controls and a unified charging-power panel. All entities and labels remain editable.

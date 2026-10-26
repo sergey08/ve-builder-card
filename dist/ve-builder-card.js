@@ -22,7 +22,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '0.1.0-beta.4';
+const VERSION = '0.1.0-beta.5';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Neumáticos'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -91,6 +91,15 @@ const compactStyles = `
 .power-detail{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:10px 0;border-top:1px solid var(--divider-color);margin-top:8px}
 .power-detail span{margin:0}.power-detail strong{font-size:20px;color:var(--primary-color);text-align:right}
 .power-panel button{border-radius:0;background:none}.power-panel .power-track{margin-bottom:4px}
+`;
+
+const powerLayoutStyles = `
+.power-detail.power-intensity{justify-content:flex-end;border:0;margin:8px 0 16px;padding:0;gap:3px;min-height:32px}
+.power-detail.power-intensity span:after{content:" ·"}.power-detail.power-intensity strong{font-size:19px}
+.power-detail.power-surplus{border:0;margin:0;padding:0;min-height:32px}
+.power-detail.power-summary{margin-top:14px;padding:14px 0 0}.power-detail.power-summary strong{font-size:22px}
+.power-panel .power-track{margin-top:12px}.power-panel .power-labels span{margin-top:5px;font-size:10px}
+.power-panel strong small{font-size:11px;font-weight:400;color:var(--secondary-text-color)}
 `;
 
 
@@ -245,8 +254,11 @@ class VEBuilderCard extends HTMLElement {
   power(block){
     const fields=block.fields??[],primary=fields.find(f=>f.display==='bar')??fields[0];
     if(!primary)return this.fields([]);
-    const state=this.state[primary.entity],pct=percentage(state?.state,primary.min??0,primary.max??100);
-    return `<div class="power-panel"><button class="power-primary" data-field="${escape(primary.id)}"><div class="power-heading"><span>${escape(primary.name||this.t('Potencia de carga'))}</span><strong>${escape(stateText(state,primary,this.lang))}</strong></div>${primary.display==='bar'?`<div class="power-track" role="progressbar" aria-label="${escape(primary.name)}" aria-valuemin="${escape(primary.min??0)}" aria-valuemax="${escape(primary.max??100)}" ${number(state?.state)!==null?`aria-valuenow="${escape(Math.max(primary.min??0,Math.min(primary.max??100,Number(state.state))))}"`:''}><div class="power-fill" style="width:${pct??0}%"></div></div>`:''}</button>${fields.filter(f=>f!==primary).map(f=>`<button class="power-detail" data-field="${escape(f.id)}"><span>${escape(f.name||this.state[f.entity]?.attributes?.friendly_name)}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div>`;
+    const state=this.state[primary.entity],pct=percentage(state?.state,primary.min??0,primary.max??100),details=fields.filter(f=>f!==primary);
+    const value=f=>{const s=this.state[f.entity],n=number(s?.state),unit=f.unit??s?.attributes?.unit_of_measurement??'';return n===null||['unknown','unavailable'].includes(s?.state)?escape(stateText(s,f,this.lang)):`${escape(format(n,f.decimals,this.lang))}${unit?` <small>${escape(unit)}</small>`:''}`;};
+    const row=(f,index)=>`<button class="power-detail ${index===0?'power-intensity':index===1?'power-surplus':'power-summary'}" data-field="${escape(f.id)}"><span>${escape(f.name||this.state[f.entity]?.attributes?.friendly_name)}</span><strong>${value(f)}</strong></button>`;
+    const unit=primary.unit??state?.attributes?.unit_of_measurement??'';
+    return `<div class="power-panel"><button class="power-primary" data-field="${escape(primary.id)}"><div class="power-heading"><span>${escape(primary.name||this.t('Potencia de carga'))}</span><strong>${value(primary)}</strong></div></button>${details.slice(0,2).map(row).join('')}${primary.display==='bar'?`<div class="power-track" role="progressbar" aria-label="${escape(primary.name)}" aria-valuemin="${escape(primary.min??0)}" aria-valuemax="${escape(primary.max??100)}" ${number(state?.state)!==null?`aria-valuenow="${escape(Math.max(primary.min??0,Math.min(primary.max??100,Number(state.state))))}"`:''}><div class="power-fill" style="width:${pct??0}%"></div></div><div class="power-labels"><span>${escape(format(primary.min??0,0,this.lang))} ${escape(unit)}</span><span>${escape(format(primary.max??100,0,this.lang))} ${escape(unit)}</span></div>`:''}${details.slice(2).map((f,i)=>row(f,i+2)).join('')}</div>`;
   }
   limits(block){return `<div class="charge-limits">${(block.fields??[]).map(f=>{const state=this.state[f.entity],a=state?.attributes??{},value=number(state?.state),valid=value!==null&&number(a.min)!==null&&number(a.max)!==null&&a.max>a.min;return `<label class="limit-row"><div class="limit-heading"><span>${escape(f.name||a.friendly_name||this.t('Límite'))}</span><strong data-limit-label="${escape(f.id)}">${escape(stateText(state,f,this.lang))}</strong></div><input type="range" data-limit="${escape(f.id)}" aria-label="${escape(f.name||this.t('Límite'))}" min="${escape(a.min??0)}" max="${escape(a.max??100)}" step="${escape(a.step??1)}" value="${escape(value??0)}" ${!valid?'disabled':''}/></label>`;}).join('')}</div>`;}
   allFields(){return (this.config.blocks??[]).flatMap(b=>[...(b.fields??[]),...(b.prices??[]),...(b.groups??[]).flatMap(g=>g.fields??[])]);}
@@ -259,7 +271,7 @@ class VEBuilderCard extends HTMLElement {
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       return `<section data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));

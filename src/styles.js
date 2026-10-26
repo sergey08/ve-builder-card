@@ -14,3 +14,12 @@ export const compactStyles = `
 .power-detail span{margin:0}.power-detail strong{font-size:20px;color:var(--primary-color);text-align:right}
 .power-panel button{border-radius:0;background:none}.power-panel .power-track{margin-bottom:4px}
 `;
+
+export const powerLayoutStyles = `
+.power-detail.power-intensity{justify-content:flex-end;border:0;margin:8px 0 16px;padding:0;gap:3px;min-height:32px}
+.power-detail.power-intensity span:after{content:" ·"}.power-detail.power-intensity strong{font-size:19px}
+.power-detail.power-surplus{border:0;margin:0;padding:0;min-height:32px}
+.power-detail.power-summary{margin-top:14px;padding:14px 0 0}.power-detail.power-summary strong{font-size:22px}
+.power-panel .power-track{margin-top:12px}.power-panel .power-labels span{margin-top:5px;font-size:10px}
+.power-panel strong small{font-size:11px;font-weight:400;color:var(--secondary-text-color)}
+`;
