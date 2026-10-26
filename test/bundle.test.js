@@ -56,8 +56,11 @@ test('all six body openings render only confirmed open states and escape gear te
 });
 test('picker preview is labelled sample data and hides the legacy entry',()=>{
  const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
- const window={customCards:[{type:'vehicle-builder-card-v1'},{type:'unrelated-card'}]};
+ const sharedRegistry=[{type:'vehicle-builder-card-v1'},{type:'unrelated-card'}];
+ const window={customCards:sharedRegistry};
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window,console:{info(){}},structuredClone});
+ assert.equal(window.customCards,sharedRegistry,'Home Assistant retains the original array reference');
+ assert.ok(sharedRegistry.some(c=>c.type==='ve-builder-card'));
  assert.match(window.customCards.find(c=>c.type==='ve-builder-card').name,/EV/);
  const Card=registry.get('ve-builder-card');const card=new Card();card.setConfig(Card.getStubConfig());card.hass={language:'en',states:{}};
  assert.match(card.shadowRoot.innerHTML,/Sample data/);assert.match(card.shadowRoot.innerHTML,/<svg/);assert.doesNotMatch(card.shadowRoot.innerHTML,/data-field=/);
