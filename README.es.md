@@ -1,6 +1,6 @@
 # VE Builder Card
 
-<p align="center"><img src="assets/logo.png" alt="VE Builder Card" width="240"></p>
+![VE Builder Card](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png)
 
 [English](README.md) · **Español**
 
@@ -8,7 +8,7 @@
 
 **Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
 
-Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **1.0.0 estable**. 22 pruebas automáticas superadas y revisión móvil confirmada por el mantenedor.
+Tarjeta de Home Assistant para construir un panel de vehículo totalmente configurable: imagen, carga, gastos y ahorro, ubicación y un mapa interactivo con presiones, marcha, puertas, capó y maletero abiertos. Configura cada bloque, entidad, nombre y distribución desde el editor visual. Versión **1.0.1 estable**. 22 pruebas automáticas superadas y revisión móvil confirmada por el mantenedor.
 
 La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.
 
@@ -34,7 +34,7 @@ No hay sensores preasignados. Funciona con las entidades que proporcione tu inte
 | Acciones | Interruptores, cerraduras y botones; detalles o acción explícita |
 | Mapa | `person` o `device_tracker`, zoom e historial |
 | Gastos y ahorro | Precios destacados, grupos de importes, unidades, decimales y comentario |
-| Neumáticos | Dibujo con las cuatro posiciones, sensores, bar/kPa/psi, fechas y comentario |
+| Mapa del vehículo | Presiones de las cuatro ruedas (bar/kPa/psi), marcha, cuatro puertas, capó y maletero; indicadores solo cuando están abiertos |
 
 La manguera permanece fija con el conector conectado y sin carga. Para distinguir carga de espera configura también **Potencia real**. Cuando la entidad de carga coincide con el estado configurado y la potencia es positiva, la animación se activa. Si no se configura potencia, se usa solo el estado de carga. Se respeta la preferencia del sistema de reducir animaciones.
 
@@ -43,7 +43,7 @@ La manguera permanece fija con el conector conectado y sin carga. Para distingui
 Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
 
 ```yaml
-url: /local/ve-builder-card.js?v=1.0.0
+url: /local/ve-builder-card.js?v=1.0.1
 type: module
 ```
 
@@ -65,7 +65,7 @@ El editor permite rellenar esta configuración sin escribir YAML. Cambia la vers
 
 1. Abre HACS → Repositorios personalizados.
 2. Añade `https://github.com/sergey08/ve-builder-card` con categoría **Dashboard**.
-3. Busca **VE Builder Card**, descarga la rama `main` y recarga Home Assistant.
+3. Busca **VE Builder Card**, descarga la última versión estable y recarga Home Assistant.
 4. Si el recurso no se registra automáticamente, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo.
 5. Añade la tarjeta desde el selector visual.
 
@@ -115,4 +115,4 @@ El bloque de neumáticos admite ahora cuatro puertas, capó, maletero y marcha. 
 
 ## Versión estable 1.0
 
-Consulta las [notas en inglés y español](docs/RELEASE-1.0.0.md). 22 pruebas automáticas superadas y revisión móvil confirmada. No se realizó una revisión visual independiente de escritorio. Selecciona v1.0.0 en HACS.
+Consulta las [notas en inglés y español](docs/RELEASE-1.0.1.md). 22 pruebas automáticas superadas y revisión móvil confirmada. No se realizó una revisión visual independiente de escritorio. Selecciona v1.0.1 en HACS.

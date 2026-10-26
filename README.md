@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/logo.png" alt="VE Builder Card" width="240"></p>
+![VE Builder Card](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png)
 
 # VE Builder Card
 
@@ -8,7 +8,7 @@
 
 **Install with HACS:** click the button, confirm the custom repository and select Download. HACS must already be installed.
 
-Build an electric vehicle dashboard in Home Assistant with a visual block editor. **1.0.0 stable**. 22 automated tests pass; mobile checks confirmed by the maintainer.
+Build a fully configurable vehicle dashboard in Home Assistant: vehicle images, charging, costs and savings, location, and an interactive vehicle map showing tyre pressures, gear, open doors, bonnet and boot. Configure every block, entity, label and layout in the visual editor. **1.0.1 stable**. 22 automated tests pass; mobile checks confirmed by the maintainer.
 
 The interface supports **English and Spanish**. It follows Home Assistant automatically, or you can choose a language in Edit. Custom titles, field names and notes remain exactly as you enter them.
 
@@ -16,7 +16,7 @@ The interface supports **English and Spanish**. It follows Home Assistant automa
 
 1. Open HACS → Custom repositories.
 2. Add `https://github.com/sergey08/ve-builder-card` with category **Dashboard**.
-3. Find **VE Builder Card**, download `main`, and reload Home Assistant.
+3. Find **VE Builder Card**, download the latest stable release, and reload Home Assistant.
 4. If needed, add `/hacsfiles/ve-builder-card/ve-builder-card.js` as a JavaScript module resource.
 5. Add **VE Builder Card** using the dashboard card picker.
 
@@ -38,7 +38,7 @@ Choose a title, add blocks, select entities, and customise each field’s name, 
 | Actions | Switches, locks and buttons with explicit tap actions |
 | Map | person or device_tracker, zoom and history |
 | Costs and savings | Reference prices, amount groups, units, decimal places and notes |
-| Tyres | Four-wheel diagram, pressure sensors, bar/kPa/psi, timestamps and notes |
+| Vehicle map | Four-wheel pressures (bar/kPa/psi), gear, four doors, bonnet and boot; indicators appear only when open |
 
 The cable remains visible and still when connected without energy flow. Configure **Actual charging power** to distinguish charging from waiting. Animation requires the configured charging state and positive power; without a power entity it uses charging state alone. Reduced-motion preferences are respected.
 
@@ -47,7 +47,7 @@ The cable remains visible and still when connected without energy flow. Configur
 Copy `dist/ve-builder-card.js` to `/config/www/ve-builder-card.js` and add a module resource:
 
 ```yaml
-url: /local/ve-builder-card.js?v=1.0.0
+url: /local/ve-builder-card.js?v=1.0.1
 type: module
 ```
 
@@ -104,4 +104,4 @@ The tyre block now also supports four doors, bonnet, boot and gear. In Edit, ass
 
 ## Stable 1.0
 
-See [English / Spanish release notes](docs/RELEASE-1.0.0.md). 22 automated checks pass; mobile validation is confirmed. A separate visual desktop review was not performed. Select v1.0.0 in HACS.
+See [English / Spanish release notes](docs/RELEASE-1.0.1.md). 22 automated checks pass; mobile validation is confirmed. A separate visual desktop review was not performed. Select v1.0.1 in HACS.

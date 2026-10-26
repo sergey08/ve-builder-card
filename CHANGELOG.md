@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 1.0.1
+
+- Fix HACS logo rendering, expand vehicle-map description and update stable installation instructions.
+- Corregido el logo en HACS, ampliada la descripción del mapa e instrucciones de instalación estable actualizadas.
+
 ## 1.0.0
 
 - Stable release of the RC behaviour. 22 tests, stored configuration/entity validation and maintainer-confirmed mobile checks.
