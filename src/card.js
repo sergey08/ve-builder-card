@@ -109,6 +109,7 @@ export class VEBuilderCard extends HTMLElement {
   }
 }
 if(!customElements.get('ve-builder-card'))customElements.define('ve-builder-card',VEBuilderCard);
-window.customCards=(window.customCards||[]).filter(c=>c.type!=='vehicle-builder-card-v1');
-if(!window.customCards.some(c=>c.type==='ve-builder-card'))window.customCards.push({type:'ve-builder-card',name:'VE Builder Card',description:'Visual EV dashboard builder / Constructor visual de paneles VE.',preview:true});
+window.customCards=window.customCards||[];
+for(let i=window.customCards.length-1;i>=0;i--)if(window.customCards[i].type==='vehicle-builder-card-v1')window.customCards.splice(i,1);
+if(!window.customCards.some(c=>c.type==='ve-builder-card'))window.customCards.push({type:'ve-builder-card',name:'VE Builder Card · EV',description:'Visual EV dashboard builder / Constructor visual de paneles VE.',preview:true});
 console.info(`VE Builder Card ${VERSION}`);

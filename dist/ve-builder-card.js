@@ -32,7 +32,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.0.3';
+const VERSION = '1.0.4';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -413,8 +413,9 @@ class VEBuilderCard extends HTMLElement {
   }
 }
 if(!customElements.get('ve-builder-card'))customElements.define('ve-builder-card',VEBuilderCard);
-window.customCards=(window.customCards||[]).filter(c=>c.type!=='vehicle-builder-card-v1');
-if(!window.customCards.some(c=>c.type==='ve-builder-card'))window.customCards.push({type:'ve-builder-card',name:'VE Builder Card',description:'Visual EV dashboard builder / Constructor visual de paneles VE.',preview:true});
+window.customCards=window.customCards||[];
+for(let i=window.customCards.length-1;i>=0;i--)if(window.customCards[i].type==='vehicle-builder-card-v1')window.customCards.splice(i,1);
+if(!window.customCards.some(c=>c.type==='ve-builder-card'))window.customCards.push({type:'ve-builder-card',name:'VE Builder Card · EV',description:'Visual EV dashboard builder / Constructor visual de paneles VE.',preview:true});
 console.info(`VE Builder Card ${VERSION}`);
 
 })();
