@@ -1,4 +1,5 @@
-export const VERSION = '0.1.0-beta.1';
+import {translate} from './i18n.js';
+export const VERSION = '0.1.0-beta.2';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Neumáticos'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -6,17 +7,17 @@ export const clone = value => structuredClone(value);
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 export function number(value) { return value !== null && value !== undefined && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null; }
 export function decimals(value, fallback=0) { const n=number(value); return n === null ? fallback : Math.max(0,Math.min(6,Math.trunc(n))); }
-export function format(value, precision=0) { const n=number(value); return n===null?'Sin datos':n.toLocaleString('es-ES',{minimumFractionDigits:decimals(precision),maximumFractionDigits:decimals(precision)}); }
+export function format(value, precision=0,lang='es') { const n=number(value); return n===null?translate('Sin datos',lang):n.toLocaleString(lang==='es'?'es-ES':'en-US',{minimumFractionDigits:decimals(precision),maximumFractionDigits:decimals(precision)}); }
 export function percentage(value, min=0, max=100) { const n=number(value),lo=number(min),hi=number(max); return n===null||lo===null||hi===null||hi<=lo?null:Math.max(0,Math.min(100,(n-lo)/(hi-lo)*100)); }
 export function pressure(value, from, to='bar') { const n=number(value); if(n===null)return null; const scale={bar:1,kPa:0.01,psi:0.0689475729}; return scale[from]&&scale[to]?n*scale[from]/scale[to]:null; }
 export function imageUrl(value) { const s=String(value??'').trim(); return /^\/(?!\/)/.test(s)||/^https?:\/\//i.test(s)?s:''; }
-export function stateText(state, field={}) {
-  if(!state||['unknown','unavailable'].includes(state.state))return 'Sin datos';
+export function stateText(state, field={},lang='es') {
+  if(!state||['unknown','unavailable'].includes(state.state))return translate('Sin datos',lang);
   const value=state.state;
-  if(field.format==='connection')return ({on:'Conectado',off:'Desconectado'})[value]??value;
-  if(field.format==='presence')return ({on:'En casa',off:'Fuera de casa',home:'En casa',not_home:'Fuera de casa'})[value]??value;
+  if(field.format==='connection')return translate(({on:'Conectado',off:'Desconectado'})[value]??value,lang);
+  if(field.format==='presence')return translate(({on:'En casa',off:'Fuera de casa',home:'En casa',not_home:'Fuera de casa'})[value]??value,lang);
   const n=number(value),unit=field.unit??state.attributes?.unit_of_measurement??'';
-  return n===null?value:`${format(n,field.decimals)}${unit?' '+unit:''}`;
+  return n===null?value:`${format(n,field.decimals,lang)}${unit?' '+unit:''}`;
 }
 export function newField() { return {id:uid(),name:'',entity:'',display:'info',size:'small',style:'subtle',width:'auto',tap:'more-info',decimals:0}; }
 export function newBlock(type) {

@@ -1,3 +1,5 @@
+[English](QA.en.md) · **Español**
+
 # Validación antes de publicar
 
 ## Automatizado
@@ -22,3 +24,5 @@ Ejecutar `npm run check`. Verifica valores ausentes, barras fuera de rango, unid
 ## Criterios de primera publicación
 
 No declarar una versión estable hasta completar esta lista. El repositorio necesita README, licencia, manifest, distribución, release y documentación de compatibilidad. No incluir configuraciones privadas ni credenciales.
+
+- Verificar idioma automático y selección español/inglés; conservar títulos y notas personalizados al cambiar de idioma.

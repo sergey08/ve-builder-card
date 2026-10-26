@@ -1,14 +1,21 @@
-# Cambios
+# Changelog / Historial
 
-## 0.1.0-beta.1 — Preparación
+## 0.1.0-beta.2
 
-- Proyecto independiente, sin entidades ni imágenes personales.
-- Editor con identificadores estables; conserva apartados abiertos al actualizar la configuración.
-- Añadir, duplicar, ordenar y eliminar bloques y campos.
-- Opciones de apariencia y comportamiento agrupadas y limitadas según el tipo de entidad.
-- Imagen y manguera estática o animada según carga.
-- Gastos con precios destacados y comentario; neumáticos con conversión de unidades.
-- Mapa nativo con conservación del componente cuando cambian otros valores.
-- Avisos de configuración incompleta, compilación autocontenida y pruebas de lógica.
+English:
+- Add project logo and English/Spanish documentation.
+- Add automatic interface language and explicit English/Spanish selection.
+- Localise built-in labels and numeric formatting while preserving custom text.
+- Add language tests.
 
-Pendiente: validación visual en Home Assistant, migración desde el prototipo, publicación del repositorio y primera instalación HACS.
+Español:
+- Logo del proyecto y documentación en inglés y español.
+- Idioma automático de interfaz y selección explícita inglés/español.
+- Etiquetas y formato numérico traducidos conservando el texto personalizado.
+- Pruebas de idiomas.
+
+## 0.1.0-beta.1
+
+Initial independent beta: configurable blocks, visual editor and HACS repository structure. Visual and clean-install validation pending.
+
+Beta inicial independiente: bloques configurables, editor visual y estructura para HACS. Validación visual e instalación limpia pendientes.

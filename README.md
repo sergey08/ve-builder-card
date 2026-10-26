@@ -1,90 +1,87 @@
+<p align="center"><img src="assets/logo.png" alt="VE Builder Card" width="240"></p>
+
 # VE Builder Card
 
-Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.1** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
+**English** · [Español](README.es.md)
 
-## Primeros pasos
+Build an electric vehicle dashboard in Home Assistant with a visual block editor. **0.1.0-beta.2**: automated checks pass; visual validation and a clean HACS installation are still pending.
 
-1. Instala `dist/ve-builder-card.js` como recurso de tipo módulo.
-2. Recarga Home Assistant y busca **VE Builder Card** en **Añadir tarjeta**.
-3. Elige un título y añade un bloque. Cada copia es independiente.
-4. En cada campo selecciona la entidad y, si quieres, cambia nombre, icono, unidad y decimales.
-5. Personaliza apariencia y comportamiento. Pulsa **Guardar**.
+The interface supports **English and Spanish**. It follows Home Assistant automatically, or you can choose a language in Edit. Custom titles, field names and notes remain exactly as you enter them.
 
-No hay sensores preasignados. Funciona con las entidades que proporcione tu integración: no se conecta directamente a ningún fabricante ni almacena credenciales.
+## Install with HACS
 
-## Bloques
+1. Open HACS → Custom repositories.
+2. Add `https://github.com/sergey08/ve-builder-card` with category **Dashboard**.
+3. Find **VE Builder Card**, download `main`, and reload Home Assistant.
+4. If needed, add `/hacsfiles/ve-builder-card/ve-builder-card.js` as a JavaScript module resource.
+5. Add **VE Builder Card** using the dashboard card picker.
 
-| Bloque | Configuración |
+[Open repository in HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+
+This is a custom repository, outside the default HACS catalogue. This beta is distributed from `main`; no release is published yet. The first real installation remains to be validated.
+
+## Build your dashboard
+
+Choose a title, add blocks, select entities, and customise each field’s name, icon, unit, decimal places, size, width and appearance. Save your changes. Each card is independent, with no preassigned sensors or manufacturer credentials.
+
+| Block | Options |
 | --- | --- |
-| Inicio | Imagen por URL o `/local/`, altura, campos, conector, estado de carga y potencia real |
-| Información | Valores, botones o barras; tamaño, estilo y anchura |
-| Carga | Campos numéricos configurables, incluida barra de potencia con escala propia |
-| Modos de carga | Controles `switch` e `input_boolean` |
-| Límites | Deslizadores `input_number`, usando los límites y pasos del helper |
-| Acciones | Interruptores, cerraduras y botones; detalles o acción explícita |
-| Mapa | `person` o `device_tracker`, zoom e historial |
-| Gastos y ahorro | Precios destacados, grupos de importes, unidades, decimales y comentario |
-| Neumáticos | Dibujo con las cuatro posiciones, sensores, bar/kPa/psi, fechas y comentario |
+| Overview | Vehicle image, information fields, connector, charging state and actual power |
+| Information | Values, buttons and progress bars; size, style and width |
+| Charging | Numeric fields and a power bar with its own scale |
+| Charging modes | Switch and input_boolean controls |
+| Limits | input_number sliders using the helper’s limits and step |
+| Actions | Switches, locks and buttons with explicit tap actions |
+| Map | person or device_tracker, zoom and history |
+| Costs and savings | Reference prices, amount groups, units, decimal places and notes |
+| Tyres | Four-wheel diagram, pressure sensors, bar/kPa/psi, timestamps and notes |
 
-La manguera permanece fija con el conector conectado y sin carga. Para distinguir carga de espera configura también **Potencia real**. Cuando la entidad de carga coincide con el estado configurado y la potencia es positiva, la animación se activa. Si no se configura potencia, se usa solo el estado de carga. Se respeta la preferencia del sistema de reducir animaciones.
+The cable remains visible and still when connected without energy flow. Configure **Actual charging power** to distinguish charging from waiting. Animation requires the configured charging state and positive power; without a power entity it uses charging state alone. Reduced-motion preferences are respected.
 
-## Instalación manual (disponible con este paquete)
+## Manual installation
 
-Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
+Copy `dist/ve-builder-card.js` to `/config/www/ve-builder-card.js` and add a module resource:
 
 ```yaml
-url: /local/ve-builder-card.js?v=0.1.0-beta.1
+url: /local/ve-builder-card.js?v=0.1.0-beta.2
 type: module
 ```
 
-Después añade una tarjeta manual o usa el selector visual:
+Add a card using the visual editor, or start with:
 
 ```yaml
 type: custom:ve-builder-card
-title: Mi vehículo
+title: My vehicle
+language: auto # auto, en or es
 blocks:
   - id: information
     type: fields
-    title: Estado
+    title: Status
     fields: []
 ```
 
-El editor permite rellenar esta configuración sin escribir YAML. Cambia la versión de la URL cuando actualices manualmente.
+Update the resource URL version after manual upgrades.
 
-## Instalación con HACS
+## Usage notes
 
-1. Abre HACS → Repositorios personalizados.
-2. Añade `https://github.com/sergey08/ve-builder-card` con categoría **Dashboard**.
-3. Busca **VE Builder Card**, descarga la rama `main` y recarga Home Assistant.
-4. Si el recurso no se registra automáticamente, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo.
-5. Añade la tarjeta desde el selector visual.
+- Unavailable readings show **No data**. They are never replaced with zero.
+- Progress bars require a maximum greater than the minimum.
+- Vehicle images use HTTP(S) URLs or Home Assistant local paths. No vehicle photograph is bundled.
+- Pressure sensors must report bar, kPa or psi.
+- Costs and savings come from your sensors. The card does not calculate or add savings.
+- Maps require entity coordinates and use Home Assistant’s native map card.
+- Sending a command does not confirm a vehicle action; the card waits for the integration’s state.
 
-[Ver repositorio en HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+## Development and validation
 
-La estructura está preparada para HACS; la primera instalación real sigue pendiente de validación. Esta beta se distribuye desde `main`. No forma parte del catálogo predeterminado de HACS y aún no tiene una release publicada.
-
-## Notas de uso
-
-- Los campos sin lectura muestran **Sin datos**, nunca un cero inventado.
-- Las barras necesitan un máximo mayor que el mínimo.
-- La imagen debe ser una URL HTTP(S) o una ruta local de Home Assistant. No se incluye ninguna fotografía de vehículo.
-- Las presiones requieren que el sensor indique `bar`, `kPa` o `psi`.
-- Gastos y ahorros se muestran desde los sensores; la tarjeta no calcula ni suma ahorros.
-- El mapa requiere coordenadas en la entidad y usa la tarjeta nativa de Home Assistant.
-- Una orden enviada no implica que el vehículo haya confirmado la acción. La tarjeta espera el estado de la integración.
-
-## Desarrollo
-
-Node.js 20 o posterior. La compilación no necesita descargar dependencias:
+Node.js 20 or later. No dependency download is needed:
 
 ```sh
 npm run check
 ```
 
-El código se divide en `src/core.js`, `src/card.js`, `src/editor.js` y `src/styles.js`. El generador produce un único archivo autocontenido en `dist/`.
+Source files live in `src/`; the build produces a self-contained `dist/ve-builder-card.js`. Automated tests cover data, conversions, configuration, actions, editor behaviour and languages. Home Assistant visual checks and mobile/desktop validation remain pending: [English checklist](docs/QA.en.md) · [Lista en español](docs/QA.md).
 
-## Estado de validación
+This card uses `custom:ve-builder-card` and per-block configuration. The earlier `custom:vehicle-builder-card-v1` prototype stays separate, without automatic migration.
 
-Hay pruebas automatizadas de datos, conversiones, configuración y acciones. La revisión visual con componentes reales de Home Assistant, HACS y la matriz móvil/escritorio siguen pendientes. Consulta [docs/QA.md](docs/QA.md).
-
-Esta versión usa un formato nuevo con propiedades por bloque y el elemento `custom:ve-builder-card`. El prototipo `custom:vehicle-builder-card-v1` se mantiene separado. No hay migración automática: no reemplaces su tipo sin adaptar la configuración.
+The project logo uses a dark navy background with luminous cyan, blue and purple vehicle/dashboard symbols. It was generated for this project. Code and bundled artwork are provided under the [MIT licence](LICENSE).
