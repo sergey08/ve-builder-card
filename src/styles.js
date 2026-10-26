@@ -34,3 +34,19 @@ export const vehicleMapStyles = `
 .body-status{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 16px 12px}.body-status button{background:var(--secondary-background-color);border-radius:10px;padding:8px 10px}
 .body-status span{font-size:11px;margin:0}.body-status strong{font-size:13px;margin-top:4px}.body-status .state-open strong{color:var(--error-color,#db4437)}.body-status .state-closed strong{color:var(--success-color,#43a047)}.body-status .state-unknown strong{color:var(--secondary-text-color)}
 `;
+
+export const valueColorStyles = `
+.value-normal{--ve-value-color:var(--success-color,#2e9d57)}
+.value-warning{--ve-value-color:var(--warning-color,#df9100)}
+.value-critical{--ve-value-color:var(--error-color,#db4437)}
+
+.configurable-field.value-normal .field-fill,.configurable-field.value-warning .field-fill,.configurable-field.value-critical .field-fill,
+.power-panel.value-normal>.power-track>.power-fill,.power-panel.value-warning>.power-track>.power-fill,.power-panel.value-critical>.power-track>.power-fill{background:var(--ve-value-color)}
+.limit-row.value-normal input,.limit-row.value-warning input,.limit-row.value-critical input{accent-color:var(--ve-value-color)}
+.value-normal .compact-value,.value-warning .compact-value,.value-critical .compact-value,
+.value-normal .field-value,.value-warning .field-value,.value-critical .field-value,
+.value-normal>strong,.value-warning>strong,.value-critical>strong,
+.value-normal>.power-primary strong,.value-warning>.power-primary strong,.value-critical>.power-primary strong,
+.value-normal .limit-heading strong,.value-warning .limit-heading strong,.value-critical .limit-heading strong{color:var(--ve-value-color)}
+.car .tyre.value-normal .pressure,.car .tyre.value-warning .pressure,.car .tyre.value-critical .pressure{fill:var(--ve-value-color)}
+`;

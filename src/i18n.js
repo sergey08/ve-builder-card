@@ -1,5 +1,10 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Colores según el valor':'Value-based colours','Activar colores por valor':'Enable value-based colours','Avisar cuando el valor sea':'Warn when the value is','Umbral de aviso · ámbar':'Warning threshold · amber','Umbral crítico · rojo':'Critical threshold · red','Bajo · batería o presión':'Low · battery or pressure','Alto · consumo o temperatura':'High · consumption or temperature',
+ 'Normal: verde. Aviso: ámbar. Crítico: rojo. Los umbrales incluyen el valor indicado y usan la unidad mostrada. Sin datos no se aplica color.':'Normal: green. Warning: amber. Critical: red. Thresholds include the specified value and use the displayed unit. Missing data has no colour.',
+ 'Revisa el orden de los umbrales: bajo requiere crítico menor o igual que aviso; alto, mayor o igual.':'Check threshold order: low requires critical at or below warning; high requires critical at or above warning.',
+ 'Elige dirección y umbrales. Puedes dejar uno sin asignar.':'Choose a direction and thresholds. You can leave one unassigned.',
+
  'Dispositivo del vehículo':'Vehicle device',
  'Asistente inicial':'Setup assistant','Tipo de vehículo':'Vehicle type','Incluir carga':'Include charging','Incluir mapa del vehículo':'Include vehicle map','Incluir ubicación':'Include location','Buscar entidades':'Find entities','Volver':'Back','Añadir apartados revisados':'Add reviewed blocks','Presión':'Pressure',
  'Elige un dispositivo y revisa las sugerencias. No se envían órdenes al vehículo. Los apartados existentes se conservan.':'Choose a device and review the suggestions. No commands are sent to the vehicle. Existing blocks are preserved.',

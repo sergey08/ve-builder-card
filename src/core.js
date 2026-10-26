@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.1.1';
+export const VERSION = '1.2.0-beta.1';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -103,4 +103,13 @@ export function vehicleWizardBlocks(kind,sections,chosen,states={},lang='es') {
  }
  if(sections.location&&chosen.location){const b=newBlock('map');b.title=translate('Ubicación',lang);b.entity=chosen.location;blocks.push(b);}
  return blocks;
+}
+
+export function valueSeverity(value,colors={}) {
+ if(!colors.enabled)return '';
+ const n=number(value),warning=number(colors.warning),critical=number(colors.critical);
+ if(n===null||!['low','high'].includes(colors.direction)||(warning===null&&critical===null))return '';
+ if(warning!==null&&critical!==null&&(colors.direction==='low'?critical>warning:critical<warning))return '';
+ const hit=threshold=>threshold!==null&&(colors.direction==='low'?n<=threshold:n>=threshold);
+ return hit(critical)?'critical':hit(warning)?'warning':'normal';
 }

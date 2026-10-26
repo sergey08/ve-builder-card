@@ -1,12 +1,12 @@
 import {language,translate,translateSchema} from './i18n.js';
-import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks} from './core.js';
+import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity} from './core.js';
 
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
 const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:'box'}}});
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
-const LABELS={kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
+const LABELS={enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
 const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 export class VEBuilderEditor extends HTMLElement {
@@ -96,6 +96,15 @@ export class VEBuilderEditor extends HTMLElement {
     for(const [kind,label]of Object.entries({electric:'Vehículo eléctrico',combustion:'Gasolina / GNC',expenses:'Gastos y ahorro',tyres:'Mapa del vehículo'}))this.button(box,label,()=>this.addTemplate(kind));
     const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.');box.append(tip);
   }
+  colorEditor(parent,owner,key,id){
+    const panel=this.panel(parent,id+'-colors','Colores según el valor');
+    const colors=owner[key]??{};
+    this.form(panel,colors,[bool('enabled')],patch=>{owner[key]={...owner[key],...patch};this.emit();this.render();});
+    if(!colors.enabled)return;
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Normal: verde. Aviso: ámbar. Crítico: rojo. Los umbrales incluyen el valor indicado y usan la unidad mostrada. Sin datos no se aplica color.');panel.append(hint);
+    this.form(panel,colors,[select('direction',{low:'Bajo · batería o presión',high:'Alto · consumo o temperatura'}),numeric('warning',-1000000,1000000,0.01),numeric('critical',-1000000,1000000,0.01)],patch=>{owner[key]={...owner[key],...patch};this.emit();const current=owner[key];const invalid=current.warning!==undefined&&current.critical!==undefined&&!valueSeverity(0,{...current,enabled:true});message.textContent=this.t(invalid?'Revisa el orden de los umbrales: bajo requiere crítico menor o igual que aviso; alto, mayor o igual.':'Elige dirección y umbrales. Puedes dejar uno sin asignar.');});
+    const message=document.createElement('p');message.className='muted';message.textContent=this.t('Elige dirección y umbrales. Puedes dejar uno sin asignar.');panel.append(message);
+  }
   fieldList(parent,fields,key,kind='info'){
     fields.forEach((field,index)=>{
       const row=this.panel(parent,field.id,field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo',!field.entity);
@@ -107,6 +116,7 @@ export class VEBuilderEditor extends HTMLElement {
       if(['info','expense','price','power'].includes(kind))schema.push(...(['expense','price'].includes(kind)?[numeric('decimals',0,6)]:[]),text('unit'));
       if(kind==='info')schema.push(select('format',{auto:'Automático',connection:'Conectado / desconectado',presence:'Presencia'}));
       this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);row.querySelector('summary').textContent=field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo';this.emit();if(domainChanged)this.render();});
+      if(['info','power','expense','price','limit'].includes(kind))this.colorEditor(row,field,'colors',field.id);
       if(!['limit','expense','price'].includes(kind)){
         if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
         const appearance=this.panel(row,field.id+'-appearance','Apariencia');
@@ -141,6 +151,7 @@ export class VEBuilderEditor extends HTMLElement {
     }else if(block.type==='map'){
       this.form(panel,block,[entity('entity',['person','device_tracker']),numeric('zoom',1,20),numeric('hours',0,168)],patch=>{Object.assign(block,patch);this.emit();});
     }else if(block.type==='tyres'){
+      this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Parte delantera arriba. Asigna cada sensor a la rueda que corresponde. La unidad de origen se obtiene del sensor.');panel.append(hint);
       block.positions??={};this.form(panel,block.positions,Object.keys(POSITIONS).map(key=>entity(key,'sensor')),patch=>{Object.assign(block.positions,patch);this.emit();});
       this.form(panel,block,[select('unit',{bar:'bar',kPa:'kPa',psi:'psi'}),numeric('decimals',0,3),bool('show_dates')],patch=>{Object.assign(block,patch);this.emit();});

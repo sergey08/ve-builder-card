@@ -78,3 +78,11 @@ test('mobile update path skips unrelated events and preserves sample preview DOM
  for(let i=0;i<100;i++)card.hass={language:'en',states:{'sensor.battery':state,'sensor.unrelated':{state:String(i)}}};assert.equal(paints,configured);
  card.hass={language:'en',states:{'sensor.battery':{...state,state:'81'}}};assert.equal(paints,configured+1);
 });
+test('conditional colours render for values, power bars and converted tyre pressures',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const colors={enabled:true,direction:'low',warning:40,critical:20};
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'fields',fields:[{entity:'sensor.battery',colors}]},{type:'power',fields:[{entity:'sensor.power',colors:{enabled:true,direction:'high',warning:4000,critical:7000},display:'bar'}]},{type:'tyres',unit:'bar',positions:{front_left:'sensor.pressure'},pressure_colors:{enabled:true,direction:'low',warning:2.3,critical:2.1}}]});
+ card.hass={language:'en',states:{'sensor.battery':{state:'15'},'sensor.power':{state:'5000'},'sensor.pressure':{state:'210',attributes:{unit_of_measurement:'kPa'}}}};
+ assert.match(card.shadowRoot.innerHTML,/configurable-field[^\"]*value-critical/);assert.match(card.shadowRoot.innerHTML,/power-panel value-warning/);assert.match(card.shadowRoot.innerHTML,/tyre value-critical/);
+});

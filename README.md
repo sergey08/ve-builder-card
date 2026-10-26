@@ -62,6 +62,10 @@ MIT license.
 
 Open **Setup assistant** in the visual editor, choose the vehicle type and device, and select the sections to include. Click **Find entities**, review every suggestion, then **Add reviewed blocks**. Suggestions use Spanish and English entity names and compatible units. Ambiguous matches remain empty; assign or clear any entity before applying. Location is selected manually. Existing blocks are preserved, and Undo can reverse the addition. Suggestions do not send vehicle commands.
 
+## Value-based colours (beta)
+
+In a numeric field, expand **Value-based colours** and enable it. Select low or high values, then set warning and critical thresholds. Example battery: low, warning 40, critical 20 means green above 40%, amber from 20% to 40% (excluding 20%), red at or below 20%. Thresholds include the specified value. For tyres, configure colours in the Vehicle map block using its display unit. Missing data is not coloured. This feature is optional and does not change existing settings. [Planned improvements](https://github.com/sergey08/ve-builder-card/blob/main/docs/ROADMAP.md).
+
 ---
 
 <a id="espanol"></a>
@@ -129,3 +133,7 @@ Licencia MIT.
 ## Asistente inicial
 
 Abre **Asistente inicial** en el editor visual, elige el tipo de vehículo y el dispositivo, y marca los apartados que necesitas. Pulsa **Buscar entidades**, revisa cada sugerencia y selecciona **Añadir apartados revisados**. Las sugerencias usan nombres de entidad en español e inglés y unidades compatibles. Las coincidencias ambiguas quedan vacías; puedes asignar o quitar cualquier entidad antes de aplicar. La ubicación se elige manualmente. Se conservan los apartados existentes y puedes deshacer la incorporación. Las sugerencias no envían órdenes al coche.
+
+## Colores según el valor (beta)
+
+Dentro de un campo numérico, abre **Colores según el valor** y actívalo. Elige valores bajos o altos y los umbrales de aviso y crítico. Ejemplo de batería: bajo, aviso 40 y crítico 20 muestra verde por encima del 40%, ámbar entre el 20% y el 40% (sin incluir el 20%) y rojo al 20% o menos. Los umbrales incluyen el valor indicado. Para neumáticos, configura los colores en el Mapa del vehículo usando su unidad de presentación. Sin datos no se aplica color. Es opcional y no cambia la configuración existente. [Mejoras pendientes](https://github.com/sergey08/ve-builder-card/blob/main/docs/ROADMAP.md).
