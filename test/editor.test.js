@@ -12,3 +12,12 @@ test('templates preserve configured blocks and replace only the empty starter',(
  editor.addTemplate('electric');assert.equal(editor.config.title,'My car');assert.equal(editor.config.blocks[0].fields[0].entity,'sensor.existing');assert.equal(editor.config.blocks.length,6);
  editor.setConfig({blocks:[{id:'empty',type:'start',fields:[]}]});editor.addTemplate('combustion');assert.equal(editor.config.blocks.length,1);assert.equal(editor.config.blocks[0].fields.length,4);
 });
+
+test('reordering works in both directions and preserves field and group data',()=>{
+ const editor=new VEBuilderEditor();let emitted=0;editor.emit=()=>emitted++;editor.render=()=>{};
+ const items=[{id:'a',entity:'sensor.first'},{id:'b',fields:[{entity:'sensor.second'}]},{id:'c'}];
+ assert.equal(editor.moveItem(items,'a',2),true);assert.deepEqual(items.map(x=>x.id),['b','c','a']);assert.equal(items[2].entity,'sensor.first');
+ assert.equal(editor.moveItem(items,'a',0),true);assert.deepEqual(items.map(x=>x.id),['a','b','c']);assert.equal(items[1].fields[0].entity,'sensor.second');
+ for(const [id,index]of [['missing',1],['a',-1],['a',3],['a',0]])assert.equal(editor.moveItem(items,id,index),false);
+ assert.equal(emitted,2);
+});

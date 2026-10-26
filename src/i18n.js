@@ -1,5 +1,7 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Arrastra para ordenar. Con teclado: Alt + flechas.':'Drag to reorder. Keyboard: Alt + arrow keys.',
+ 'Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.':'Drag a field, group or block handle to change its position. Keyboard: Alt + arrow keys.',
  'Plantillas iniciales':'Starter templates','Vehículo eléctrico':'Electric vehicle','Gasolina / GNC':'Petrol / CNG','Opciones avanzadas':'Advanced options','Arrastra para ordenar':'Drag to reorder','Deshacer último cambio de estructura':'Undo last structure change',
  'Añade una base y selecciona tus entidades. Los bloques configurados se conservan.':'Add a starting layout and select your entities. Configured blocks are preserved.',
  'Arrastra los títulos para ordenar. También puedes usar Subir y Bajar.':'Drag headings to reorder. You can also use Move up and Move down.',

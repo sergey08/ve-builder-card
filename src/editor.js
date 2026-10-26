@@ -7,7 +7,7 @@ const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
 const LABELS={language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
-const CSS=`:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
+const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 export class VEBuilderEditor extends HTMLElement {
   get lang(){return language(this.config,this._hass);}
@@ -26,12 +26,18 @@ export class VEBuilderEditor extends HTMLElement {
     const form=document.createElement('ha-form');form.hass=this._hass;form.data=clone(data);form.schema=translateSchema(schema,this.lang);form.computeLabel=field=>this.t(LABELS[field.name]??POSITIONS[field.name]??field.name);
     form.addEventListener('value-changed',event=>{event.stopPropagation();const values=event.detail.value??{};const allowed=new Set(schema.map(s=>s.name));const patch=Object.fromEntries(Object.entries(values).filter(([key])=>allowed.has(key)));change(patch);});parent.append(form);return form;
   }
+  moveItem(list,id,target){
+    const from=list.findIndex(item=>item.id===id);if(from<0||target<0||target>=list.length||from===target)return false;
+    list.splice(target,0,list.splice(from,1)[0]);this.emit();this.render();return true;
+  }
   reorderHandle(panel,list,index,key){
-    const handle=panel.querySelector('summary');handle.draggable=true;handle.title=this.t('Arrastra para ordenar');
-    handle.addEventListener('dragstart',event=>{event.stopPropagation();this.dragItem={key,id:list[index].id};event.dataTransfer.setData('text/plain',list[index].id);event.dataTransfer.effectAllowed='move';});
-    handle.addEventListener('dragover',event=>{if(this.dragItem?.key===key){event.preventDefault();event.dataTransfer.dropEffect='move';}});
-    handle.addEventListener('drop',event=>{event.preventDefault();event.stopPropagation();if(this.dragItem?.key!==key)return;const from=list.findIndex(item=>item.id===this.dragItem.id);this.dragItem=null;if(from<0||from===index)return;list.splice(index,0,list.splice(from,1)[0]);this.emit();this.render();});
-    handle.addEventListener('dragend',()=>{this.dragItem=null;});
+    const handle=panel.querySelector('summary');handle.draggable=true;handle.classList.add('reorder-handle');handle.title=this.t('Arrastra para ordenar. Con teclado: Alt + flechas.');
+    handle.addEventListener('keydown',event=>{if(event.altKey&&['ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();event.stopPropagation();this.moveItem(list,list[index].id,index+(event.key==='ArrowUp'?-1:1));}});
+    handle.addEventListener('dragstart',event=>{event.stopPropagation();this.dragItem={key,id:list[index].id};event.dataTransfer.setData('text/plain',list[index].id);event.dataTransfer.effectAllowed='move';panel.classList.add('dragging');});
+    handle.addEventListener('dragover',event=>{if(this.dragItem?.key===key){event.preventDefault();event.stopPropagation();event.dataTransfer.dropEffect='move';panel.classList.add('drop-target');}});
+    handle.addEventListener('dragleave',()=>panel.classList.remove('drop-target'));
+    handle.addEventListener('drop',event=>{event.preventDefault();event.stopPropagation();panel.classList.remove('drop-target');if(this.dragItem?.key!==key)return;const id=this.dragItem.id;this.dragItem=null;this.moveItem(list,id,index);});
+    handle.addEventListener('dragend',()=>{this.dragItem=null;this.shadowRoot.querySelectorAll('.dragging,.drop-target').forEach(el=>el.classList.remove('dragging','drop-target'));});
   }
   addTemplate(kind){
     const blocks=templateBlocks(kind,this.lang);if(!blocks.length)return;
@@ -43,7 +49,7 @@ export class VEBuilderEditor extends HTMLElement {
     const box=this.panel(parent,'templates','Plantillas iniciales',this.config.blocks.length===0);
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añade una base y selecciona tus entidades. Los bloques configurados se conservan.');box.append(hint);
     for(const [kind,label]of Object.entries({electric:'Vehículo eléctrico',combustion:'Gasolina / GNC',expenses:'Gastos y ahorro',tyres:'Neumáticos'}))this.button(box,label,()=>this.addTemplate(kind));
-    const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra los títulos para ordenar. También puedes usar Subir y Bajar.');box.append(tip);
+    const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.');box.append(tip);
   }
   fieldList(parent,fields,key,kind='info'){
     fields.forEach((field,index)=>{
@@ -70,8 +76,6 @@ export class VEBuilderEditor extends HTMLElement {
         this.form(behavior,{tap:['action','mode'].includes(kind)?'toggle':'more-info',confirm:domain==='lock',...field},[select('tap',options),bool('confirm')],patch=>{Object.assign(field,patch);this.emit();});
       }
       const toolbar=document.createElement('div');toolbar.className='toolbar';row.append(toolbar);
-      if(index>0)this.button(toolbar,'↑ Subir',()=>{[fields[index-1],fields[index]]=[fields[index],fields[index-1]];this.emit();this.render();});
-      if(index<fields.length-1)this.button(toolbar,'↓ Bajar',()=>{[fields[index],fields[index+1]]=[fields[index+1],fields[index]];this.emit();this.render();});
       this.button(toolbar,'Duplicar',()=>{fields.splice(index+1,0,{...clone(field),id:uid()});this.emit();this.render();});
       this.button(toolbar,'Eliminar',()=>{fields.splice(index,1);this.emit();this.render();},true);
     });
@@ -97,7 +101,7 @@ export class VEBuilderEditor extends HTMLElement {
     }else if(block.type==='expenses'){
       this.fieldList(this.panel(panel,block.id+'-prices','Precios de referencia'),block.prices??(block.prices=[]),block.id,'price');
       const groups=block.groups??(block.groups=[]);
-      groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=group.name||'Grupo';this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');if(index>0)this.button(box,'↑ Subir grupo',()=>{[groups[index-1],groups[index]]=[groups[index],groups[index-1]];this.emit();this.render();});this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});
+      groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.reorderHandle(box,groups,index,block.id+'-groups');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=group.name||'Grupo';this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});
       this.button(panel,'＋ Añadir grupo',()=>{groups.push({id:uid(),name:this.t('Nuevo grupo'),icon:'mdi:cash',fields:[]});this.emit();this.render();});
     }
     this.form(panel,block,[{name:'note',selector:{text:{multiline:true}}}],patch=>{Object.assign(block,patch);this.emit();});
@@ -112,8 +116,6 @@ export class VEBuilderEditor extends HTMLElement {
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
-      if(index>0)this.button(toolbar,'↑ Subir bloque',()=>{const list=this.config.blocks;[list[index-1],list[index]]=[list[index],list[index-1]];this.emit();this.render();});
-      if(index<this.config.blocks.length-1)this.button(toolbar,'↓ Bajar bloque',()=>{const list=this.config.blocks;[list[index],list[index+1]]=[list[index+1],list[index]];this.emit();this.render();});
       this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });

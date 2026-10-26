@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.7
+
+- Drag fields, expense groups and blocks using visible handles and highlighted drop targets. Replace move buttons with Alt + arrow keyboard support.
+- Arrastre de campos, grupos de gastos y bloques con asas visibles y destino resaltado. Sustituidos los botones Subir/Bajar por soporte de teclado Alt + flechas.
+
 ## 0.1.0-beta.6
 
 - Add generic starter templates for electric vehicles, petrol/CNG, expenses and tyres. Configured blocks are preserved.
