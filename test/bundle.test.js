@@ -26,7 +26,7 @@ test('distributed bundle renders configured cards with real state data',()=>{
   assert.match(card.shadowRoot.innerHTML,/Test car/);
   if(block.type==='power'){assert.match(card.shadowRoot.innerHTML,/class="power-panel"/);assert.match(card.shadowRoot.innerHTML,/class="power-detail /);}
   if(block.type==='modes')assert.match(card.shadowRoot.innerHTML,/mode-active/);
-  if(block.type==='tyres'){assert.match(card.shadowRoot.innerHTML,/state-open/);assert.match(card.shadowRoot.innerHTML,/rotate\(55/);assert.match(card.shadowRoot.innerHTML,/>P<\/text>/);}
+  if(block.type==='tyres'){assert.match(card.shadowRoot.innerHTML,/state-open/);assert.match(card.shadowRoot.innerHTML,/rotate\(55/);assert.match(card.shadowRoot.innerHTML,/>P<\/text>/);assert.doesNotMatch(card.shadowRoot.innerHTML,/<div class="body-status">/);card.hass={language:'en',states:{'binary_sensor.door':{state:'off',attributes:{}},'sensor.gear':{state:'P',attributes:{}}}};assert.doesNotMatch(card.shadowRoot.innerHTML,/<g class="body-part /);}
   if(block.type==='start')assert.match(card.shadowRoot.innerHTML,/compact-value/);
  }
 });

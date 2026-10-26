@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.10
+
+- Show vehicle body indicators only when open; remove the status boxes below the diagram.
+- Indicadores de puertas, capó y maletero solo cuando están abiertos; eliminadas las cajas de estado bajo el dibujo.
+
 ## 0.1.0-beta.9
 
 - Expand tyres into a vehicle map: four doors, bonnet, boot and gear. Configurable entities, labels and open/closed values; unknown states are never shown as closed. Existing tyre configurations remain supported.
