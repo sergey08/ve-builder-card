@@ -4,6 +4,10 @@
 
 [English](README.md) · **Español**
 
+[![Open in HACS / Abrir en HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+
+**Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
+
 Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.2** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
 
 La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.

@@ -4,6 +4,10 @@
 
 **English** · [Español](README.es.md)
 
+[![Open in HACS / Abrir en HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+
+**Install with HACS:** click the button, confirm the custom repository and select Download. HACS must already be installed.
+
 Build an electric vehicle dashboard in Home Assistant with a visual block editor. **0.1.0-beta.2**: automated checks pass; visual validation and a clean HACS installation are still pending.
 
 The interface supports **English and Spanish**. It follows Home Assistant automatically, or you can choose a language in Edit. Custom titles, field names and notes remain exactly as you enter them.
