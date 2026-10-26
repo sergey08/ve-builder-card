@@ -1,20 +1,20 @@
-name: Error
-description: Informar de un problema sin incluir datos privados
+name: Bug report / Error
+description: Report a problem without private data / Informa de un problema sin datos privados
 body:
   - type: input
     id: versions
     attributes:
-      label: Versiones de Home Assistant y VE Builder Card
+      label: Home Assistant and card versions / Versiones de Home Assistant y la tarjeta
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Pasos, resultado esperado y resultado observado
+      label: Steps, expected and actual result / Pasos, resultado esperado y observado
     validations:
       required: true
   - type: textarea
     id: config
     attributes:
-      label: Configuración mínima sin datos personales
+      label: Minimal configuration without private data / Configuración mínima sin datos privados
       render: yaml

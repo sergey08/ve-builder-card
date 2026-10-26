@@ -6,7 +6,7 @@ Pruebas automáticas: ejecuta `npm run check`. El mantenedor ha confirmado la in
 
 Ejecutar `npm run check`. Verifica valores ausentes, barras fuera de rango, unidades de presión, imágenes, independencia de configuraciones y controles compatibles. Estas pruebas no sustituyen las de interfaz.
 
-## Home Assistant real — pendiente
+## Comprobaciones de regresión en Home Assistant
 
 1. Instalar el recurso en un panel de pruebas; conservar el prototipo.
 2. Crear dos copias desde el selector; comprobar que editar una no cambia la otra.
@@ -21,9 +21,9 @@ Ejecutar `npm run check`. Verifica valores ausentes, barras fuera de rango, unid
 11. Probar una orden solo con una entidad de pruebas, sin ejecutar acciones reales sobre el vehículo.
 12. Instalar y actualizar desde HACS en una instalación limpia.
 
-## Criterios de primera publicación
+## Revisión de publicación
 
-No declarar una versión estable hasta completar esta lista. El repositorio necesita README, licencia, manifest, distribución, release y documentación de compatibilidad. No incluir configuraciones privadas ni credenciales.
+Mantener README, licencia, manifiesto de HACS, distribución, notas de versión y documentación de compatibilidad. Registrar los resultados de cada comprobación y sus límites. No incluir configuraciones privadas ni credenciales.
 
 - Verificar idioma automático y selección español/inglés; conservar títulos y notas personalizados al cambiar de idioma.
 
