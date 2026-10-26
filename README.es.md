@@ -8,7 +8,7 @@
 
 **Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
 
-Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.2** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
+Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.6** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
 
 La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.
 
@@ -43,7 +43,7 @@ La manguera permanece fija con el conector conectado y sin carga. Para distingui
 Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
 
 ```yaml
-url: /local/ve-builder-card.js?v=0.1.0-beta.2
+url: /local/ve-builder-card.js?v=0.1.0-beta.6
 type: module
 ```
 
@@ -100,3 +100,7 @@ Hay pruebas automatizadas de datos, conversiones, configuración y acciones. La 
 Esta versión usa un formato nuevo con propiedades por bloque y el elemento `custom:ve-builder-card`. El prototipo `custom:vehicle-builder-card-v1` se mantiene separado. No hay migración automática: no reemplaces su tipo sin adaptar la configuración.
 
 El logo del proyecto combina fondo azul oscuro y símbolos de vehículo y panel en cian, azul y violeta. Generado para este proyecto. Código y recursos bajo licencia MIT.
+
+## Plantillas iniciales
+
+En Editar, abre Plantillas iniciales y elige Vehículo eléctrico, Gasolina / GNC, Gastos y ahorro o Neumáticos. Después selecciona tus entidades. Se añaden bloques conservando los configurados; solo se reemplaza el inicio vacío. Arrastra títulos de bloques o campos para ordenar, o utiliza Subir/Bajar. Los decimales de información y potencia están en Opciones avanzadas. El arrastre está pendiente de validación en Home Assistant.

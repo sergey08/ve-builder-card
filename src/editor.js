@@ -1,5 +1,5 @@
 import {language,translate,translateSchema} from './i18n.js';
-import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate} from './core.js';
+import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks} from './core.js';
 
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
@@ -26,16 +26,37 @@ export class VEBuilderEditor extends HTMLElement {
     const form=document.createElement('ha-form');form.hass=this._hass;form.data=clone(data);form.schema=translateSchema(schema,this.lang);form.computeLabel=field=>this.t(LABELS[field.name]??POSITIONS[field.name]??field.name);
     form.addEventListener('value-changed',event=>{event.stopPropagation();const values=event.detail.value??{};const allowed=new Set(schema.map(s=>s.name));const patch=Object.fromEntries(Object.entries(values).filter(([key])=>allowed.has(key)));change(patch);});parent.append(form);return form;
   }
+  reorderHandle(panel,list,index,key){
+    const handle=panel.querySelector('summary');handle.draggable=true;handle.title=this.t('Arrastra para ordenar');
+    handle.addEventListener('dragstart',event=>{event.stopPropagation();this.dragItem={key,id:list[index].id};event.dataTransfer.setData('text/plain',list[index].id);event.dataTransfer.effectAllowed='move';});
+    handle.addEventListener('dragover',event=>{if(this.dragItem?.key===key){event.preventDefault();event.dataTransfer.dropEffect='move';}});
+    handle.addEventListener('drop',event=>{event.preventDefault();event.stopPropagation();if(this.dragItem?.key!==key)return;const from=list.findIndex(item=>item.id===this.dragItem.id);this.dragItem=null;if(from<0||from===index)return;list.splice(index,0,list.splice(from,1)[0]);this.emit();this.render();});
+    handle.addEventListener('dragend',()=>{this.dragItem=null;});
+  }
+  addTemplate(kind){
+    const blocks=templateBlocks(kind,this.lang);if(!blocks.length)return;
+    // The empty starter is a placeholder; configured blocks are always preserved.
+    if(this.config.blocks.length===1){const b=this.config.blocks[0];if(b.type==='start'&&!b.fields?.length&&!b.image&&!b.connector_entity&&!b.charging_entity&&!b.power_entity)this.config.blocks=[];}
+    this.config.blocks.push(...blocks);this.openKey=blocks[0].id;this.emit();this.render();
+  }
+  templates(parent){
+    const box=this.panel(parent,'templates','Plantillas iniciales',this.config.blocks.length===0);
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añade una base y selecciona tus entidades. Los bloques configurados se conservan.');box.append(hint);
+    for(const [kind,label]of Object.entries({electric:'Vehículo eléctrico',combustion:'Gasolina / GNC',expenses:'Gastos y ahorro',tyres:'Neumáticos'}))this.button(box,label,()=>this.addTemplate(kind));
+    const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra los títulos para ordenar. También puedes usar Subir y Bajar.');box.append(tip);
+  }
   fieldList(parent,fields,key,kind='info'){
     fields.forEach((field,index)=>{
       const row=this.panel(parent,field.id,field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo',!field.entity);
+      this.reorderHandle(row,fields,index,key);
       const data=this.panel(row,field.id+'-data','Datos',true);
       const domain=kind==='limit'?'input_number':kind==='action'?['switch','input_boolean','lock','button']:kind==='mode'?['switch','input_boolean']:undefined;
       const schema=[entity('entity',domain),text('name')];if(kind!=='limit')schema.push({name:'icon',selector:{icon:{}}});
-      if(['info','expense','price','power'].includes(kind))schema.push(numeric('decimals',0,6),text('unit'));
+      if(['info','expense','price','power'].includes(kind))schema.push(...(['expense','price'].includes(kind)?[numeric('decimals',0,6)]:[]),text('unit'));
       if(kind==='info')schema.push(select('format',{auto:'Automático',connection:'Conectado / desconectado',presence:'Presencia'}));
       this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);row.querySelector('summary').textContent=field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo';this.emit();if(domainChanged)this.render();});
       if(!['limit','expense','price'].includes(kind)){
+        if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
         const appearance=this.panel(row,field.id+'-appearance','Apariencia');
         const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado'}),select('width',{auto:'Media fila',full:'Fila completa'})];
         if(['info','power'].includes(kind))schemas.unshift(select('display',{info:'Información',button:'Botón',bar:'Barra'}));
@@ -87,8 +108,9 @@ export class VEBuilderEditor extends HTMLElement {
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
     this.form(root,{language:'auto',...this.config},[text('title'),select('language',{auto:'Automatic / Automático',en:'English',es:'Español'})],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
+    this.templates(root);
     this.config.blocks.forEach((block,index)=>{
-      const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.blockEditor(panel,block);
+      const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
       if(index>0)this.button(toolbar,'↑ Subir bloque',()=>{const list=this.config.blocks;[list[index-1],list[index]]=[list[index],list[index-1]];this.emit();this.render();});
       if(index<this.config.blocks.length-1)this.button(toolbar,'↓ Bajar bloque',()=>{const list=this.config.blocks;[list[index],list[index+1]]=[list[index+1],list[index]];this.emit();this.render();});

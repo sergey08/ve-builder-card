@@ -1,5 +1,10 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Plantillas iniciales':'Starter templates','Vehículo eléctrico':'Electric vehicle','Gasolina / GNC':'Petrol / CNG','Opciones avanzadas':'Advanced options','Arrastra para ordenar':'Drag to reorder','Deshacer último cambio de estructura':'Undo last structure change',
+ 'Añade una base y selecciona tus entidades. Los bloques configurados se conservan.':'Add a starting layout and select your entities. Configured blocks are preserved.',
+ 'Arrastra los títulos para ordenar. También puedes usar Subir y Bajar.':'Drag headings to reorder. You can also use Move up and Move down.',
+ 'Ubicación':'Location','Batería':'Battery','Autonomía':'Range','Odómetro':'Odometer','Combustible':'Fuel','Intensidad configurada':'Configured current','Excedentes disponibles':'Available surplus','Cargado hoy':'Charged today','Tiempo para finalizar':'Time remaining','Electricidad':'Electricity','Coste de carga':'Charging cost','Ahorro solar':'Solar savings','Ahorro frente al combustible':'Savings compared with fuel','Hoy':'Today','Este mes':'This month','Este año':'This year',
+
  'Activo':'Active','Inactivo':'Inactive','Apagado':'Off','Bloqueado':'Locked','Desbloqueado':'Unlocked','Potencia de carga':'Charging power',
  'Inicio':'Overview','Información':'Information','Modos de carga':'Charging modes','Carga':'Charging','Límites':'Limits','Acciones':'Actions','Mapa':'Map','Gastos y ahorro':'Costs and savings','Neumáticos':'Tyres',
  'Delantera izquierda':'Front left','Delantera derecha':'Front right','Trasera izquierda':'Rear left','Trasera derecha':'Rear right',

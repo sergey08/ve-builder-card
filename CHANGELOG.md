@@ -1,5 +1,12 @@
 # Changelog / Historial
 
+## 0.1.0-beta.6
+
+- Add generic starter templates for electric vehicles, petrol/CNG, expenses and tyres. Configured blocks are preserved.
+- Drag headings to reorder fields and blocks, with existing keyboard-friendly move buttons retained. Numeric precision moves to advanced options for information/power fields.
+- Plantillas genéricas para eléctrico, gasolina/GNC, gastos y neumáticos; conservan los bloques configurados.
+- Ordenación arrastrando títulos, manteniendo botones Subir/Bajar. Decimales en opciones avanzadas para información/potencia.
+
 ## 0.1.0-beta.5
 
 - Restore charging panel layout: right-aligned current, surplus above the scale, compact units and separated energy/time rows.

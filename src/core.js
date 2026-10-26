@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '0.1.0-beta.5';
+export const VERSION = '0.1.0-beta.6';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Neumáticos'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -51,4 +51,14 @@ export function actionFor(entity, state, tap='toggle') {
   if(domain==='lock'&&['locked','unlocked'].includes(state.state))return {domain,service:state.state==='locked'?'unlock':'lock',data:{entity_id:entity}};
   if(domain==='button'&&tap==='press'&&!['unknown','unavailable'].includes(state.state))return {domain,service:'press',data:{entity_id:entity}};
   return null;
+}
+
+export function templateBlocks(kind,lang='es') {
+ const field=(name,options={})=>({...newField(),name:translate(name,lang),...options});
+ const block=(type,options={})=>{const b=newBlock(type);b.title=translate(b.title,lang);if(b.note)b.note=translate(b.note,lang);return Object.assign(b,options);};
+ if(kind==='electric')return [block('start',{fields:[field('Ubicación',{format:'presence',icon:'mdi:map-marker'}),field('Batería',{icon:'mdi:battery',unit:'%'}),field('Autonomía',{unit:'km',icon:'mdi:map-marker-distance'}),field('Odómetro',{unit:'km',icon:'mdi:counter'})]}),block('modes'),block('power',{fields:[field('Potencia de carga',{display:'bar',min:0,max:7400,unit:'W'}),field('Intensidad configurada',{unit:'A'}),field('Excedentes disponibles',{unit:'W'}),field('Cargado hoy',{unit:'kWh',decimals:2}),field('Tiempo para finalizar')]}),block('limits'),block('actions')];
+ if(kind==='combustion')return [block('start',{show_status:false,show_cable:false,animate:false,fields:[field('Ubicación',{format:'presence',icon:'mdi:map-marker'}),field('Combustible',{unit:'%',icon:'mdi:gas-station'}),field('Autonomía',{unit:'km',icon:'mdi:map-marker-distance'}),field('Odómetro',{unit:'km',icon:'mdi:counter'})]})];
+ if(kind==='expenses')return [block('expenses',{prices:[field('Electricidad',{unit:'€/kWh',decimals:4}),field('Combustible',{unit:'€/L',decimals:3})],groups:[['Coste de carga','cost','mdi:ev-station'],['Ahorro solar','solar','mdi:solar-power'],['Ahorro frente al combustible','diesel','mdi:gas-station']].map(([name,style,icon])=>({id:uid(),name:translate(name,lang),style,icon,fields:['Hoy','Este mes','Este año'].map(name=>field(name,{unit:'€',decimals:2}))}))})];
+ if(kind==='tyres')return [block('tyres')];
+ return [];
 }
