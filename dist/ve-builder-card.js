@@ -2,6 +2,7 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Vista de ejemplo':'Example preview','Tu vehículo, a tu manera':'Your vehicle, your way','Datos de ejemplo. Abre Editar y elige una plantilla para empezar.':'Sample data. Open Edit and choose a template to get started.',
  'Mapa del vehículo':'Vehicle map','Puertas, capó y maletero':'Doors, bonnet and boot','Marcha':'Gear','Sensor de marcha':'Gear sensor','Nombre de la marcha':'Gear label','Estado que significa abierto':'State that means open','Estado que significa cerrado':'State that means closed','Abierto':'Open','Cerrado':'Closed','Capó':'Bonnet','Maletero':'Boot','Puerta delantera izquierda':'Front left door','Puerta delantera derecha':'Front right door','Puerta trasera izquierda':'Rear left door','Puerta trasera derecha':'Rear right door',
  '↶ Deshacer':'↶ Undo','↷ Rehacer':'↷ Redo','Filtrar entidades por dispositivo (opcional)':'Filter entities by device (optional)','No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.':'Could not load the filter. You can choose an entity without filtering.',
  'Arrastra para ordenar. Con teclado: Alt + flechas.':'Drag to reorder. Keyboard: Alt + arrow keys.',
@@ -31,7 +32,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -371,8 +372,16 @@ class VEBuilderCard extends HTMLElement {
   }
   limits(block){return `<div class="charge-limits">${(block.fields??[]).map(f=>{const state=this.state[f.entity],a=state?.attributes??{},value=number(state?.state),valid=value!==null&&number(a.min)!==null&&number(a.max)!==null&&a.max>a.min;return `<label class="limit-row"><div class="limit-heading"><span>${escape(f.name||a.friendly_name||this.t('Límite'))}</span><strong data-limit-label="${escape(f.id)}">${escape(stateText(state,f,this.lang))}</strong></div><input type="range" data-limit="${escape(f.id)}" aria-label="${escape(f.name||this.t('Límite'))}" min="${escape(a.min??0)}" max="${escape(a.max??100)}" step="${escape(a.step??1)}" value="${escape(value??0)}" ${!valid?'disabled':''}/></label>`;}).join('')}</div>`;}
   allFields(){return (this.config.blocks??[]).flatMap(b=>[...(b.fields??[]),...(b.prices??[]),...(b.groups??[]).flatMap(g=>g.fields??[])]);}
+  showcase(){
+    return `<style>${styles}
+    .showcase{padding:18px;background:linear-gradient(145deg,var(--ha-card-background,var(--card-background-color)),var(--secondary-background-color));border-radius:16px}.showcase-tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-color);font-weight:700}.showcase h3{margin:8px 0 12px;font-size:21px}.showcase-metrics{display:flex;gap:6px;flex-wrap:wrap}.showcase-metrics span{padding:6px 10px;border-radius:20px;background:var(--ha-card-background,var(--card-background-color));font-size:11px;margin:0}.showcase svg{display:block;width:100%;height:150px}.showcase-power{padding:12px;background:var(--ha-card-background,var(--card-background-color));border-radius:12px}.showcase-power>div:first-child{display:flex;justify-content:space-between;font-size:12px}.showcase-bar{height:7px;border-radius:8px;margin-top:10px;background:var(--divider-color)}.showcase-bar:after{content:"";display:block;width:62%;height:100%;border-radius:8px;background:var(--primary-color)}.showcase-features{display:flex;justify-content:space-around;gap:6px;margin-top:14px;font-size:11px;color:var(--secondary-text-color)}.showcase p{font-size:11px;line-height:1.5;margin:12px 0 0;color:var(--secondary-text-color)}
+    </style><ha-card><div class="showcase"><div class="showcase-tag">${this.t('Vista de ejemplo')}</div><h3>${this.t('Tu vehículo, a tu manera')}</h3><div class="showcase-metrics"><span>🔋 80 %</span><span>↗ 320 km</span><span>🌡 21 °C</span></div>
+    <svg viewBox="0 0 400 160" role="img" aria-label="${escape(this.t('Vista de ejemplo'))}"><ellipse cx="203" cy="131" rx="150" ry="11" fill="var(--divider-color)" opacity=".4"/><path d="M46 111 L58 85 Q66 74 102 69 L136 37 Q148 29 172 29 L241 30 Q260 31 282 64 L327 75 Q351 81 354 105 L352 120 L48 120 Z" fill="var(--secondary-background-color)" stroke="var(--primary-color)" stroke-width="3"/><path d="M118 67 L146 39 L185 38 L185 67 Z M197 38 L237 39 Q253 42 268 67 L197 67 Z" fill="var(--primary-color)" opacity=".3"/><path d="M192 74 L192 113 M279 76 L285 113" stroke="var(--divider-color)" stroke-width="2"/><path d="M59 91 L85 91 M328 88 L344 93" stroke="var(--primary-color)" stroke-width="5" stroke-linecap="round"/><circle cx="113" cy="119" r="24" fill="var(--ha-card-background,var(--card-background-color))" stroke="var(--primary-color)" stroke-width="4"/><circle cx="113" cy="119" r="11" fill="var(--divider-color)"/><circle cx="291" cy="119" r="24" fill="var(--ha-card-background,var(--card-background-color))" stroke="var(--primary-color)" stroke-width="4"/><circle cx="291" cy="119" r="11" fill="var(--divider-color)"/><path d="M24 136 L24 96 Q24 87 34 87 L56 87" fill="none" stroke="var(--primary-color)" stroke-width="3" stroke-linecap="round"/></svg>
+    <div class="showcase-power"><div><b>${this.t('Potencia de carga')}</b><b>4,6 kW</b></div><div class="showcase-bar"></div></div><div class="showcase-features"><b>${this.t('Mapa del vehículo')}</b><b>${this.t('Gastos y ahorro')}</b><b>${this.t('Ubicación')}</b></div><p>${this.t('Datos de ejemplo. Abre Editar y elige una plantilla para empezar.')}</p></div></ha-card>`;
+  }
   render(){
     if(!this._hass||!this.config)return;
+    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this.shadowRoot.innerHTML=this.showcase();return;}
     // Updates do not rebuild a slider while the user is adjusting it.
     if(this._editingSlider)return;
     const signature=JSON.stringify([this.lang,this._configSignature,[...this._entities].map(id=>this.state[id])]);
@@ -404,7 +413,7 @@ class VEBuilderCard extends HTMLElement {
   }
 }
 if(!customElements.get('ve-builder-card'))customElements.define('ve-builder-card',VEBuilderCard);
-window.customCards=window.customCards||[];
+window.customCards=(window.customCards||[]).filter(c=>c.type!=='vehicle-builder-card-v1');
 if(!window.customCards.some(c=>c.type==='ve-builder-card'))window.customCards.push({type:'ve-builder-card',name:'VE Builder Card',description:'Visual EV dashboard builder / Constructor visual de paneles VE.',preview:true});
 console.info(`VE Builder Card ${VERSION}`);
 

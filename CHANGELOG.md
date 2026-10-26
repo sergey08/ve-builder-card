@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 1.0.2
+
+- Replace blank card-picker previews with a themed vehicle illustration and explicitly labelled sample readings. Hide the legacy prototype registration from the picker.
+- Vista del selector con ilustración de vehículo y datos claramente marcados como ejemplo. Oculta la entrada del prototipo antiguo.
+
 ## 1.0.1
 
 - Fix HACS logo rendering, expand vehicle-map description and update stable installation instructions.

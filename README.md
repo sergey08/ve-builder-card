@@ -8,7 +8,7 @@
 
 **Install with HACS:** click the button, confirm the custom repository and select Download. HACS must already be installed.
 
-Build a fully configurable vehicle dashboard in Home Assistant: vehicle images, charging, costs and savings, location, and an interactive vehicle map showing tyre pressures, gear, open doors, bonnet and boot. Configure every block, entity, label and layout in the visual editor. **1.0.1 stable**. 22 automated tests pass; mobile checks confirmed by the maintainer.
+Build a fully configurable vehicle dashboard in Home Assistant: vehicle images, charging, costs and savings, location, and an interactive vehicle map showing tyre pressures, gear, open doors, bonnet and boot. Configure every block, entity, label and layout in the visual editor. **1.0.2 stable**. 22 automated tests pass; mobile checks confirmed by the maintainer.
 
 The interface supports **English and Spanish**. It follows Home Assistant automatically, or you can choose a language in Edit. Custom titles, field names and notes remain exactly as you enter them.
 
@@ -47,7 +47,7 @@ The cable remains visible and still when connected without energy flow. Configur
 Copy `dist/ve-builder-card.js` to `/config/www/ve-builder-card.js` and add a module resource:
 
 ```yaml
-url: /local/ve-builder-card.js?v=1.0.1
+url: /local/ve-builder-card.js?v=1.0.2
 type: module
 ```
 
@@ -104,4 +104,4 @@ The tyre block now also supports four doors, bonnet, boot and gear. In Edit, ass
 
 ## Stable 1.0
 
-See [English / Spanish release notes](docs/RELEASE-1.0.1.md). 22 automated checks pass; mobile validation is confirmed. A separate visual desktop review was not performed. Select v1.0.1 in HACS.
+See [English / Spanish release notes](docs/RELEASE-1.0.2.md). 22 automated checks pass; mobile validation is confirmed. A separate visual desktop review was not performed. Select v1.0.2 in HACS.

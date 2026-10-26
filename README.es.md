@@ -8,7 +8,7 @@
 
 **Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
 
-Tarjeta de Home Assistant para construir un panel de vehículo totalmente configurable: imagen, carga, gastos y ahorro, ubicación y un mapa interactivo con presiones, marcha, puertas, capó y maletero abiertos. Configura cada bloque, entidad, nombre y distribución desde el editor visual. Versión **1.0.1 estable**. 22 pruebas automáticas superadas y revisión móvil confirmada por el mantenedor.
+Tarjeta de Home Assistant para construir un panel de vehículo totalmente configurable: imagen, carga, gastos y ahorro, ubicación y un mapa interactivo con presiones, marcha, puertas, capó y maletero abiertos. Configura cada bloque, entidad, nombre y distribución desde el editor visual. Versión **1.0.2 estable**. 22 pruebas automáticas superadas y revisión móvil confirmada por el mantenedor.
 
 La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.
 
@@ -43,7 +43,7 @@ La manguera permanece fija con el conector conectado y sin carga. Para distingui
 Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
 
 ```yaml
-url: /local/ve-builder-card.js?v=1.0.1
+url: /local/ve-builder-card.js?v=1.0.2
 type: module
 ```
 
@@ -115,4 +115,4 @@ El bloque de neumáticos admite ahora cuatro puertas, capó, maletero y marcha. 
 
 ## Versión estable 1.0
 
-Consulta las [notas en inglés y español](docs/RELEASE-1.0.1.md). 22 pruebas automáticas superadas y revisión móvil confirmada. No se realizó una revisión visual independiente de escritorio. Selecciona v1.0.1 en HACS.
+Consulta las [notas en inglés y español](docs/RELEASE-1.0.2.md). 22 pruebas automáticas superadas y revisión móvil confirmada. No se realizó una revisión visual independiente de escritorio. Selecciona v1.0.2 en HACS.
