@@ -23,3 +23,14 @@ export const powerLayoutStyles = `
 .power-panel .power-track{margin-top:12px}.power-panel .power-labels span{margin-top:5px;font-size:10px}
 .power-panel strong small{font-size:11px;font-weight:400;color:var(--secondary-text-color)}
 `;
+
+export const vehicleMapStyles = `
+.car.vehicle-map{max-height:440px}.body-part{cursor:pointer;stroke-width:4;stroke-linejoin:round}
+.body-part.state-closed{fill:var(--success-color,#43a047);stroke:var(--success-color,#43a047)}
+.body-part.state-open{fill:var(--error-color,#db4437);stroke:var(--error-color,#db4437)}
+.body-part.state-unknown{fill:var(--disabled-text-color);stroke:var(--disabled-text-color);stroke-dasharray:3 3}
+.body-part path{stroke-width:7}.body-part:focus-visible,.gear-position:focus-visible{outline:2px solid var(--primary-color)}
+.gear-position{cursor:pointer}.car .gear-value{font-size:25px;font-weight:700;fill:var(--primary-color)}
+.body-status{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 16px 12px}.body-status button{background:var(--secondary-background-color);border-radius:10px;padding:8px 10px}
+.body-status span{font-size:11px;margin:0}.body-status strong{font-size:13px;margin-top:4px}.body-status .state-open strong{color:var(--error-color,#db4437)}.body-status .state-closed strong{color:var(--success-color,#43a047)}.body-status .state-unknown strong{color:var(--secondary-text-color)}
+`;

@@ -9,3 +9,10 @@ test('normalization does not mutate original or share instances',()=>{const orig
 test('actions require supported domain, valid state, and control permission',()=>{assert.equal(actionFor('sensor.test',{state:'on'}),null);assert.equal(actionFor('switch.test',{state:'unavailable'}),null);assert.equal(actionFor('lock.test',{state:'locked',attributes:{control_allowed:false}}),null);assert.equal(actionFor('lock.test',{state:'locked'}).service,'unlock');assert.equal(actionFor('switch.test',{state:'off'}).service,'turn_on');assert.equal(actionFor('switch.test',{state:'on'},'more-info'),null);});
 test('new generic configurations contain no personal entities',()=>{for(const type of ['start','fields','power','limits','actions','modes','map','tyres','expenses']){const b=newBlock(type);assert.ok(!JSON.stringify(b).includes('xpeng'));assert.ok(!JSON.stringify(b).includes('135818'));}assert.equal(newField().entity,'');});
 test('validation explains missing entities and bad bar ranges',()=>{const c={blocks:[{type:'fields',fields:[{name:'Batería',entity:'',display:'bar',min:90,max:10}]}]};assert.equal(validate(c).length,2);});
+test('vehicle openings distinguish open, closed, unavailable and unmatched states',async()=>{
+ const {openingState}=await import('../src/core.js');
+ assert.equal(openingState({state:'on'}),'open');assert.equal(openingState({state:'off'}),'closed');
+ for(const state of ['unknown','unavailable','opening','unexpected'])assert.equal(openingState({state}),'unknown');
+ assert.equal(openingState(undefined),'unknown');assert.equal(openingState({state:'open'},{open_value:'open',closed_value:'closed'}),'open');
+ assert.equal(openingState({state:'closed'},{open_value:'open',closed_value:'closed'}),'closed');
+});

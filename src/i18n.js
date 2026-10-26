@@ -1,5 +1,6 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Mapa del vehículo':'Vehicle map','Puertas, capó y maletero':'Doors, bonnet and boot','Marcha':'Gear','Sensor de marcha':'Gear sensor','Nombre de la marcha':'Gear label','Estado que significa abierto':'State that means open','Estado que significa cerrado':'State that means closed','Abierto':'Open','Cerrado':'Closed','Capó':'Bonnet','Maletero':'Boot','Puerta delantera izquierda':'Front left door','Puerta delantera derecha':'Front right door','Puerta trasera izquierda':'Rear left door','Puerta trasera derecha':'Rear right door',
  '↶ Deshacer':'↶ Undo','↷ Rehacer':'↷ Redo','Filtrar entidades por dispositivo (opcional)':'Filter entities by device (optional)','No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.':'Could not load the filter. You can choose an entity without filtering.',
  'Arrastra para ordenar. Con teclado: Alt + flechas.':'Drag to reorder. Keyboard: Alt + arrow keys.',
  'Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.':'Drag a field, group or block handle to change its position. Keyboard: Alt + arrow keys.',

@@ -8,7 +8,7 @@
 
 **Install with HACS:** click the button, confirm the custom repository and select Download. HACS must already be installed.
 
-Build an electric vehicle dashboard in Home Assistant with a visual block editor. **0.1.0-beta.8**: automated checks pass; visual validation and a clean HACS installation are still pending.
+Build an electric vehicle dashboard in Home Assistant with a visual block editor. **0.1.0-beta.9**: automated checks pass; visual validation and a clean HACS installation are still pending.
 
 The interface supports **English and Spanish**. It follows Home Assistant automatically, or you can choose a language in Edit. Custom titles, field names and notes remain exactly as you enter them.
 
@@ -47,7 +47,7 @@ The cable remains visible and still when connected without energy flow. Configur
 Copy `dist/ve-builder-card.js` to `/config/www/ve-builder-card.js` and add a module resource:
 
 ```yaml
-url: /local/ve-builder-card.js?v=0.1.0-beta.8
+url: /local/ve-builder-card.js?v=0.1.0-beta.9
 type: module
 ```
 
@@ -97,3 +97,7 @@ In Edit, expand Starter templates and choose Electric vehicle, Petrol / CNG, Cos
 ## Editing helpers
 
 Undo/Redo retains up to 50 changes during the current editing session. Reopening the editor resets history. Under each field’s Data section, optionally choose a device to filter available entities; the existing entity stays selected until you change it. Clear the filter to access helpers or entities from other devices. The filter is an editor convenience, not part of the saved card configuration.
+
+## Vehicle map
+
+The tyre block now also supports four doors, bonnet, boot and gear. In Edit, assign optional entities under Doors, bonnet and boot and Gear. For binary sensors use on/off; for covers use open/closed. Unknown or unmatched states appear as No data, never Closed. Open doors swing outward and turn red; closed parts are green. Click a part for entity details. Gear is displayed as reported by the integration. Tyre sensors and conversion settings remain compatible.

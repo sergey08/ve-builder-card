@@ -8,7 +8,7 @@
 
 **Instalar con HACS:** pulsa el botón, confirma el repositorio personalizado y selecciona Descargar. Es necesario tener HACS instalado.
 
-Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.8** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
+Tarjeta de Home Assistant para construir paneles de vehículos eléctricos mediante un editor visual por bloques. Versión **0.1.0-beta.9** de preparación. Pendiente de validación visual y de una instalación limpia de Home Assistant.
 
 La interfaz admite **español e inglés**: sigue el idioma de Home Assistant o permite elegirlo en Editar → Idioma. Los nombres y comentarios personalizados no se traducen automáticamente.
 
@@ -43,7 +43,7 @@ La manguera permanece fija con el conector conectado y sin carga. Para distingui
 Copia `dist/ve-builder-card.js` a `/config/www/ve-builder-card.js` y añade el recurso:
 
 ```yaml
-url: /local/ve-builder-card.js?v=0.1.0-beta.8
+url: /local/ve-builder-card.js?v=0.1.0-beta.9
 type: module
 ```
 
@@ -108,3 +108,7 @@ En Editar, abre Plantillas iniciales y elige Vehículo eléctrico, Gasolina / GN
 ## Ayudas de edición
 
 Deshacer/Rehacer conserva hasta 50 cambios durante la sesión de edición. Al reabrir el editor se reinicia el historial. En Datos de cada campo puedes elegir un dispositivo para filtrar las entidades; la entidad actual se mantiene hasta que la cambies. Quita el filtro para acceder a helpers o entidades de otros dispositivos. El filtro solo ayuda a editar y no forma parte de la configuración guardada.
+
+## Mapa del vehículo
+
+El bloque de neumáticos admite ahora cuatro puertas, capó, maletero y marcha. En Editar asigna las entidades opcionales en Puertas, capó y maletero y en Marcha. Para sensores binarios usa on/off; para covers, open/closed. Los estados desconocidos o no coincidentes muestran Sin datos, nunca Cerrado. Las puertas abiertas se dibujan hacia fuera en rojo y los elementos cerrados en verde. Pulsa un elemento para ver sus detalles. La marcha se muestra como la comunica la integración. Se conservan los sensores y conversiones de neumáticos.

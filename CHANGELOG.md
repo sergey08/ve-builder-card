@@ -1,5 +1,10 @@
 # Changelog / Historial
 
+## 0.1.0-beta.9
+
+- Expand tyres into a vehicle map: four doors, bonnet, boot and gear. Configurable entities, labels and open/closed values; unknown states are never shown as closed. Existing tyre configurations remain supported.
+- Neumáticos ampliado a mapa del vehículo: cuatro puertas, capó, maletero y marcha. Entidades, nombres y estados configurables; sin datos no equivale a cerrado. Compatibilidad con las configuraciones anteriores.
+
 ## 0.1.0-beta.8
 
 - Add session-local undo/redo (50 edits) and an optional per-field device filter, without changing selected entities.

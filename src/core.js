@@ -1,6 +1,6 @@
 import {translate} from './i18n.js';
-export const VERSION = '0.1.0-beta.8';
-export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Neumáticos'};
+export const VERSION = '0.1.0-beta.9';
+export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 export const clone = value => structuredClone(value);
@@ -61,4 +61,11 @@ export function templateBlocks(kind,lang='es') {
  if(kind==='expenses')return [block('expenses',{prices:[field('Electricidad',{unit:'€/kWh',decimals:4}),field('Combustible',{unit:'€/L',decimals:3})],groups:[['Coste de carga','cost','mdi:ev-station'],['Ahorro solar','solar','mdi:solar-power'],['Ahorro frente al combustible','diesel','mdi:gas-station']].map(([name,style,icon])=>({id:uid(),name:translate(name,lang),style,icon,fields:['Hoy','Este mes','Este año'].map(name=>field(name,{unit:'€',decimals:2}))}))})];
  if(kind==='tyres')return [block('tyres')];
  return [];
+}
+
+export const BODY_PARTS={front_left:'Puerta delantera izquierda',front_right:'Puerta delantera derecha',rear_left:'Puerta trasera izquierda',rear_right:'Puerta trasera derecha',bonnet:'Capó',trunk:'Maletero'};
+export function openingState(state,config={}){
+ if(!state||['unknown','unavailable',''].includes(state.state))return 'unknown';
+ const value=String(state.state).toLowerCase(),open=String(config.open_value??'on').toLowerCase(),closed=String(config.closed_value??'off').toLowerCase();
+ if(value===open)return 'open';if(value===closed)return 'closed';return 'unknown';
 }

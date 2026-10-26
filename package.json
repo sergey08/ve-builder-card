@@ -1,6 +1,6 @@
 {
   "name": "ve-builder-card",
-  "version": "0.1.0-beta.8",
+  "version": "0.1.0-beta.9",
   "private": true,
   "type": "module",
   "scripts": {"build": "node scripts/build.mjs", "test": "node --test", "check": "node --check src/card.js && node --check src/editor.js && npm test && npm run build"},
