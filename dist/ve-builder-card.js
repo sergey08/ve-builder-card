@@ -48,7 +48,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.2.2-beta.1';
+const VERSION = '1.2.2';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
