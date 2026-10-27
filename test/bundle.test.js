@@ -155,3 +155,12 @@ test('alert summary escapes labels, opens entity details only and keeps expanded
  card._hass.states['sensor.battery']={state:'20'};card.refreshAlertSummary();assert.equal(writes,1);assert.equal(details.open,true);
  card._hass.states['sensor.battery']={state:'50'};assert.equal(card.alertSummary(),'');
 });
+
+test('pressure advice renders translated context and selected references without changing pressure colours',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();const block={type:'tyres',recommended_front_bar:2.5,recommended_rear_bar:2.7,positions:{front_left:'sensor.pressure'},pressure_colors:{enabled:true,direction:'low',warning:2.4,critical:2.2},pressure_advice:{enabled:true,profile:'full',full_front_bar:2.9,full_rear_bar:3}};
+ card.setConfig({blocks:[block]});card.hass={language:'en',states:{'sensor.pressure':{state:'231',attributes:{unit_of_measurement:'kPa'}}}};
+ assert.match(card.shadowRoot.innerHTML,/Full load · cold reference/);assert.match(card.shadowRoot.innerHTML,/2.9 bar/);assert.match(card.shadowRoot.innerHTML,/thermal condition unknown/);assert.match(card.shadowRoot.innerHTML,/tyre value-warning/);
+ card.setConfig({blocks:[{...block,pressure_advice:{enabled:false}}]});assert.doesNotMatch(card.shadowRoot.innerHTML,/<aside class="pressure-advice"/);assert.match(card.shadowRoot.innerHTML,/2.5 bar/);
+});

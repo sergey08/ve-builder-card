@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.4.0-beta.1';
+export const VERSION = '1.4.0-beta.2';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -150,4 +150,18 @@ export function collectCardAlerts(config,states={},lang='es',now=Date.now()){
   if(options.include_stale!==false){const info=readingFreshness(block.freshness,states,readingEntities(block),now);if(info.status==='stale')add({kind:'stale',entity:block.freshness?.timestamp_entity||'',block:block.id,severity:'warning',label:block.title||translate(TYPES[block.type]||'Información',lang),value:freshnessText(info,lang)});}
  }
  return [...alerts.values()].sort((a,b)=>(b.severity==='critical')-(a.severity==='critical'));
+}
+
+export function recommendedPressure(block,axle){
+ const full=block.pressure_advice?.profile==='full';
+ const value=number(full?block.pressure_advice?.['full_'+axle+'_bar']:block['recommended_'+axle+'_bar']);
+ return value!==null&&value>0?value:null;
+}
+export function tyreAdvice(block,states={},now=Date.now()){
+ const options=block.pressure_advice??{};if(!options.enabled)return null;
+ const tempState=states[options.temperature_entity],raw=number(tempState?.state),unit=tempState?.attributes?.unit_of_measurement;
+ const age=now-Date.parse(tempState?.last_updated),fresh=Number.isFinite(age)&&age>=-120000&&age<=30*60000;
+ const temperature=fresh&&raw!==null?(unit==='°C'?raw:unit==='°F'?(raw-32)*5/9:null):null;
+ const trip=readingFreshness({enabled:true,timestamp_entity:options.trip_end_entity||'sensor.__no_trip',max_age_minutes:120},states,[],now);
+ return {profile:options.profile==='full'?'full':'normal',recentTrip:trip.status==='fresh',heat:temperature!==null&&temperature>=30,temperature};
 }

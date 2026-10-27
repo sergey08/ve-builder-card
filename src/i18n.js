@@ -1,5 +1,23 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+"Consejos y perfiles de presión":"Pressure advice and load profiles",
+"Mostrar consejos de presión":"Show pressure advice",
+"Perfil de carga":"Load profile",
+"Carga normal":"Normal load",
+"Plena carga":"Full load",
+"Plena carga delante · bar (en frío)":"Full load front · bar (cold)",
+"Plena carga detrás · bar (en frío)":"Full load rear · bar (cold)",
+"Temperatura exterior (opcional)":"Outside temperature (optional)",
+"Sensor con la fecha de fin del último trayecto (opcional)":"Last trip end timestamp sensor (optional)",
+"Plena carga · referencia en frío":"Full load · cold reference",
+"Carga normal · referencia en frío":"Normal load · cold reference",
+"Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.":"Full load pressures are missing. Enter the values from the vehicle label.",
+"Circulación reciente según el sensor. Las ruedas podrían seguir calientes.":"Recent driving reported by the sensor. Tyres may still be warm.",
+"Condición térmica desconocida.":"Tyre thermal condition unknown.",
+"Temperatura exterior elevada. La presión puede aumentar al circular.":"High outside temperature. Pressure may rise while driving.",
+"Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.":"Check and adjust cold according to the vehicle label. Do not deflate hot tyres. The season does not automatically change the reference.",
+"Usa exclusivamente los valores de la etiqueta para cada carga. El perfil cambia la referencia, no los umbrales de color. Temperatura en °C o °F con lectura de menos de 30 minutos; a partir de 30 °C muestra un consejo. El sensor de trayecto debe contener una fecha ISO o Unix; durante 2 horas indica circulación reciente, sin confirmar que las ruedas estén calientes o frías.":"Use only the label values for each load. The profile changes the reference, not colour thresholds. Temperature in °C or °F must be less than 30 minutes old; 30 °C or above shows advice. The trip sensor must contain an ISO or Unix date; recent driving is indicated for 2 hours without confirming hot or cold tyres.",
+
  'Resumen de avisos':'Alert summary','Mostrar resumen de avisos':'Show alert summary','Valores en aviso o crítico':'Warning or critical values','Presiones en aviso o crítico':'Warning or critical pressures','Puertas, capó y maletero abiertos':'Open doors, bonnet and boot','Datos antiguos':'Old data',
  'Según las últimas lecturas recibidas. Pulsa un aviso para ver la entidad; no se envían órdenes.':'Based on the latest received readings. Select an alert to view the entity; no commands are sent.',
  'Solo resume esta tarjeta y utiliza sus umbrales y entidades configurados. Desaparece cuando no hay avisos. Pulsa un aviso para ver detalles, sin ejecutar acciones.':'Summarises this card only using its configured entities and thresholds. Hidden when there are no alerts. Select an alert to view details without executing actions.',

@@ -51,7 +51,9 @@ export const valueColorStyles = `
 .car .tyre.value-normal .pressure,.car .tyre.value-warning .pressure,.car .tyre.value-critical .pressure{fill:var(--ve-value-color)}
 `;
 
-export const recommendationStyles = `.car .recommended{fill:var(--secondary-text-color);font-size:9px;font-weight:400}`;
+export const recommendationStyles = `
+.pressure-advice{margin:4px 16px 12px;padding:10px 12px;border-radius:10px;background:var(--secondary-background-color);color:var(--secondary-text-color);font-size:11px;line-height:1.5}.pressure-advice strong{font-size:12px;color:var(--primary-text-color)}.pressure-advice p{margin:5px 0 0}
+.car .recommended{fill:var(--secondary-text-color);font-size:9px;font-weight:400}`;
 
 export const freshnessStyles = `
 .reading-age{margin:6px 18px 10px;font-size:11px;line-height:1.5;color:var(--secondary-text-color)}

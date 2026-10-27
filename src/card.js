@@ -1,5 +1,5 @@
 import {language,translate} from './i18n.js';
-import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,collectCardAlerts} from './core.js';
+import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
 import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles} from './styles.js';
 import './editor.js';
 
@@ -13,7 +13,7 @@ export class VEBuilderCard extends HTMLElement {
   connectedCallback(){this.syncFreshnessTimer();this.updateFreshness();}
   disconnectedCallback(){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}}
   syncFreshnessTimer(){
-    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled);
+    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled||b.pressure_advice?.enabled);
     if(!enabled){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}return;}
     if(!this.isConnected||typeof window.setInterval!=='function'||this._freshnessTimer)return;
     this._freshnessTimer=window.setInterval(()=>{if(document.visibilityState!=='hidden')this.updateFreshness();},60000);
@@ -31,6 +31,8 @@ export class VEBuilderCard extends HTMLElement {
     if(!this.config||!this._hass||!this.shadowRoot)return;
     for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=freshnessText(info,this.lang);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
     this.refreshAlertSummary();
+    for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host.innerHTML!==html)host.innerHTML=html;}}
+
   }
   alertSummary(){
     const alerts=collectCardAlerts(this.config,this.state,this.lang);if(!alerts.length)return '';
@@ -65,7 +67,7 @@ export class VEBuilderCard extends HTMLElement {
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
     const coords={front_left:[57,85],front_right:[303,85],rear_left:[57,260],rear_right:[303,260]},unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';
-    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),recommended=pressure(block[key.startsWith('front')?'recommended_front_bar':'recommended_rear_bar'],'bar',unit),hasRecommended=recommended!==null&&recommended>0;return `<g class="tyre ${this.severity({colors:block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${hasRecommended?`<text x="${x}" y="${y+36}" class="recommended">${escape(this.t('Rec. en frío'))}: ${escape(format(recommended,unit==='kPa'?0:1,this.lang))} ${unit}</text>`:''}${block.show_dates===false?'':`<text x="${x}" y="${y+(hasRecommended?51:38)}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
+    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),recommended=pressure(recommendedPressure(block,key.startsWith('front')?'front':'rear'),'bar',unit),hasRecommended=recommended!==null&&recommended>0;return `<g class="tyre ${this.severity({colors:block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${hasRecommended?`<text x="${x}" y="${y+36}" class="recommended">${escape(this.t('Rec. en frío'))}: ${escape(format(recommended,unit==='kPa'?0:1,this.lang))} ${unit}</text>`:''}${block.show_dates===false?'':`<text x="${x}" y="${y+(hasRecommended?51:38)}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
     const parts=Object.entries(BODY_PARTS).filter(([key])=>block.body_parts?.[key]?.entity).map(([key,label])=>{const f=block.body_parts[key],status=openingState(this.state[f.entity],f);return {key,f,label:f.name||this.t(label),status,text:this.t(status==='open'?'Abierto':status==='closed'?'Cerrado':'Sin datos')};});
     const shapes=parts.filter(part=>part.status==='open').map(({key,f,label,status,text})=>{let shape='';const left=key.endsWith('left'),x=left?126:234,y=key.startsWith('front')?120:192;
       if(['bonnet','trunk'].includes(key)){const y=key==='bonnet'?55:285;shape=`<rect x="144" y="${y}" width="72" height="32" rx="12"/>`;}
@@ -74,7 +76,12 @@ export class VEBuilderCard extends HTMLElement {
     }).join('');
     const gear=block.gear_entity?stateText(this.state[block.gear_entity],{},this.lang):'';
     const gearSvg=block.gear_entity?`<g class="gear-position" role="button" tabindex="0" data-entity="${escape(block.gear_entity)}" aria-label="${escape(this.t('Marcha')+': '+gear)}"><text x="180" y="164" class="unit">${escape(block.gear_name||this.t('Marcha'))}</text><text x="180" y="195" class="gear-value">${escape(gear)}</text></g>`:'';
-    return `<svg class="car ${expanded?'vehicle-map':''}" viewBox="0 0 360 350" aria-label="${escape(this.t('Mapa del vehículo'))}"><text x="180" y="20" class="unit">${this.t('DELANTE')}</text><rect x="126" y="35" width="108" height="295" rx="47" class="body"/><path d="M140 100 Q180 80 220 100 L215 130 L145 130 Z M145 235 L215 235 L218 270 Q180 285 142 270 Z" class="glass"/>${[[115,75],[230,75],[115,260],[230,260]].map(([x,y])=>`<rect x="${x}" y="${y}" width="15" height="44" rx="6" class="wheel"/>`).join('')}${shapes}${gearSvg}${values}</svg>`;
+    return `<svg class="car ${expanded?'vehicle-map':''}" viewBox="0 0 360 350" aria-label="${escape(this.t('Mapa del vehículo'))}"><text x="180" y="20" class="unit">${this.t('DELANTE')}</text><rect x="126" y="35" width="108" height="295" rx="47" class="body"/><path d="M140 100 Q180 80 220 100 L215 130 L145 130 Z M145 235 L215 235 L218 270 Q180 285 142 270 Z" class="glass"/>${[[115,75],[230,75],[115,260],[230,260]].map(([x,y])=>`<rect x="${x}" y="${y}" width="15" height="44" rx="6" class="wheel"/>`).join('')}${shapes}${gearSvg}${values}</svg><div data-tyre-advice="${escape(block.id)}">${this.pressureAdvice(block)}</div>`;
+  }
+  pressureAdvice(block){
+    const info=tyreAdvice(block,this.state);if(!info)return '';
+    const fullMissing=info.profile==='full'&&['front','rear'].some(axle=>recommendedPressure(block,axle)===null);
+    return `<aside class="pressure-advice"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'Condición térmica desconocida.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></aside>`;
   }
   expenses(block){
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(f.name||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.lang==='es'?'Lectura':'Reading'}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
