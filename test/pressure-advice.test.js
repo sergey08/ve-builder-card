@@ -41,3 +41,13 @@ test('location supports custom home states and fixed configurations stay compati
  assert.equal(tyreAdvice(b,{'input_boolean.car':{state:'on'}},now).location,'home');assert.equal(tyreAdvice(b,{'input_boolean.car':{state:'off'}},now).location,'away');
  assert.equal(tyreAdvice(block,{},now).location,'fixed');assert.equal(tyreAdvice(block,{},now).temperatureEntity,'sensor.outside');
 });
+
+test('temperature age prefers report timestamps and supports a configurable age limit',()=>{
+ const states={'sensor.outside':{state:'22',attributes:{unit_of_measurement:'°C'},last_updated:new Date(now-90*60000).toISOString(),last_reported:new Date(now-60000).toISOString()}};
+ assert.equal(tyreAdvice(block,states,now).temperature,22);
+ delete states['sensor.outside'].last_reported;assert.equal(tyreAdvice(block,states,now).temperature,null);
+ const b={...block,pressure_advice:{...block.pressure_advice,max_temperature_age_minutes:120}};
+ assert.equal(tyreAdvice(b,states,now).temperature,22);
+ states['sensor.outside'].last_updated=new Date(now-121*60000).toISOString();assert.equal(tyreAdvice(b,states,now).temperature,null);
+ states['sensor.outside'].last_reported=new Date(now+10*60000).toISOString();assert.equal(tyreAdvice(b,states,now).temperature,null);
+});

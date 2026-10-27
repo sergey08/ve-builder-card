@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.4.0-beta.6';
+export const VERSION = '1.4.0-beta.7';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -163,7 +163,8 @@ export function tyreAdvice(block,states={},now=Date.now()){
  const location=automatic?(!locationState||['unknown','unavailable','none','null',''].includes(String(locationState).toLowerCase())?'unknown':locationState===(options.home_value||'home')?'home':'away'):'fixed';
  const temperatureEntity=location==='unknown'?'':location==='away'?options.away_temperature_entity:options.temperature_entity;
  const tempState=states[temperatureEntity],raw=number(tempState?.state),unit=tempState?.attributes?.unit_of_measurement;
- const age=now-Date.parse(tempState?.last_updated),fresh=Number.isFinite(age)&&age>=-120000&&age<=30*60000;
+ const maxAge=number(options.max_temperature_age_minutes),ageLimit=maxAge!==null&&maxAge>0?maxAge:30;
+ const age=now-Date.parse(tempState?.last_reported??tempState?.last_updated),fresh=Number.isFinite(age)&&age>=-120000&&age<=ageLimit*60000;
  const temperature=fresh&&raw!==null?(unit==='°C'?raw:unit==='°F'?(raw-32)*5/9:null):null;
  const trip=readingFreshness({enabled:true,timestamp_entity:options.trip_end_entity||'sensor.__no_trip',max_age_minutes:120},states,[],now);
  return {temperatureEntity,location,profile:options.profile==='full'?'full':'normal',recentTrip:trip.status==='fresh',heat:temperature!==null&&temperature>=30,temperature};
