@@ -1,5 +1,14 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+"Reutilizar apartados":"Reuse sections",
+"Copiar apartado":"Copy section",
+"Pegar apartado":"Paste section",
+"Apartado copiado":"Copied section",
+"Borrar copia temporal":"Clear temporary copy",
+"Apartado copiado. Abre otra tarjeta de este panel y pulsa Pegar apartado.":"Section copied. Open another card in this dashboard and select Paste section.",
+"Apartado pegado. Revisa sus entidades y pulsa Guardar.":"Section pasted. Review its entities and select Save.",
+"Copia un apartado desde sus botones y pégalo en otra tarjeta abierta en esta misma página. Conserva entidades, nombres y estilo. La copia temporal se borra al recargar; no usa el portapapeles del sistema.":"Copy a section using its buttons and paste it into another card opened on this same page. Preserves entities, names and appearance. The temporary copy clears on reload; it does not use the system clipboard.",
+
 "Origen de la temperatura":"Temperature source",
 "Entidad de ubicación del vehículo":"Vehicle location entity",
 "Estado que significa en casa":"State meaning at home",

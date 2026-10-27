@@ -37,3 +37,12 @@ test('device filter intersects device entities with permitted domains',()=>{
  assert.deepEqual(editor.entitySchema('entity',undefined,'car').selector.entity.include_entities,['sensor.a','switch.a']);
  assert.equal(editor.entitySchema('entity','sensor','').selector.entity.include_entities,undefined);
 });
+
+test('sections copy across editor instances with independent nested objects and unique IDs',()=>{
+ const source=new VEBuilderEditor(),target=new VEBuilderEditor();for(const e of [source,target]){e.render=()=>{};e.emit=()=>e.recordHistory();e.updateHistoryButtons=()=>{};e.setConfig({blocks:[]});}
+ const original={id:'block',type:'expenses',title:'Costs',prices:[{id:'price',entity:'sensor.price',colors:{enabled:true,warning:30}}],groups:[{id:'group',name:'Savings',fields:[{id:'value',entity:'sensor.savings'}]}]};
+ source.copySection(original);assert.equal(target.pasteSection(),true);const copy=target.config.blocks[0];assert.equal(copy.title,'Costs');assert.equal(copy.prices[0].entity,'sensor.price');
+ for(const [a,b]of [[copy,original],[copy.prices[0],original.prices[0]],[copy.groups[0],original.groups[0]],[copy.groups[0].fields[0],original.groups[0].fields[0]]])assert.notEqual(a.id,b.id);
+ copy.prices[0].colors.warning=999;assert.equal(original.prices[0].colors.warning,30);target.pasteSection();assert.equal(target.config.blocks[1].prices[0].colors.warning,30);assert.notEqual(copy.id,target.config.blocks[1].id);
+ target.travelHistory('undo');assert.equal(target.config.blocks.length,1);target.travelHistory('redo');assert.equal(target.config.blocks.length,2);
+});

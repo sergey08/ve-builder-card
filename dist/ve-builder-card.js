@@ -2,6 +2,15 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+"Reutilizar apartados":"Reuse sections",
+"Copiar apartado":"Copy section",
+"Pegar apartado":"Paste section",
+"Apartado copiado":"Copied section",
+"Borrar copia temporal":"Clear temporary copy",
+"Apartado copiado. Abre otra tarjeta de este panel y pulsa Pegar apartado.":"Section copied. Open another card in this dashboard and select Paste section.",
+"Apartado pegado. Revisa sus entidades y pulsa Guardar.":"Section pasted. Review its entities and select Save.",
+"Copia un apartado desde sus botones y pégalo en otra tarjeta abierta en esta misma página. Conserva entidades, nombres y estilo. La copia temporal se borra al recargar; no usa el portapapeles del sistema.":"Copy a section using its buttons and paste it into another card opened on this same page. Preserves entities, names and appearance. The temporary copy clears on reload; it does not use the system clipboard.",
+
 "Origen de la temperatura":"Temperature source",
 "Entidad de ubicación del vehículo":"Vehicle location entity",
 "Estado que significa en casa":"State meaning at home",
@@ -90,7 +99,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.4.0-beta.7';
+const VERSION = '1.4.0-beta.8';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -347,6 +356,8 @@ const bool=name=>({name,selector:{boolean:{}}});
 const LABELS={max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
 const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
+let copiedSection=null;
+
 class VEBuilderEditor extends HTMLElement {
   get lang(){return language(this.config,this._hass);}
   t(value){return translate(value,this.lang);}
@@ -376,6 +387,21 @@ class VEBuilderEditor extends HTMLElement {
     const labels={include_values:'Valores en aviso o crítico',include_tyres:'Presiones en aviso o crítico',include_openings:'Puertas, capó y maletero abiertos',include_stale:'Datos antiguos'};
     const form=this.form(panel,{include_values:true,include_tyres:true,include_openings:true,include_stale:true,...options},Object.keys(labels).map(bool),patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();});form.computeLabel=field=>this.t(labels[field.name]);
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Solo resume esta tarjeta y utiliza sus umbrales y entidades configurados. Desaparece cuando no hay avisos. Pulsa un aviso para ver detalles, sin ejecutar acciones.');panel.append(hint);
+  }
+  copySection(block){copiedSection=clone(block);this.copyFeedback=this.t('Apartado copiado. Abre otra tarjeta de este panel y pulsa Pegar apartado.');this.render();}
+  pasteSection(){
+    if(!copiedSection)return false;
+    const copy=clone(copiedSection);copy.id=uid();
+    for(const fields of [copy.fields,copy.prices])fields?.forEach(f=>f.id=uid());
+    copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});
+    this.config.blocks.push(copy);this.openKey=copy.id;this.copyFeedback=this.t('Apartado pegado. Revisa sus entidades y pulsa Guardar.');this.emit();this.render();return true;
+  }
+  sectionClipboard(parent){
+    const box=this.panel(parent,'section-clipboard','Reutilizar apartados');
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Copia un apartado desde sus botones y pégalo en otra tarjeta abierta en esta misma página. Conserva entidades, nombres y estilo. La copia temporal se borra al recargar; no usa el portapapeles del sistema.');box.append(hint);
+    const paste=this.button(box,'Pegar apartado',()=>this.pasteSection());paste.disabled=!copiedSection;
+    if(copiedSection){const label=document.createElement('p');label.className='muted';label.textContent=this.t('Apartado copiado')+': '+(copiedSection.title||this.t(TYPES[copiedSection.type]||'Bloque'));box.append(label);this.button(box,'Borrar copia temporal',()=>{copiedSection=null;this.copyFeedback='';this.render();});}
+    if(this.copyFeedback){const feedback=document.createElement('p');feedback.className='muted';feedback.setAttribute('role','status');feedback.textContent=this.copyFeedback;box.append(feedback);}
   }
   historyToolbar(parent){
     const bar=document.createElement('div');bar.className='toolbar';
@@ -546,6 +572,7 @@ class VEBuilderEditor extends HTMLElement {
     this.form(root,{language:'auto',...this.config},[text('title'),select('language',{auto:'Automatic / Automático',en:'English',es:'Español'})],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
     this.historyToolbar(root);
     this.alertsEditor(root);
+    this.sectionClipboard(root);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.wizardPanel(root);
     this.templates(root);
@@ -553,6 +580,7 @@ class VEBuilderEditor extends HTMLElement {
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
       this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
+      this.button(toolbar,'Copiar apartado',()=>this.copySection(block));
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });
     const add=document.createElement('div');add.className='add';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de bloque'));for(const [type,label]of Object.entries(TYPES)){const option=document.createElement('option');option.value=type;option.textContent=this.t(label);picker.append(option);}add.append(picker);
