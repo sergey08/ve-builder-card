@@ -35,7 +35,7 @@ test('charging cable distinguishes disconnected, idle, active and missing power'
  const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
  const Card=registry.get('ve-builder-card');
- for(const [plug,charging,power,visible,animated]of [['off','Idle','0',false,false],['on','Idle','0',true,false],['on','Charging','0',true,false],['on','Charging','7400',true,true],['on','Charging','unavailable',true,false]]){
+ for(const [plug,charging,power,visible,animated]of [['off','Idle','0',false,false],['on','Idle','0',true,false],['on','Connected','2664',true,true],['on','Charging','0',true,false],['on','Charging','7400',true,true],['on','Charging','unavailable',true,false]]){
   const card=new Card();card.setConfig({blocks:[{id:'start',type:'start',image:'/local/car.png',connector_entity:'binary_sensor.plug',charging_entity:'sensor.charging',power_entity:'sensor.power',fields:[]}]});
   card.hass={language:'en',states:{'binary_sensor.plug':{state:plug},'sensor.charging':{state:charging},'sensor.power':{state:power}}};
   assert.equal(card.shadowRoot.innerHTML.includes('<svg class="charge-cable'),visible);
@@ -111,4 +111,14 @@ test('distributed card includes every stylesheet, including colours and opening 
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
  const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'fields',fields:[{entity:'sensor.battery'}]}]});card.hass={language:'en',states:{'sensor.battery':{state:'48'}}};
  for(const [name,css]of Object.entries({styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles}))assert.ok(card.shadowRoot.innerHTML.includes(css),name+' must reach the browser');
+});
+
+test('real charging power overrides delayed vehicle status and unavailable power stays explicit',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'start',image:'/local/car.png',connector_entity:'binary_sensor.plug',charging_entity:'sensor.charging',power_entity:'sensor.power',fields:[]}]});
+ const states={'binary_sensor.plug':{state:'on'},'sensor.charging':{state:'Connected'},'sensor.power':{state:'2664'}};card.hass={language:'es',states};assert.match(card.shadowRoot.innerHTML,/>Cargando</);assert.match(card.shadowRoot.innerHTML,/cable-animated/);
+ card.hass={language:'es',states:{...states,'sensor.power':{state:'0'},'sensor.charging':{state:'Charging'}}};assert.match(card.shadowRoot.innerHTML,/>Conectado · Sin carga</);assert.doesNotMatch(card.shadowRoot.innerHTML,/cable-animated/);
+ card.hass={language:'es',states:{...states,'sensor.power':{state:'unavailable'}}};assert.match(card.shadowRoot.innerHTML,/>Conectado · Sin datos de potencia</);assert.doesNotMatch(card.shadowRoot.innerHTML,/cable-animated/);
+ card.setConfig({blocks:[{type:'start',image:'/local/car.png',charging_entity:'sensor.charging',fields:[]}]});card.hass={language:'en',states:{'sensor.charging':{state:'Charging'}}};assert.match(card.shadowRoot.innerHTML,/>Charging</);
 });

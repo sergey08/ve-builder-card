@@ -40,7 +40,7 @@ Assign each tyre pressure sensor and choose bar, kPa or psi. Optionally assign g
 
 ### Charging display
 
-The cable remains visible and stationary while connected without energy flow. Set **Actual charging power** to distinguish charging from waiting: with a power entity, animation requires the charging state and positive power. Without one, it follows the charging state alone. Reduced-motion preferences are respected.
+The cable remains visible and stationary while connected without energy flow. Set **Actual charging power** to distinguish charging from waiting: with a power entity, positive power determines charging and animation, even when the vehicle status is delayed. Zero power means waiting; unavailable power is identified explicitly. Without a power entity, the display follows the charging state. Reduced-motion preferences are respected.
 
 ### Images and languages
 
@@ -116,7 +116,7 @@ Asigna cada sensor de presión y elige bar, kPa o psi. Opcionalmente, añade la 
 
 ### Visualización de la carga
 
-La manguera permanece visible y quieta cuando el coche está conectado sin recibir energía. Configura **Potencia real de carga** para distinguir la carga de la espera: si hay una entidad de potencia, la animación requiere estado de carga y potencia positiva. Sin ella, sigue únicamente el estado de carga. Se respeta la preferencia de movimiento reducido.
+La manguera permanece visible y quieta cuando el coche está conectado sin recibir energía. Configura **Potencia real de carga** para distinguir la carga de la espera: si hay una entidad de potencia, su lectura positiva determina la carga y la animación, aunque el estado del vehículo llegue con retraso. Con potencia cero queda en espera y se indica expresamente si la potencia no está disponible. Sin entidad de potencia, sigue el estado de carga. Se respeta la preferencia de movimiento reducido.
 
 ### Imágenes e idiomas
 

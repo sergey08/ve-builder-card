@@ -1,5 +1,6 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Conectado · Sin datos de potencia':'Connected · Power unavailable',
  'Rec. en frío':'Cold rec.','Presiones recomendadas':'Recommended pressures','Presión recomendada delante · bar (en frío)':'Recommended front pressure · bar (cold)','Presión recomendada detrás · bar (en frío)':'Recommended rear pressure · bar (cold)',
  'Introduce las presiones en frío de la etiqueta del vehículo. Se guardan en bar y se convierten a la unidad mostrada. Vacío o 0 oculta la referencia.':'Enter cold pressures from the vehicle label. Stored in bar and converted to the display unit. Empty or 0 hides the reference.',
 
