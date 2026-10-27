@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.2.2';
+export const VERSION = '1.3.0-beta.1';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -112,4 +112,24 @@ export function valueSeverity(value,colors={}) {
  if(warning!==null&&critical!==null&&(colors.direction==='low'?critical>warning:critical<warning))return '';
  const hit=threshold=>threshold!==null&&(colors.direction==='low'?n<=threshold:n>=threshold);
  return hit(critical)?'critical':hit(warning)?'warning':'normal';
+}
+
+export function readingFreshness(options={},states={},entities=[],now=Date.now()) {
+ if(!options.enabled)return {status:'disabled'};
+ const parse=value=>{if(value===null||value===undefined||String(value).trim()==='')return NaN;const n=Number(value);return Number.isFinite(n)?n>=1e12?n:n>=1e9?n*1000:NaN:Date.parse(value);};
+ const source=options.timestamp_entity?'sensor':'changes';
+ let timestamp;
+ if(options.timestamp_entity){timestamp=parse(states[options.timestamp_entity]?.state);}
+ else {const ids=[...new Set(entities.filter(Boolean))];const times=ids.map(id=>parse(states[id]?.last_updated));if(!ids.length||times.some(t=>!Number.isFinite(t)))return {status:'unknown',source};timestamp=Math.min(...times);}
+ if(!Number.isFinite(timestamp)||!Number.isFinite(now)||timestamp>now+120000)return {status:'unknown',source};
+ const ageMinutes=Math.max(0,(now-timestamp)/60000),limit=number(options.max_age_minutes);
+ return {status:ageMinutes>=(limit!==null&&limit>0?limit:60)?'stale':'fresh',source,timestamp,ageMinutes};
+}
+export function freshnessText(info,lang='es') {
+ const en=lang==='en';if(info.status==='disabled')return '';
+ if(info.status==='unknown')return en?'Reading time unavailable':'Fecha de lectura no disponible';
+ const minutes=Math.floor(info.ageMinutes),amount=minutes<60?minutes:minutes<1440?Math.floor(minutes/60):Math.floor(minutes/1440),unit=minutes<60?'min':minutes<1440?'h':en?'d':'d';
+ const ago=minutes<1?(en?'just now':'ahora'):(en?`${amount} ${unit} ago`:`hace ${amount} ${unit}`);
+ const label=info.source==='changes'?(en?'Oldest state change':'Cambio más antiguo'):(en?'Last reading':'Última lectura');
+ return `${info.status==='stale'?(en?'Old data · ':'Datos antiguos · '):''}${label} · ${ago}`;
 }

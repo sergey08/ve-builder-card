@@ -17,3 +17,14 @@ Disponible en la versión estable 1.2.0: colores por valor, umbrales de presión
 - Vehicle map customisation: orientation, colours and indicator positions.
 
 Available in stable 1.2.0: value-based colours, per-axle pressure thresholds and recommended cold pressure references.
+
+## En beta / In beta
+
+- Antigüedad de lecturas y atenuación de valores antiguos / Reading age and dimming of old values: 1.3.0-beta.1.
+
+## Propuestas adicionales / Additional proposals
+
+- Colores para estados no numéricos / Colours for non-numeric states.
+- Resumen de avisos / Alert summary.
+- Intervalo de presión alta y baja / High and low pressure range.
+- Perfiles y fases de carga / Charging profiles and phases.

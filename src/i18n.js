@@ -1,5 +1,10 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Antigüedad de las lecturas':'Reading age','Mostrar antigüedad de las lecturas':'Show reading age','Considerar antiguo a partir de · minutos':'Consider old after · minutes','Sensor con la fecha de lectura (opcional)':'Reading timestamp sensor (optional)',
+ 'Basado en el cambio más antiguo de las entidades del apartado. Un valor sin cambios puede seguir siendo válido; configura un sensor de fecha para conocer la lectura real.':'Based on the oldest state change in this block. An unchanged value may still be valid; configure a timestamp sensor to track actual readings.',
+ 'Basado en la fecha indicada por el sensor seleccionado; que el coche esté dormido no implica una avería.':'Based on the selected sensor timestamp; a sleeping vehicle does not imply a fault.',
+ 'Elige un sensor cuyo valor sea una fecha de lectura. Sin él se usa el cambio más antiguo de las entidades; un valor estable no demuestra que el coche haya dejado de informar. Los datos antiguos se atenúan sin bloquear controles.':'Choose a sensor whose value is a reading timestamp. Without one, the oldest entity state change is used; an unchanged value does not prove that the vehicle stopped reporting. Old readings are dimmed without blocking controls.',
+
  'Conectado · Sin datos de potencia':'Connected · Power unavailable',
  'Rec. en frío':'Cold rec.','Presiones recomendadas':'Recommended pressures','Presión recomendada delante · bar (en frío)':'Recommended front pressure · bar (cold)','Presión recomendada detrás · bar (en frío)':'Recommended rear pressure · bar (cold)',
  'Introduce las presiones en frío de la etiqueta del vehículo. Se guardan en bar y se convierten a la unidad mostrada. Vacío o 0 oculta la referencia.':'Enter cold pressures from the vehicle label. Stored in bar and converted to the display unit. Empty or 0 hides the reference.',

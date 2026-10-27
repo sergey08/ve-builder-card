@@ -52,3 +52,11 @@ export const valueColorStyles = `
 `;
 
 export const recommendationStyles = `.car .recommended{fill:var(--secondary-text-color);font-size:9px;font-weight:400}`;
+
+export const freshnessStyles = `
+.reading-age{margin:6px 18px 10px;font-size:11px;line-height:1.5;color:var(--secondary-text-color)}
+.reading-age.reading-old{color:var(--warning-color,#b77900)}
+.data-stale .configurable-field .field-content,.data-stale .car .tyre .pressure,
+.data-stale .expense-prices strong,.data-stale .expense-values strong,
+.data-stale .power-primary strong,.data-stale .power-detail strong{opacity:.65}
+`;

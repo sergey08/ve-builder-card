@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import vm from 'node:vm';
-import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles} from '../src/styles.js';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles} from '../src/styles.js';
 test('distributed bundle renders configured cards with real state data',()=>{
  execFileSync(process.execPath,['scripts/build.mjs']);
  const registry=new Map();
@@ -110,7 +110,7 @@ test('distributed card includes every stylesheet, including colours and opening 
  const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
  const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'fields',fields:[{entity:'sensor.battery'}]}]});card.hass={language:'en',states:{'sensor.battery':{state:'48'}}};
- for(const [name,css]of Object.entries({styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles}))assert.ok(card.shadowRoot.innerHTML.includes(css),name+' must reach the browser');
+ for(const [name,css]of Object.entries({styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles}))assert.ok(card.shadowRoot.innerHTML.includes(css),name+' must reach the browser');
 });
 
 test('real charging power overrides delayed vehicle status and unavailable power stays explicit',()=>{
@@ -121,4 +121,23 @@ test('real charging power overrides delayed vehicle status and unavailable power
  card.hass={language:'es',states:{...states,'sensor.power':{state:'0'},'sensor.charging':{state:'Charging'}}};assert.match(card.shadowRoot.innerHTML,/>Conectado · Sin carga</);assert.doesNotMatch(card.shadowRoot.innerHTML,/cable-animated/);
  card.hass={language:'es',states:{...states,'sensor.power':{state:'unavailable'}}};assert.match(card.shadowRoot.innerHTML,/>Conectado · Sin datos de potencia</);assert.doesNotMatch(card.shadowRoot.innerHTML,/cable-animated/);
  card.setConfig({blocks:[{type:'start',image:'/local/car.png',charging_entity:'sensor.charging',fields:[]}]});card.hass={language:'en',states:{'sensor.charging':{state:'Charging'}}};assert.match(card.shadowRoot.innerHTML,/>Charging</);
+});
+test('freshness timer updates labels without repainting and cleans up on disconnect',()=>{
+ const registry=new Map();let timers=0,cleared=0,callback,listener,updates=0;
+ class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ const window={setInterval(fn,ms){assert.equal(ms,60000);timers++;callback=fn;return timers;},clearInterval(){cleared++;}};
+ const document={visibilityState:'visible',addEventListener(name,fn){listener=fn;},removeEventListener(name,fn){assert.equal(listener,fn);listener=null;}};
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window,document,console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.render=()=>{};card.updateFreshness=()=>updates++;card.isConnected=true;const config={blocks:[{type:'fields',freshness:{enabled:true},fields:[]}]};
+ card.setConfig(config);card.connectedCallback();assert.equal(timers,1);assert.equal(updates,1);callback();assert.equal(updates,2);document.visibilityState='hidden';callback();assert.equal(updates,2);document.visibilityState='visible';listener();assert.equal(updates,3);
+ card.disconnectedCallback();assert.equal(cleared,1);assert.equal(listener,null);card.connectedCallback();assert.equal(timers,2);card.setConfig({blocks:[]});assert.equal(cleared,2);
+});
+test('freshness renders an old-reading badge without changing charging status or controls',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'start',image:'/local/car.png',power_entity:'sensor.power',connector_entity:'binary_sensor.plug',fields:[{entity:'sensor.battery'}],freshness:{enabled:true,max_age_minutes:60,timestamp_entity:'sensor.timestamp'}}]});
+ card.hass={language:'es',states:{'sensor.timestamp':{state:'2020-01-01T00:00:00Z'},'sensor.power':{state:'2664'},'binary_sensor.plug':{state:'on'},'sensor.battery':{state:'48'}}};
+ assert.match(card.shadowRoot.innerHTML,/class="data-stale"/);assert.match(card.shadowRoot.innerHTML,/Datos antiguos/);assert.match(card.shadowRoot.innerHTML,/>Cargando</);assert.match(card.shadowRoot.innerHTML,/cable-animated/);
+ const fakeBlock={type:'fields',image:'/local/car.png',note:'image.png',fields:[{entity:'sensor.battery'}],freshness:{enabled:true}};assert.equal(card.blockFreshness(fakeBlock).status,'unknown');
+ card._hass.states['sensor.battery'].last_updated=new Date().toISOString();assert.equal(card.blockFreshness(fakeBlock).status,'fresh');
 });

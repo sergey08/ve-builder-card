@@ -1,6 +1,6 @@
 import {language,translate} from './i18n.js';
-import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity} from './core.js';
-import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles} from './styles.js';
+import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText} from './core.js';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles} from './styles.js';
 import './editor.js';
 
 export class VEBuilderCard extends HTMLElement {
@@ -8,8 +8,30 @@ export class VEBuilderCard extends HTMLElement {
   t(value){return translate(value,this.lang);}
   static getConfigElement(){return document.createElement('ve-builder-card-editor');}
   static getStubConfig(){return {type:'custom:ve-builder-card',title:'Mi vehículo',blocks:[newBlock('start')]};}
-  setConfig(config){this.config=normalize(config);this._dirty=true;this._configSignature=JSON.stringify(this.config);this._entities=new Set(this._configSignature.match(/[a-z_]+\.[a-z0-9_]+/g)??[]);if(!this.shadowRoot)this.attachShadow({mode:'open'});this.render();}
+  setConfig(config){this.config=normalize(config);this._dirty=true;this._configSignature=JSON.stringify(this.config);this._entities=new Set(this._configSignature.match(/[a-z_]+\.[a-z0-9_]+/g)??[]);if(!this.shadowRoot)this.attachShadow({mode:'open'});this.render();this.syncFreshnessTimer();}
   set hass(hass){this._hass=hass;this.render();}
+  connectedCallback(){this.syncFreshnessTimer();this.updateFreshness();}
+  disconnectedCallback(){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}}
+  syncFreshnessTimer(){
+    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled);
+    if(!enabled){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}return;}
+    if(!this.isConnected||typeof window.setInterval!=='function'||this._freshnessTimer)return;
+    this._freshnessTimer=window.setInterval(()=>{if(document.visibilityState!=='hidden')this.updateFreshness();},60000);
+    this._visibilityHandler=()=>{if(document.visibilityState!=='hidden')this.updateFreshness();};document.addEventListener('visibilitychange',this._visibilityHandler);
+  }
+  blockFreshness(block){
+    const entities=[];const collect=(value,key='')=>{if(value&&typeof value==='object')for(const [k,v]of Object.entries(value))collect(v,k);else if(typeof value==='string'&&(key==='entity'||key.endsWith('_entity')||Object.hasOwn(POSITIONS,key))&&/^[a-z_]+\.[a-z0-9_]+$/.test(value))entities.push(value);};if(block.type==='start')entities.push(...(block.fields??[]).map(f=>f.entity));else collect(block);
+    return readingFreshness(block.freshness,this.state,entities);
+  }
+  freshnessBadge(block,info){
+    if(info.status==='disabled')return '';
+    const title=info.source==='changes'?this.t('Basado en el cambio más antiguo de las entidades del apartado. Un valor sin cambios puede seguir siendo válido; configura un sensor de fecha para conocer la lectura real.'):this.t('Basado en la fecha indicada por el sensor seleccionado; que el coche esté dormido no implica una avería.');
+    return `<div class="reading-age ${info.status==='stale'?'reading-old':''}" data-freshness="${escape(block.id)}" title="${escape(title)}">${escape(freshnessText(info,this.lang))}</div>`;
+  }
+  updateFreshness(){
+    if(!this.config||!this._hass||!this.shadowRoot)return;
+    for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=freshnessText(info,this.lang);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
+  }
   getCardSize(){return Math.max(2,(this.config?.blocks.length??1)*2);}
   getGridOptions(){return {columns:12,rows:'auto'};}
   get state(){return this._hass?.states??{};}
@@ -87,9 +109,9 @@ export class VEBuilderCard extends HTMLElement {
     this._dirty=false;this._renderStates=states;this._renderLanguage=this.lang;this._renderUser=this._hass.user;
     const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
-      return `<section data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
+      const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
