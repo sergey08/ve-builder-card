@@ -1,5 +1,16 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+"Origen de la temperatura":"Temperature source",
+"Entidad de ubicación del vehículo":"Vehicle location entity",
+"Estado que significa en casa":"State meaning at home",
+"Temperatura exterior del vehículo · fuera de casa":"Vehicle outside temperature · away from home",
+"Sensor fijo":"Fixed sensor",
+"Según la ubicación":"Based on location",
+"Ubicación desconocida · sin temperatura de referencia":"Unknown location · no reference temperature",
+"En casa":"At home",
+"Fuera de casa":"Away from home",
+"Según la ubicación: usa el sensor exterior de casa cuando coincida el estado configurado; fuera usa exclusivamente el sensor del vehículo. Con ubicación desconocida no selecciona temperatura. No reutiliza la temperatura de casa fuera de ella.":"Based on location: uses the home outside sensor when the configured state matches; away uses only the vehicle sensor. Unknown location selects no temperature. Home temperature is never reused away from home.",
+
  "Más información":"More information", "Sensor de temperatura":"Temperature sensor",
  "Última lectura":"Last reading",
  "Última actualización del vehículo":"Last vehicle update", "Último cambio":"Last change",

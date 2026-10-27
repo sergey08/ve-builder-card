@@ -195,3 +195,14 @@ test('compact advice starts collapsed and summary separates warning and critical
  card.hass={...card._hass,language:'en'};assert.match(card.alertSummary(),/2 critical · 1 warning/);assert.match(card.pressureAdvice(card.config.blocks[1]),/More information/);
  card._hass.states['sensor.a']={state:'50'};card._hass.states['sensor.b']={state:'50'};assert.match(card.alertSummary(),/1 warning/);assert.doesNotMatch(card.alertSummary(),/has-critical/);
 });
+
+test('location-based temperature rendering identifies selected source and unknown location',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))(),block={type:'tyres',pressure_advice:{enabled:true,temperature_mode:'location',location_entity:'person.car',temperature_entity:'sensor.home',away_temperature_entity:'sensor.car'}};
+ card.setConfig({blocks:[block]});card.hass={language:'es',states:{'person.car':{state:'home'},'sensor.home':{state:'22',last_updated:new Date().toISOString(),attributes:{unit_of_measurement:'°C',friendly_name:'Aerotermia'}}}};
+ assert.match(card.pressureAdvice(block),/22,0 °C · En casa/);assert.match(card.pressureAdvice(block),/Aerotermia/);
+ card._hass.states['person.car']={state:'not_home'};assert.match(card.pressureAdvice(block),/Sin lectura reciente válida · Fuera de casa/);assert.doesNotMatch(card.pressureAdvice(block),/22,0 °C|Aerotermia/);
+ card._hass.states['person.car']={state:'unknown'};assert.match(card.pressureAdvice(block),/Ubicación desconocida/);
+ card._hass.language='en';assert.match(card.pressureAdvice(block),/Unknown location/);
+});

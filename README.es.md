@@ -36,6 +36,8 @@ Empieza con una plantilla de vehículo eléctrico, vehículo de combustión, gas
 
 ### Consejos de presión y carga
 
+Desde **1.4.0-beta.6**, puedes seleccionar **Origen de la temperatura → Según la ubicación**. Configura la entidad de ubicación, su estado en casa (por defecto `home`), el sensor exterior de casa y el del vehículo para fuera. No utiliza temperatura de casa fuera de ella. Si la ubicación es desconocida o el sensor seleccionado no tiene lectura reciente válida, lo indica sin sustituirlo por el de otra ubicación. El modo sensor fijo sigue disponible.
+
 Desde **1.4.0-beta.5**, perfil y temperatura se presentan de forma compacta; el origen del sensor y los consejos están en **Más información**. El resumen distingue avisos críticos y normales.
 
 El cuadro de consejos muestra la temperatura exterior utilizada y el nombre del sensor; indica expresamente si falta una lectura válida reciente. Disponible en **1.4.0-beta.3**.

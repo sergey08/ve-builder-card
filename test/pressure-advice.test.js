@@ -23,3 +23,21 @@ test('heat advice requires a recent temperature with recognised units and conver
  for(const states of [temp('35','K'),temp('unavailable'),temp('35','°C','2026-10-27T10:00:00Z'),temp('35','°C','2026-10-27T13:00:00Z')]){assert.equal(tyreAdvice(block,states,now).heat,false);assert.equal(tyreAdvice(block,states,now).temperature,null);}
  assert.equal(recommendedPressure(block,'front'),2.5);
 });
+
+test('location selects home and vehicle temperatures without cross-location fallback',()=>{
+ const b={pressure_advice:{enabled:true,temperature_mode:'location',location_entity:'person.car',temperature_entity:'sensor.home',away_temperature_entity:'sensor.car'}};
+ const states={'person.car':{state:'home'},'sensor.home':{state:'35',attributes:{unit_of_measurement:'°C'},last_updated:new Date(now).toISOString()},'sensor.car':{state:'20',attributes:{unit_of_measurement:'°C'},last_updated:new Date(now).toISOString()}};
+ assert.equal(tyreAdvice(b,states,now).temperature,35);assert.equal(tyreAdvice(b,states,now).location,'home');
+ states['person.car']={state:'not_home'};assert.equal(tyreAdvice(b,states,now).temperature,20);assert.equal(tyreAdvice(b,states,now).temperatureEntity,'sensor.car');
+ states['sensor.car']={state:'unavailable'};assert.equal(tyreAdvice(b,states,now).temperature,null);assert.equal(tyreAdvice(b,states,now).heat,false);
+});
+test('unknown location suppresses temperature and named zones count as away',()=>{
+ const b={pressure_advice:{enabled:true,temperature_mode:'location',location_entity:'person.car',temperature_entity:'sensor.home',away_temperature_entity:'sensor.car'}};
+ for(const v of [undefined,'unknown','unavailable','none']){const a=tyreAdvice(b,{'person.car':{state:v}},now);assert.equal(a.location,'unknown');assert.equal(a.temperatureEntity,'');assert.equal(a.temperature,null);}
+ assert.equal(tyreAdvice(b,{'person.car':{state:'Work'}},now).location,'away');
+});
+test('location supports custom home states and fixed configurations stay compatible',()=>{
+ const b={pressure_advice:{enabled:true,temperature_mode:'location',home_value:'on',location_entity:'input_boolean.car',temperature_entity:'sensor.home'}};
+ assert.equal(tyreAdvice(b,{'input_boolean.car':{state:'on'}},now).location,'home');assert.equal(tyreAdvice(b,{'input_boolean.car':{state:'off'}},now).location,'away');
+ assert.equal(tyreAdvice(block,{},now).location,'fixed');assert.equal(tyreAdvice(block,{},now).temperatureEntity,'sensor.outside');
+});
