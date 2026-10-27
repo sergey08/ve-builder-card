@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import vm from 'node:vm';
-import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles} from '../src/styles.js';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles} from '../src/styles.js';
 test('distributed bundle renders configured cards with real state data',()=>{
  execFileSync(process.execPath,['scripts/build.mjs']);
  const registry=new Map();
@@ -110,7 +110,7 @@ test('distributed card includes every stylesheet, including colours and opening 
  const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
  const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[{type:'fields',fields:[{entity:'sensor.battery'}]}]});card.hass={language:'en',states:{'sensor.battery':{state:'48'}}};
- for(const [name,css]of Object.entries({styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles}))assert.ok(card.shadowRoot.innerHTML.includes(css),name+' must reach the browser');
+ for(const [name,css]of Object.entries({styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles}))assert.ok(card.shadowRoot.innerHTML.includes(css),name+' must reach the browser');
 });
 
 test('real charging power overrides delayed vehicle status and unavailable power stays explicit',()=>{
@@ -140,4 +140,18 @@ test('freshness renders an old-reading badge without changing charging status or
  assert.match(card.shadowRoot.innerHTML,/class="data-stale"/);assert.match(card.shadowRoot.innerHTML,/Datos antiguos/);assert.match(card.shadowRoot.innerHTML,/>Cargando</);assert.match(card.shadowRoot.innerHTML,/cable-animated/);
  const fakeBlock={type:'fields',image:'/local/car.png',note:'image.png',fields:[{entity:'sensor.battery'}],freshness:{enabled:true}};assert.equal(card.blockFreshness(fakeBlock).status,'unknown');
  card._hass.states['sensor.battery'].last_updated=new Date().toISOString();assert.equal(card.blockFreshness(fakeBlock).status,'fresh');
+});
+
+test('alert summary escapes labels, opens entity details only and keeps expanded state on age refresh',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({alerts:{enabled:true},blocks:[{type:'fields',fields:[{entity:'sensor.battery',name:'<img onerror=bad>',colors:{enabled:true,direction:'low',warning:30,critical:15}}]}]});
+ card.hass={language:'es',states:{'sensor.battery':{state:'10',attributes:{unit_of_measurement:'%'}}}};
+ assert.match(card.alertSummary(),/has-critical/);assert.match(card.alertSummary(),/1 valor en aviso/);assert.match(card.alertSummary(),/&lt;img onerror=bad&gt;/);assert.doesNotMatch(card.alertSummary(),/<img|data-field=/);
+ let details={open:true},writes=0,opened;const host={_alertMarkup:'old',contains:()=>true,querySelector:()=>details,set innerHTML(v){writes++;details={open:false};},get innerHTML(){return '';}};
+ card.shadowRoot.querySelector=()=>host;card.moreInfo=id=>opened=id;card.bindAlertSummary();
+ host.onclick({target:{closest:()=>({dataset:{alertEntity:'sensor.battery'}})}});assert.equal(opened,'sensor.battery');
+ card.refreshAlertSummary();assert.equal(writes,0);
+ card._hass.states['sensor.battery']={state:'20'};card.refreshAlertSummary();assert.equal(writes,1);assert.equal(details.open,true);
+ card._hass.states['sensor.battery']={state:'50'};assert.equal(card.alertSummary(),'');
 });

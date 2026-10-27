@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.3.0';
+export const VERSION = '1.4.0-beta.1';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -132,4 +132,22 @@ export function freshnessText(info,lang='es') {
  const ago=minutes<1?(en?'just now':'ahora'):(en?`${amount} ${unit} ago`:`hace ${amount} ${unit}`);
  const label=info.source==='changes'?(en?'Oldest state change':'Cambio más antiguo'):(en?'Last reading':'Última lectura');
  return `${info.status==='stale'?(en?'Old data · ':'Datos antiguos · '):''}${label} · ${ago}`;
+}
+
+export function readingEntities(block){
+ if(block.type==='start')return (block.fields??[]).map(f=>f.entity).filter(Boolean);
+ const entities=[];const collect=(value,key='')=>{if(value&&typeof value==='object')for(const [k,v]of Object.entries(value))collect(v,k);else if(typeof value==='string'&&(key==='entity'||key.endsWith('_entity')||Object.hasOwn(POSITIONS,key))&&/^[a-z_]+\.[a-z0-9_]+$/.test(value))entities.push(value);};collect(block);return [...new Set(entities)];
+}
+export function collectCardAlerts(config,states={},lang='es',now=Date.now()){
+ const options=config.alerts??{};if(!options.enabled)return [];
+ const alerts=new Map();const add=alert=>{const key=alert.kind+':'+(alert.entity||alert.block);const old=alerts.get(key);if(!old||alert.severity==='critical')alerts.set(key,alert);};
+ for(const block of config.blocks??[]){
+  if(options.include_values!==false){const fields=[...(block.fields??[]),...(block.prices??[]),...(block.groups??[]).flatMap(g=>g.fields??[])];for(const f of fields){const state=states[f.entity],severity=valueSeverity(state?.state,f.colors);if(['warning','critical'].includes(severity))add({kind:'value',entity:f.entity,block:block.id,severity,label:f.name||state?.attributes?.friendly_name||f.entity,value:stateText(state,f,lang)});}}
+  if(block.type==='tyres'){
+   if(options.include_tyres!==false){const unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';for(const [key,label]of Object.entries(POSITIONS)){const entity=block.positions?.[key],state=states[entity],n=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),severity=valueSeverity(n,block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors);if(['warning','critical'].includes(severity))add({kind:'tyre',entity,block:block.id,severity,label:translate(label,lang),value:format(n,block.decimals??2,lang)+' '+unit});}}
+   if(options.include_openings!==false)for(const [key,label]of Object.entries(BODY_PARTS)){const f=block.body_parts?.[key];if(f?.entity&&openingState(states[f.entity],f)==='open')add({kind:'opening',entity:f.entity,block:block.id,severity:'warning',label:f.name||translate(label,lang),value:translate('Abierto',lang)});}
+  }
+  if(options.include_stale!==false){const info=readingFreshness(block.freshness,states,readingEntities(block),now);if(info.status==='stale')add({kind:'stale',entity:block.freshness?.timestamp_entity||'',block:block.id,severity:'warning',label:block.title||translate(TYPES[block.type]||'Información',lang),value:freshnessText(info,lang)});}
+ }
+ return [...alerts.values()].sort((a,b)=>(b.severity==='critical')-(a.severity==='critical'));
 }

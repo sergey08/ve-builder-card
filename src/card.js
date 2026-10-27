@@ -1,6 +1,6 @@
 import {language,translate} from './i18n.js';
-import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText} from './core.js';
-import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles} from './styles.js';
+import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,collectCardAlerts} from './core.js';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles} from './styles.js';
 import './editor.js';
 
 export class VEBuilderCard extends HTMLElement {
@@ -20,8 +20,7 @@ export class VEBuilderCard extends HTMLElement {
     this._visibilityHandler=()=>{if(document.visibilityState!=='hidden')this.updateFreshness();};document.addEventListener('visibilitychange',this._visibilityHandler);
   }
   blockFreshness(block){
-    const entities=[];const collect=(value,key='')=>{if(value&&typeof value==='object')for(const [k,v]of Object.entries(value))collect(v,k);else if(typeof value==='string'&&(key==='entity'||key.endsWith('_entity')||Object.hasOwn(POSITIONS,key))&&/^[a-z_]+\.[a-z0-9_]+$/.test(value))entities.push(value);};if(block.type==='start')entities.push(...(block.fields??[]).map(f=>f.entity));else collect(block);
-    return readingFreshness(block.freshness,this.state,entities);
+    return readingFreshness(block.freshness,this.state,readingEntities(block));
   }
   freshnessBadge(block,info){
     if(info.status==='disabled')return '';
@@ -31,7 +30,17 @@ export class VEBuilderCard extends HTMLElement {
   updateFreshness(){
     if(!this.config||!this._hass||!this.shadowRoot)return;
     for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=freshnessText(info,this.lang);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
+    this.refreshAlertSummary();
   }
+  alertSummary(){
+    const alerts=collectCardAlerts(this.config,this.state,this.lang);if(!alerts.length)return '';
+    const counts={};for(const a of alerts)counts[a.kind]=(counts[a.kind]??0)+1;
+    const labels=this.lang==='en'?{tyre:['tyre alert','tyre alerts'],opening:['open part','open parts'],value:['value alert','value alerts'],stale:['old reading','old readings']}:{tyre:['neumático en aviso','neumáticos en aviso'],opening:['apertura','aperturas'],value:['valor en aviso','valores en aviso'],stale:['lectura antigua','lecturas antiguas']};
+    const summary=Object.entries(counts).map(([kind,n])=>n+' '+labels[kind][n===1?0:1]).join(' · ');
+    return `<details class="alert-summary ${alerts.some(a=>a.severity==='critical')?'has-critical':''}"><summary><ha-icon icon="mdi:alert-outline"></ha-icon><span>${escape(summary)}</span></summary><div class="alert-items">${alerts.map(a=>{const label=a.label+': '+a.value;return a.entity&&this.state[a.entity]?`<button type="button" class="alert-item ${a.severity==='critical'?'alert-critical':''}" data-alert-entity="${escape(a.entity)}"><ha-icon icon="${a.severity==='critical'?'mdi:alert-circle-outline':'mdi:alert-outline'}"></ha-icon><span>${escape(label)}</span><ha-icon icon="mdi:chevron-right"></ha-icon></button>`:`<p class="alert-item">${escape(label)}</p>`;}).join('')}<p class="alert-note">${this.t('Según las últimas lecturas recibidas. Pulsa un aviso para ver la entidad; no se envían órdenes.')}</p></div></details>`;
+  }
+  bindAlertSummary(){const host=this.shadowRoot.querySelector?.('[data-alert-summary]');if(!host)return;host._alertMarkup=this.alertSummary();host.onclick=event=>{const button=event.target.closest?.('[data-alert-entity]');if(button&&host.contains(button))this.moreInfo(button.dataset.alertEntity);};}
+  refreshAlertSummary(){const host=this.shadowRoot.querySelector?.('[data-alert-summary]');if(!host)return;const html=this.alertSummary();if(host._alertMarkup===html)return;const open=host.querySelector('details')?.open;host.innerHTML=html;host._alertMarkup=html;if(open&&host.querySelector('details'))host.querySelector('details').open=true;}
   getCardSize(){return Math.max(2,(this.config?.blocks.length??1)*2);}
   getGridOptions(){return {columns:12,rows:'auto'};}
   get state(){return this._hass?.states??{};}
@@ -110,9 +119,11 @@ export class VEBuilderCard extends HTMLElement {
     const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
+    const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
+    this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
     this.shadowRoot.querySelectorAll('[data-entity]').forEach(el=>{const open=()=>this.moreInfo(el.dataset.entity);el.addEventListener('click',open);el.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();open();}});});

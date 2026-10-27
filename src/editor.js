@@ -31,6 +31,14 @@ export class VEBuilderEditor extends HTMLElement {
   updateHistoryButtons(){
     for(const [key,list]of [['undo',this.history],['redo',this.future]]){const button=this.shadowRoot?.querySelector('[data-history="'+key+'"]');if(button)button.disabled=!list?.length;}
   }
+  alertsEditor(parent){
+    const panel=this.panel(parent,'alerts-summary','Resumen de avisos');const options=this.config.alerts??{};
+    const toggle=this.form(panel,{enabled:!!options.enabled},[bool('enabled')],patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();this.render();});toggle.computeLabel=()=>this.t('Mostrar resumen de avisos');
+    if(!options.enabled)return;
+    const labels={include_values:'Valores en aviso o crítico',include_tyres:'Presiones en aviso o crítico',include_openings:'Puertas, capó y maletero abiertos',include_stale:'Datos antiguos'};
+    const form=this.form(panel,{include_values:true,include_tyres:true,include_openings:true,include_stale:true,...options},Object.keys(labels).map(bool),patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();});form.computeLabel=field=>this.t(labels[field.name]);
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Solo resume esta tarjeta y utiliza sus umbrales y entidades configurados. Desaparece cuando no hay avisos. Pulsa un aviso para ver detalles, sin ejecutar acciones.');panel.append(hint);
+  }
   historyToolbar(parent){
     const bar=document.createElement('div');bar.className='toolbar';
     for(const [key,label]of [['undo','↶ Deshacer'],['redo','↷ Rehacer']]){const button=this.button(bar,label,()=>this.travelHistory(key));button.dataset.history=key;}
@@ -193,6 +201,7 @@ export class VEBuilderEditor extends HTMLElement {
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
     this.form(root,{language:'auto',...this.config},[text('title'),select('language',{auto:'Automatic / Automático',en:'English',es:'Español'})],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
     this.historyToolbar(root);
+    this.alertsEditor(root);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.wizardPanel(root);
     this.templates(root);

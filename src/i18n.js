@@ -1,5 +1,9 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ 'Resumen de avisos':'Alert summary','Mostrar resumen de avisos':'Show alert summary','Valores en aviso o crítico':'Warning or critical values','Presiones en aviso o crítico':'Warning or critical pressures','Puertas, capó y maletero abiertos':'Open doors, bonnet and boot','Datos antiguos':'Old data',
+ 'Según las últimas lecturas recibidas. Pulsa un aviso para ver la entidad; no se envían órdenes.':'Based on the latest received readings. Select an alert to view the entity; no commands are sent.',
+ 'Solo resume esta tarjeta y utiliza sus umbrales y entidades configurados. Desaparece cuando no hay avisos. Pulsa un aviso para ver detalles, sin ejecutar acciones.':'Summarises this card only using its configured entities and thresholds. Hidden when there are no alerts. Select an alert to view details without executing actions.',
+
  'Antigüedad de las lecturas':'Reading age','Mostrar antigüedad de las lecturas':'Show reading age','Considerar antiguo a partir de · minutos':'Consider old after · minutes','Sensor con la fecha de lectura (opcional)':'Reading timestamp sensor (optional)',
  'Basado en el cambio más antiguo de las entidades del apartado. Un valor sin cambios puede seguir siendo válido; configura un sensor de fecha para conocer la lectura real.':'Based on the oldest state change in this block. An unchanged value may still be valid; configure a timestamp sensor to track actual readings.',
  'Basado en la fecha indicada por el sensor seleccionado; que el coche esté dormido no implica una avería.':'Based on the selected sensor timestamp; a sleeping vehicle does not imply a fault.',
