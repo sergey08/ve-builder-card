@@ -161,6 +161,16 @@ test('pressure advice renders translated context and selected references without
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
  const card=new (registry.get('ve-builder-card'))();const block={type:'tyres',recommended_front_bar:2.5,recommended_rear_bar:2.7,positions:{front_left:'sensor.pressure'},pressure_colors:{enabled:true,direction:'low',warning:2.4,critical:2.2},pressure_advice:{enabled:true,profile:'full',full_front_bar:2.9,full_rear_bar:3}};
  card.setConfig({blocks:[block]});card.hass={language:'en',states:{'sensor.pressure':{state:'231',attributes:{unit_of_measurement:'kPa'}}}};
- assert.match(card.shadowRoot.innerHTML,/Full load · cold reference/);assert.match(card.shadowRoot.innerHTML,/2.9 bar/);assert.match(card.shadowRoot.innerHTML,/thermal condition unknown/);assert.match(card.shadowRoot.innerHTML,/tyre value-warning/);
+ assert.match(card.shadowRoot.innerHTML,/Full load · cold reference/);assert.match(card.shadowRoot.innerHTML,/2.9 bar/);assert.match(card.shadowRoot.innerHTML,/Cannot determine whether the tyres are cold or hot/);assert.match(card.shadowRoot.innerHTML,/tyre value-warning/);
  card.setConfig({blocks:[{...block,pressure_advice:{enabled:false}}]});assert.doesNotMatch(card.shadowRoot.innerHTML,/<aside class="pressure-advice"/);assert.match(card.shadowRoot.innerHTML,/2.5 bar/);
+});
+
+test('pressure advice identifies temperature source, converts Fahrenheit and hides invalid old values',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();const block={type:'tyres',pressure_advice:{enabled:true,temperature_entity:'sensor.outside'}};card.setConfig({blocks:[block]});
+ card.hass={language:'en',states:{'sensor.outside':{state:'68',last_updated:new Date().toISOString(),attributes:{unit_of_measurement:'°F',friendly_name:'Heat pump <outside>'}}}};
+ assert.match(card.pressureAdvice(block),/Outside temperature: 20.0 °C/);assert.match(card.pressureAdvice(block),/Heat pump &lt;outside&gt;/);assert.match(card.pressureAdvice(block),/Cannot determine/);
+ card._hass.states['sensor.outside'].last_updated='2020-01-01T00:00:00Z';assert.match(card.pressureAdvice(block),/No valid recent reading/);assert.doesNotMatch(card.pressureAdvice(block),/20.0 °C/);
+ card._hass.language='es';assert.match(card.pressureAdvice(block),/No se puede determinar si los neumáticos están fríos o calientes/);
 });

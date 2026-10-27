@@ -2,6 +2,7 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ "Temperatura exterior":"Outside temperature", "Sin lectura reciente válida":"No valid recent reading", "No se puede determinar si los neumáticos están fríos o calientes.":"Cannot determine whether the tyres are cold or hot.",
 "Consejos y perfiles de presión":"Pressure advice and load profiles",
 "Mostrar consejos de presión":"Show pressure advice",
 "Perfil de carga":"Load profile",
@@ -75,7 +76,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.4.0-beta.2';
+const VERSION = '1.4.0-beta.3';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -621,8 +622,10 @@ class VEBuilderCard extends HTMLElement {
   }
   pressureAdvice(block){
     const info=tyreAdvice(block,this.state);if(!info)return '';
+    const temperatureEntity=block.pressure_advice?.temperature_entity,temperatureName=this.state[temperatureEntity]?.attributes?.friendly_name||temperatureEntity||'';
+    const temperatureLine=temperatureEntity?`<p>${this.t('Temperatura exterior')}: ${info.temperature===null?this.t('Sin lectura reciente válida'):escape(format(info.temperature,1,this.lang))+' °C'} <span>· ${escape(temperatureName)}</span></p>`:'';
     const fullMissing=info.profile==='full'&&['front','rear'].some(axle=>recommendedPressure(block,axle)===null);
-    return `<aside class="pressure-advice"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'Condición térmica desconocida.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></aside>`;
+    return `<aside class="pressure-advice"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${temperatureLine}${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'No se puede determinar si los neumáticos están fríos o calientes.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></aside>`;
   }
   expenses(block){
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(f.name||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.lang==='es'?'Lectura':'Reading'}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
