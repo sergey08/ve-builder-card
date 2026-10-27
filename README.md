@@ -70,7 +70,7 @@ You can configure independent **front axle** and **rear axle** colours. Without 
 
 In **Recommended pressures**, enter cold front and rear pressures in bar. A small reference appears below each reading and converts to the display unit. Empty or 0 hides it. Use your vehicle label.
 
-## Reading age (beta)
+## Reading age
 
 In Edit, open a block and **Reading age**. Enable the option and choose the age limit in minutes (default 60). You can select a sensor whose value is the actual reading timestamp, in ISO or Unix format. Without one, the oldest entity state change is shown explicitly: an unchanged value can remain valid. Old readings are dimmed without blocking controls; a sleeping vehicle is not a fault.
 
@@ -150,6 +150,6 @@ Puedes configurar colores independientes para **eje delantero** y **eje trasero*
 
 En **Presiones recomendadas**, introduce los valores en frío para delante y detrás, en bar. Aparecen en pequeño bajo cada lectura y se convierten si cambias la unidad mostrada. Vacío o 0 oculta la referencia. Usa la etiqueta de tu vehículo.
 
-## Antigüedad de las lecturas (beta)
+## Antigüedad de las lecturas
 
 En Editar, abre un apartado y **Antigüedad de las lecturas**. Activa la opción y elige a partir de cuántos minutos considerar los datos antiguos (por defecto 60). Puedes seleccionar un sensor cuyo valor sea la fecha real de lectura, en ISO o Unix. Si no lo configuras, se muestra el cambio más antiguo de las entidades del apartado, identificado como tal: un valor estable puede seguir siendo válido. Los datos antiguos se atenúan sin bloquear controles; no significa que el coche esté averiado.

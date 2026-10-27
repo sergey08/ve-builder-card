@@ -18,9 +18,9 @@ Disponible en la versión estable 1.2.0: colores por valor, umbrales de presión
 
 Available in stable 1.2.0: value-based colours, per-axle pressure thresholds and recommended cold pressure references.
 
-## En beta / In beta
+## Incorporado / Implemented
 
-- Antigüedad de lecturas y atenuación de valores antiguos / Reading age and dimming of old values: 1.3.0-beta.1.
+- Antigüedad de lecturas y atenuación de valores antiguos / Reading age and dimming of old values: stable 1.3.0.
 
 ## Propuestas adicionales / Additional proposals
 
