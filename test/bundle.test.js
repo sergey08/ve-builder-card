@@ -174,3 +174,13 @@ test('pressure advice identifies temperature source, converts Fahrenheit and hid
  card._hass.states['sensor.outside'].last_updated='2020-01-01T00:00:00Z';assert.match(card.pressureAdvice(block),/No valid recent reading/);assert.doesNotMatch(card.pressureAdvice(block),/20.0 °C/);
  card._hass.language='es';assert.match(card.pressureAdvice(block),/No se puede determinar si los neumáticos están fríos o calientes/);
 });
+
+test('vehicle update and individual tyre changes have distinct timestamp labels in both languages',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();const block={type:'tyres',positions:{front_left:'sensor.pressure'},freshness:{enabled:true,timestamp_entity:'sensor.timestamp'}};card.setConfig({blocks:[block]});
+ card.hass={language:'es',states:{'sensor.pressure':{state:'231',last_updated:'2026-10-27T09:39:00Z',attributes:{unit_of_measurement:'kPa'}},'sensor.timestamp':{state:new Date().toISOString()}}};
+ assert.match(card.shadowRoot.innerHTML,/Última actualización del vehículo/);assert.match(card.shadowRoot.innerHTML,/Último cambio/);
+ card.hass={...card._hass,language:'en'};assert.match(card.shadowRoot.innerHTML,/Last vehicle update/);assert.match(card.shadowRoot.innerHTML,/Last change/);
+ assert.match(card.freshnessLabel({type:'tyres'},{status:'fresh',source:'changes',ageMinutes:2}),/Oldest state change/);
+});

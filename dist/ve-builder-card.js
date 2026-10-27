@@ -2,6 +2,8 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ "Última lectura":"Last reading",
+ "Última actualización del vehículo":"Last vehicle update", "Último cambio":"Last change",
  "Temperatura exterior":"Outside temperature", "Sin lectura reciente válida":"No valid recent reading", "No se puede determinar si los neumáticos están fríos o calientes.":"Cannot determine whether the tyres are cold or hot.",
 "Consejos y perfiles de presión":"Pressure advice and load profiles",
 "Mostrar consejos de presión":"Show pressure advice",
@@ -76,7 +78,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.4.0-beta.3';
+const VERSION = '1.4.0-beta.4';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -564,14 +566,18 @@ class VEBuilderCard extends HTMLElement {
   blockFreshness(block){
     return readingFreshness(block.freshness,this.state,readingEntities(block));
   }
+  freshnessLabel(block,info){
+    const text=freshnessText(info,this.lang);
+    return block.type==='tyres'&&info.source==='sensor'?text.replace(this.t('Última lectura'),this.t('Última actualización del vehículo')):text;
+  }
   freshnessBadge(block,info){
     if(info.status==='disabled')return '';
     const title=info.source==='changes'?this.t('Basado en el cambio más antiguo de las entidades del apartado. Un valor sin cambios puede seguir siendo válido; configura un sensor de fecha para conocer la lectura real.'):this.t('Basado en la fecha indicada por el sensor seleccionado; que el coche esté dormido no implica una avería.');
-    return `<div class="reading-age ${info.status==='stale'?'reading-old':''}" data-freshness="${escape(block.id)}" title="${escape(title)}">${escape(freshnessText(info,this.lang))}</div>`;
+    return `<div class="reading-age ${info.status==='stale'?'reading-old':''}" data-freshness="${escape(block.id)}" title="${escape(title)}">${escape(this.freshnessLabel(block,info))}</div>`;
   }
   updateFreshness(){
     if(!this.config||!this._hass||!this.shadowRoot)return;
-    for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=freshnessText(info,this.lang);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
+    for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=this.freshnessLabel(block,info);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
     this.refreshAlertSummary();
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host.innerHTML!==html)host.innerHTML=html;}}
 
@@ -609,7 +615,7 @@ class VEBuilderCard extends HTMLElement {
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
     const coords={front_left:[57,85],front_right:[303,85],rear_left:[57,260],rear_right:[303,260]},unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';
-    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),recommended=pressure(recommendedPressure(block,key.startsWith('front')?'front':'rear'),'bar',unit),hasRecommended=recommended!==null&&recommended>0;return `<g class="tyre ${this.severity({colors:block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${hasRecommended?`<text x="${x}" y="${y+36}" class="recommended">${escape(this.t('Rec. en frío'))}: ${escape(format(recommended,unit==='kPa'?0:1,this.lang))} ${unit}</text>`:''}${block.show_dates===false?'':`<text x="${x}" y="${y+(hasRecommended?51:38)}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
+    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),recommended=pressure(recommendedPressure(block,key.startsWith('front')?'front':'rear'),'bar',unit),hasRecommended=recommended!==null&&recommended>0;return `<g class="tyre ${this.severity({colors:block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${hasRecommended?`<text x="${x}" y="${y+36}" class="recommended">${escape(this.t('Rec. en frío'))}: ${escape(format(recommended,unit==='kPa'?0:1,this.lang))} ${unit}</text>`:''}${block.show_dates===false?'':`<text x="${x}" y="${y+(hasRecommended?49:33)}" class="date">${this.t('Último cambio')}</text><text x="${x}" y="${y+(hasRecommended?60:44)}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
     const parts=Object.entries(BODY_PARTS).filter(([key])=>block.body_parts?.[key]?.entity).map(([key,label])=>{const f=block.body_parts[key],status=openingState(this.state[f.entity],f);return {key,f,label:f.name||this.t(label),status,text:this.t(status==='open'?'Abierto':status==='closed'?'Cerrado':'Sin datos')};});
     const shapes=parts.filter(part=>part.status==='open').map(({key,f,label,status,text})=>{let shape='';const left=key.endsWith('left'),x=left?126:234,y=key.startsWith('front')?120:192;
       if(['bonnet','trunk'].includes(key)){const y=key==='bonnet'?55:285;shape=`<rect x="144" y="${y}" width="72" height="32" rx="12"/>`;}
