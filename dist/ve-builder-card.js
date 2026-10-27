@@ -2,6 +2,7 @@
 (()=>{
 function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ "Más información":"More information", "Sensor de temperatura":"Temperature sensor",
  "Última lectura":"Last reading",
  "Última actualización del vehículo":"Last vehicle update", "Último cambio":"Last change",
  "Temperatura exterior":"Outside temperature", "Sin lectura reciente válida":"No valid recent reading", "No se puede determinar si los neumáticos están fríos o calientes.":"Cannot determine whether the tyres are cold or hot.",
@@ -78,7 +79,7 @@ const EN={
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EN[value])return EN[value];return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
-const VERSION = '1.4.0-beta.4';
+const VERSION = '1.4.0-beta.5';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -299,7 +300,7 @@ const valueColorStyles = `
 `;
 
 const recommendationStyles = `
-.pressure-advice{margin:4px 16px 12px;padding:10px 12px;border-radius:10px;background:var(--secondary-background-color);color:var(--secondary-text-color);font-size:11px;line-height:1.5}.pressure-advice strong{font-size:12px;color:var(--primary-text-color)}.pressure-advice p{margin:5px 0 0}
+.pressure-advice{margin:4px 16px 12px;padding:10px 12px;border-radius:10px;background:var(--secondary-background-color);color:var(--secondary-text-color);font-size:11px;line-height:1.5}.pressure-advice strong{font-size:12px;color:var(--primary-text-color)}.pressure-advice p{margin:5px 0 0}.pressure-context{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}.pressure-context>span{margin:0;font-size:11px}.pressure-advice details{margin-top:4px}.pressure-advice summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:6px;font-size:11px}.pressure-advice summary:before{content:"▸"}.pressure-advice details[open]>summary:before{content:"▾"}.pressure-advice summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
 .car .recommended{fill:var(--secondary-text-color);font-size:9px;font-weight:400}`;
 
 const freshnessStyles = `
@@ -579,14 +580,13 @@ class VEBuilderCard extends HTMLElement {
     if(!this.config||!this._hass||!this.shadowRoot)return;
     for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=this.freshnessLabel(block,info);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
     this.refreshAlertSummary();
-    for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host.innerHTML!==html)host.innerHTML=html;}}
+    for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host._adviceMarkup!==html){const open=host.querySelector('details')?.open;host.innerHTML=html;host._adviceMarkup=html;if(open&&host.querySelector('details'))host.querySelector('details').open=true;}}}
 
   }
   alertSummary(){
     const alerts=collectCardAlerts(this.config,this.state,this.lang);if(!alerts.length)return '';
-    const counts={};for(const a of alerts)counts[a.kind]=(counts[a.kind]??0)+1;
-    const labels=this.lang==='en'?{tyre:['tyre alert','tyre alerts'],opening:['open part','open parts'],value:['value alert','value alerts'],stale:['old reading','old readings']}:{tyre:['neumático en aviso','neumáticos en aviso'],opening:['apertura','aperturas'],value:['valor en aviso','valores en aviso'],stale:['lectura antigua','lecturas antiguas']};
-    const summary=Object.entries(counts).map(([kind,n])=>n+' '+labels[kind][n===1?0:1]).join(' · ');
+    const critical=alerts.filter(a=>a.severity==='critical').length,warning=alerts.length-critical;
+    const summary=[critical?`${critical} ${this.lang==='en'?'critical':critical===1?'crítico':'críticos'}`:'',warning?`${warning} ${this.lang==='en'?(warning===1?'warning':'warnings'):'en aviso'}`:''].filter(Boolean).join(' · ');
     return `<details class="alert-summary ${alerts.some(a=>a.severity==='critical')?'has-critical':''}"><summary><ha-icon icon="mdi:alert-outline"></ha-icon><span>${escape(summary)}</span></summary><div class="alert-items">${alerts.map(a=>{const label=a.label+': '+a.value;return a.entity&&this.state[a.entity]?`<button type="button" class="alert-item ${a.severity==='critical'?'alert-critical':''}" data-alert-entity="${escape(a.entity)}"><ha-icon icon="${a.severity==='critical'?'mdi:alert-circle-outline':'mdi:alert-outline'}"></ha-icon><span>${escape(label)}</span><ha-icon icon="mdi:chevron-right"></ha-icon></button>`:`<p class="alert-item">${escape(label)}</p>`;}).join('')}<p class="alert-note">${this.t('Según las últimas lecturas recibidas. Pulsa un aviso para ver la entidad; no se envían órdenes.')}</p></div></details>`;
   }
   bindAlertSummary(){const host=this.shadowRoot.querySelector?.('[data-alert-summary]');if(!host)return;host._alertMarkup=this.alertSummary();host.onclick=event=>{const button=event.target.closest?.('[data-alert-entity]');if(button&&host.contains(button))this.moreInfo(button.dataset.alertEntity);};}
@@ -629,9 +629,9 @@ class VEBuilderCard extends HTMLElement {
   pressureAdvice(block){
     const info=tyreAdvice(block,this.state);if(!info)return '';
     const temperatureEntity=block.pressure_advice?.temperature_entity,temperatureName=this.state[temperatureEntity]?.attributes?.friendly_name||temperatureEntity||'';
-    const temperatureLine=temperatureEntity?`<p>${this.t('Temperatura exterior')}: ${info.temperature===null?this.t('Sin lectura reciente válida'):escape(format(info.temperature,1,this.lang))+' °C'} <span>· ${escape(temperatureName)}</span></p>`:'';
+    const temperature=temperatureEntity?`${this.t('Temperatura exterior')}: ${info.temperature===null?this.t('Sin lectura reciente válida'):format(info.temperature,1,this.lang)+' °C'}`:'';
     const fullMissing=info.profile==='full'&&['front','rear'].some(axle=>recommendedPressure(block,axle)===null);
-    return `<aside class="pressure-advice"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${temperatureLine}${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'No se puede determinar si los neumáticos están fríos o calientes.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></aside>`;
+    return `<aside class="pressure-advice"><div class="pressure-context"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${temperature?`<span>${escape(temperature)}</span>`:''}</div>${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<details><summary>${this.t('Más información')}</summary>${temperatureEntity?`<p>${this.t('Sensor de temperatura')}: ${escape(temperatureName)}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'No se puede determinar si los neumáticos están fríos o calientes.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></details></aside>`;
   }
   expenses(block){
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(f.name||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.lang==='es'?'Lectura':'Reading'}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
@@ -676,10 +676,12 @@ class VEBuilderCard extends HTMLElement {
     const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
+    const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
     this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
+    for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));

@@ -147,7 +147,7 @@ test('alert summary escapes labels, opens entity details only and keeps expanded
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
  const card=new (registry.get('ve-builder-card'))();card.setConfig({alerts:{enabled:true},blocks:[{type:'fields',fields:[{entity:'sensor.battery',name:'<img onerror=bad>',colors:{enabled:true,direction:'low',warning:30,critical:15}}]}]});
  card.hass={language:'es',states:{'sensor.battery':{state:'10',attributes:{unit_of_measurement:'%'}}}};
- assert.match(card.alertSummary(),/has-critical/);assert.match(card.alertSummary(),/1 valor en aviso/);assert.match(card.alertSummary(),/&lt;img onerror=bad&gt;/);assert.doesNotMatch(card.alertSummary(),/<img|data-field=/);
+ assert.match(card.alertSummary(),/has-critical/);assert.match(card.alertSummary(),/1 crítico/);assert.match(card.alertSummary(),/&lt;img onerror=bad&gt;/);assert.doesNotMatch(card.alertSummary(),/<img|data-field=/);
  let details={open:true},writes=0,opened;const host={_alertMarkup:'old',contains:()=>true,querySelector:()=>details,set innerHTML(v){writes++;details={open:false};},get innerHTML(){return '';}};
  card.shadowRoot.querySelector=()=>host;card.moreInfo=id=>opened=id;card.bindAlertSummary();
  host.onclick({target:{closest:()=>({dataset:{alertEntity:'sensor.battery'}})}});assert.equal(opened,'sensor.battery');
@@ -183,4 +183,15 @@ test('vehicle update and individual tyre changes have distinct timestamp labels 
  assert.match(card.shadowRoot.innerHTML,/Última actualización del vehículo/);assert.match(card.shadowRoot.innerHTML,/Último cambio/);
  card.hass={...card._hass,language:'en'};assert.match(card.shadowRoot.innerHTML,/Last vehicle update/);assert.match(card.shadowRoot.innerHTML,/Last change/);
  assert.match(card.freshnessLabel({type:'tyres'},{status:'fresh',source:'changes',ageMinutes:2}),/Oldest state change/);
+});
+
+test('compact advice starts collapsed and summary separates warning and critical counts',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();const colors={enabled:true,direction:'low',warning:30,critical:15};
+ card.setConfig({alerts:{enabled:true},blocks:[{type:'fields',fields:[{entity:'sensor.a',colors},{entity:'sensor.b',colors},{entity:'sensor.c',colors}]},{type:'tyres',pressure_advice:{enabled:true}}]});
+ card.hass={language:'es',states:{'sensor.a':{state:'10'},'sensor.b':{state:'5'},'sensor.c':{state:'20'}}};assert.match(card.alertSummary(),/2 críticos · 1 en aviso/);
+ const advice=card.pressureAdvice(card.config.blocks[1]);assert.match(advice,/<details><summary>Más información<\/summary>/);assert.doesNotMatch(advice,/<details open/);assert.match(advice,/No desinfles neumáticos calientes/);
+ card.hass={...card._hass,language:'en'};assert.match(card.alertSummary(),/2 critical · 1 warning/);assert.match(card.pressureAdvice(card.config.blocks[1]),/More information/);
+ card._hass.states['sensor.a']={state:'50'};card._hass.states['sensor.b']={state:'50'};assert.match(card.alertSummary(),/1 warning/);assert.doesNotMatch(card.alertSummary(),/has-critical/);
 });

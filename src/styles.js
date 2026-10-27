@@ -52,7 +52,7 @@ export const valueColorStyles = `
 `;
 
 export const recommendationStyles = `
-.pressure-advice{margin:4px 16px 12px;padding:10px 12px;border-radius:10px;background:var(--secondary-background-color);color:var(--secondary-text-color);font-size:11px;line-height:1.5}.pressure-advice strong{font-size:12px;color:var(--primary-text-color)}.pressure-advice p{margin:5px 0 0}
+.pressure-advice{margin:4px 16px 12px;padding:10px 12px;border-radius:10px;background:var(--secondary-background-color);color:var(--secondary-text-color);font-size:11px;line-height:1.5}.pressure-advice strong{font-size:12px;color:var(--primary-text-color)}.pressure-advice p{margin:5px 0 0}.pressure-context{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}.pressure-context>span{margin:0;font-size:11px}.pressure-advice details{margin-top:4px}.pressure-advice summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:6px;font-size:11px}.pressure-advice summary:before{content:"▸"}.pressure-advice details[open]>summary:before{content:"▾"}.pressure-advice summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
 .car .recommended{fill:var(--secondary-text-color);font-size:9px;font-weight:400}`;
 
 export const freshnessStyles = `

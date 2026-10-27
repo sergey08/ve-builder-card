@@ -1,5 +1,6 @@
 export function language(config={},hass={}) {const selected=config.language??'auto';return (selected==='auto'?(hass.language??'es'):selected).toLowerCase().startsWith('es')?'es':'en';}
 const EN={
+ "Más información":"More information", "Sensor de temperatura":"Temperature sensor",
  "Última lectura":"Last reading",
  "Última actualización del vehículo":"Last vehicle update", "Último cambio":"Last change",
  "Temperatura exterior":"Outside temperature", "Sin lectura reciente válida":"No valid recent reading", "No se puede determinar si los neumáticos están fríos o calientes.":"Cannot determine whether the tyres are cold or hot.",
