@@ -1618,7 +1618,7 @@ function translateSchema(schema,lang){const output=structuredClone(schema);for(c
 
 function missingTranslations(code){return code==='es'||code==='en'?[]:Object.keys(EN).filter(key=>!EXTRA[code]?.[key]);}
 
-const VERSION = '1.5.0-beta.1';
+const VERSION = '1.5.0';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;

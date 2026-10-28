@@ -10,7 +10,7 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.4.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.1).
+**Versión estable: 1.5.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.5.0).
 
 ## Así se ve la tarjeta
 
@@ -102,7 +102,7 @@ En **Presiones recomendadas**, introduce los valores en frío para delante y det
 
 En Editar, abre un apartado y **Antigüedad de las lecturas**. Activa la opción y elige a partir de cuántos minutos considerar los datos antiguos (por defecto 60). Puedes seleccionar un sensor cuyo valor sea la fecha real de lectura, en ISO o Unix. Si no lo configuras, se muestra el cambio más antiguo de las entidades del apartado, identificado como tal: un valor estable puede seguir siendo válido. Los datos antiguos se atenúan sin bloquear controles; no significa que el coche esté averiado.
 
-## Exportar e importar tarjetas completas (beta 1.5.0)
+## Exportar e importar tarjetas completas
 
 En **Editar → Exportar e importar tarjeta**, descarga una copia JSON con entidades o desmarca **Incluir entidades en la exportación** para compartir un diseño. Se conservan títulos, notas y URL de imágenes; revísalos antes de compartir. No incluye lecturas del vehículo ni archivos de imagen.
 

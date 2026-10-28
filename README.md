@@ -10,7 +10,7 @@ Create your own vehicle dashboard in Home Assistant. Combine vehicle information
 
 The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered.
 
-**Stable release: 1.4.1.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.1).
+**Stable release: 1.5.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.5.0).
 
 ## See the card
 
@@ -100,7 +100,7 @@ In **Recommended pressures**, enter cold front and rear pressures in bar. A smal
 
 In Edit, open a block and **Reading age**. Enable the option and choose the age limit in minutes (default 60). You can select a sensor whose value is the actual reading timestamp, in ISO or Unix format. Without one, the oldest entity state change is shown explicitly: an unchanged value can remain valid. Old readings are dimmed without blocking controls; a sleeping vehicle is not a fault.
 
-## Whole-card export and import (1.5.0 beta)
+## Whole-card export and import
 
 In **Edit → Export and import card**, download a JSON backup with entity assignments or uncheck **Include entities in export** to share a layout. Titles, notes and image URLs remain; review them before sharing. Vehicle readings and image files are not included.
 
@@ -126,7 +126,7 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.4.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.1).
+**Versión estable: 1.5.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.5.0).
 
 ## Así se ve la tarjeta
 
@@ -218,7 +218,7 @@ En **Presiones recomendadas**, introduce los valores en frío para delante y det
 
 En Editar, abre un apartado y **Antigüedad de las lecturas**. Activa la opción y elige a partir de cuántos minutos considerar los datos antiguos (por defecto 60). Puedes seleccionar un sensor cuyo valor sea la fecha real de lectura, en ISO o Unix. Si no lo configuras, se muestra el cambio más antiguo de las entidades del apartado, identificado como tal: un valor estable puede seguir siendo válido. Los datos antiguos se atenúan sin bloquear controles; no significa que el coche esté averiado.
 
-## Exportar e importar tarjetas completas (beta 1.5.0)
+## Exportar e importar tarjetas completas
 
 En **Editar → Exportar e importar tarjeta**, descarga una copia JSON con entidades o desmarca **Incluir entidades en la exportación** para compartir un diseño. Se conservan títulos, notas y URL de imágenes; revísalos antes de compartir. No incluye lecturas del vehículo ni archivos de imagen.
 
