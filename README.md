@@ -8,7 +8,9 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
-The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered. French, Portuguese, German, Italian and Dutch are available in the 1.4.0-beta.9 prerelease.
+The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered.
+
+**Stable release: 1.4.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.0).
 
 ## See the card
 
@@ -46,6 +48,18 @@ Start from an electric vehicle, combustion vehicle, costs or vehicle map templat
 | Costs and savings | Electricity and fuel reference prices, amount groups, units, precision and explanatory notes |
 | Vehicle map | Four tyre pressures, gear, four doors, bonnet and boot on a vehicle diagram; pressure units, timestamps and notes |
 
+### Pressure advice and load profiles
+
+In **Edit → Vehicle map → Pressure advice and load profiles**, enable advice and choose normal or full load. Enter the cold pressures from the vehicle label for each axle. Changing the profile changes the displayed reference, not the colour thresholds. Full-load values are never invented.
+
+Choose a fixed temperature sensor or **Temperature source → Based on location**. Configure the vehicle location entity, its home state (default `home`), a home outside sensor and a vehicle outside sensor for away. An unknown location or missing, old or invalid reading is shown explicitly; temperature is never borrowed from another location. Supports °C/°F and a configurable maximum age (default 30 minutes).
+
+Profile and temperature stay compact; **More information** contains the sensor source and advice. An optional last-trip-end sensor (ISO/Unix) indicates recent driving for two hours. High outside temperature (30 °C or above) adds advice. Neither the season nor outside temperature automatically changes inflation targets or confirms that the tyres are cold. Check and adjust cold according to the vehicle label; do not deflate hot tyres.
+
+### Alert summary
+
+Enable **Edit → Alert summary** for an expandable list of warning and critical values, tyre pressures, confirmed openings and old readings. Each category can be disabled. Uses this card’s configured entities, axle thresholds and enabled reading-age settings. Hidden when there are no alerts. Selecting an item opens entity details without vehicle commands or notifications.
+
 ### Vehicle map
 
 Assign each tyre pressure sensor and choose bar, kPa or psi. Optionally assign gear and opening sensors for the four doors, bonnet and boot. Configure the values that mean open and closed for your integration. Opening indicators appear only when a configured sensor confirms that the part is open; closed, unknown or unavailable states do not show an opening indicator. The diagram displays information; it does not operate doors or locks.
@@ -56,7 +70,7 @@ The cable remains visible and stationary while connected without energy flow. Se
 
 ### Images and languages
 
-Use an image URL or a Home Assistant `/local/` image path in the Overview block. The interface supports **English and Spanish**, follows Home Assistant automatically, and also offers a language override in the editor. Your custom titles, field names and notes are preserved as entered.
+Use an image URL or a Home Assistant `/local/` image path in the Overview block. The interface supports **English, Spanish, Portuguese, French, German, Italian and Dutch**, follows Home Assistant automatically, and also offers a language override in the editor. Your custom titles, field names and notes are preserved as entered.
 
 ## Manual installation
 
@@ -86,6 +100,10 @@ In **Recommended pressures**, enter cold front and rear pressures in bar. A smal
 
 In Edit, open a block and **Reading age**. Enable the option and choose the age limit in minutes (default 60). You can select a sensor whose value is the actual reading timestamp, in ISO or Unix format. Without one, the oldest entity state change is shown explicitly: an unchanged value can remain valid. Old readings are dimmed without blocking controls; a sleeping vehicle is not a fault.
 
+## Reuse sections
+
+Select **Copy section** at the end of a block. In another card on the same page open **Edit → Reuse sections → Paste section**. Entities and appearance are preserved in an independent copy. Review entities and save. The temporary copy clears on page reload.
+
 ---
 
 <a id="espanol"></a>
@@ -99,6 +117,20 @@ In Edit, open a block and **Reading age**. Enable the option and choose the age 
 [![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
+
+El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
+
+**Versión estable: 1.4.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.0).
+
+## Así se ve la tarjeta
+
+Un panel configurable con lecturas compactas, imagen del vehículo y controles de carga, más un mapa del coche con presiones, aperturas confirmadas, marcha y avisos desplegables.
+
+| Resumen del vehículo y controles de carga | Mapa del vehículo, presiones y avisos |
+| --- | --- |
+| ![Resumen del vehículo y controles de carga](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png) | ![Mapa del vehículo, presiones y avisos](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png) |
+
+Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo. Ilustran el diseño; los valores, textos y funciones pueden diferir de la versión actual. Cada usuario configura sus entidades, títulos e imágenes.
 
 ## Instalar con HACS
 
@@ -126,6 +158,20 @@ Empieza con una plantilla de vehículo eléctrico, vehículo de combustión, gas
 | Gastos y ahorro | Precios de referencia de electricidad y combustible, grupos de importes, unidades, decimales y comentarios |
 | Mapa del vehículo | Presión de los cuatro neumáticos, marcha, cuatro puertas, capó y maletero sobre el esquema del coche; unidades de presión, fechas y comentarios |
 
+### Consejos de presión y carga
+
+Puedes seleccionar **Origen de la temperatura → Según la ubicación**. Configura la entidad de ubicación, su estado en casa (por defecto `home`), el sensor exterior de casa y el del vehículo para fuera. No utiliza temperatura de casa fuera de ella. Si la ubicación es desconocida o el sensor seleccionado no tiene lectura reciente válida, lo indica sin sustituirlo por el de otra ubicación. El modo sensor fijo sigue disponible.
+
+El perfil y la temperatura se presentan de forma compacta; el origen del sensor y los consejos están en **Más información**. El resumen distingue avisos críticos y avisos de advertencia.
+
+El cuadro de consejos muestra la temperatura exterior utilizada y el nombre del sensor; indica expresamente si falta una lectura válida reciente.
+
+En **Editar → Mapa del vehículo → Consejos y perfiles de presión**, activa los consejos y elige carga normal o plena carga. Introduce las referencias por eje de la etiqueta del vehículo: el perfil no modifica los umbrales de aviso. Puedes seleccionar temperatura exterior (°C/°F, antigüedad máxima configurable: 30 minutos por defecto) y un sensor cuyo valor sea la fecha de fin del último trayecto (ISO/Unix). Se indica circulación reciente durante 2 horas y se muestra un consejo con 30 °C o más. Si falta contexto, se muestra condición térmica desconocida. No cambia presiones por ser verano ni confirma que las ruedas estén frías. [Consejos de Michelin](https://www.michelin.es/auto/consejos/presion-de-los-neumaticos/inflar-neumaticos).
+
+### Resumen de avisos
+
+Activa **Editar → Resumen de avisos** para mostrar una lista compacta y desplegable de valores y presiones en aviso o crítico, aperturas confirmadas y lecturas antiguas. Puedes desactivar cada categoría. Utiliza las entidades y umbrales de esta tarjeta, incluidos los límites de presión por eje y los ajustes de antigüedad activados. Desaparece cuando no hay avisos. Pulsa un elemento para ver sus detalles; no envía órdenes al vehículo ni notificaciones.
+
 ### Mapa del vehículo
 
 Asigna cada sensor de presión y elige bar, kPa o psi. Opcionalmente, añade la marcha y los sensores de apertura de las cuatro puertas, el capó y el maletero. Configura los valores que significan abierto y cerrado en tu integración. Los indicadores de apertura aparecen solo cuando el sensor configurado confirma que esa parte está abierta; los estados cerrado, desconocido o no disponible no muestran un indicador de apertura. El esquema muestra información; no acciona puertas ni cerraduras.
@@ -136,7 +182,7 @@ La manguera permanece visible y quieta cuando el coche está conectado sin recib
 
 ### Imágenes e idiomas
 
-Utiliza una URL de imagen o una ruta `/local/` de Home Assistant en el apartado Inicio. La interfaz admite **español e inglés**, sigue automáticamente el idioma de Home Assistant y permite elegirlo desde el editor. Los títulos, nombres de campos y comentarios personalizados se conservan tal como los escribas.
+Utiliza una URL de imagen o una ruta `/local/` de Home Assistant en el apartado Inicio. La interfaz admite **inglés, español, portugués, francés, alemán, italiano y neerlandés**, sigue automáticamente el idioma de Home Assistant y permite elegirlo desde el editor. Los títulos, nombres de campos y comentarios personalizados se conservan tal como los escribas.
 
 ## Instalación manual
 
@@ -166,5 +212,6 @@ En **Presiones recomendadas**, introduce los valores en frío para delante y det
 
 En Editar, abre un apartado y **Antigüedad de las lecturas**. Activa la opción y elige a partir de cuántos minutos considerar los datos antiguos (por defecto 60). Puedes seleccionar un sensor cuyo valor sea la fecha real de lectura, en ISO o Unix. Si no lo configuras, se muestra el cambio más antiguo de las entidades del apartado, identificado como tal: un valor estable puede seguir siendo válido. Los datos antiguos se atenúan sin bloquear controles; no significa que el coche esté averiado.
 
+## Reutilizar apartados
 
-Since **1.4.0-beta.8**, select **Copy section** at the end of a block. In another card on the same page open **Edit → Reuse sections → Paste section**. Preserves entities and appearance in an independent copy. Review entities and save. The temporary copy clears on page reload.
+Pulsa **Copiar apartado** al final de un bloque. En otra tarjeta del mismo panel abre **Editar → Reutilizar apartados → Pegar apartado**. Conserva entidades y estilo en una copia independiente. Revisa entidades y guarda. La copia temporal desaparece al recargar la página.
