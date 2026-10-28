@@ -13,7 +13,7 @@ Export and import complete vehicle cards from the visual editor.
 
 Files contain configuration, not live readings or image files. Titles, notes and image URLs remain even when entity assignments are removed: review them before sharing. Referenced entities and local image paths must exist on the destination system. Importing creates no sensors and sends no vehicle commands.
 
-**Validation:** 64 automated tests pass. Round-trip and entity-free export were additionally verified against all four existing maintainer cards: XPeng G6, Costs and savings, Vehicle map and Seat Ibiza. Native file-picker and mobile visual review are release-gate items recorded in the release pull request.
+**Validation:** 64 automated tests pass. Round-trip and entity-free export were additionally verified against all four existing maintainer cards: XPeng G6, Costs and savings, Vehicle map and Seat Ibiza. The maintainer confirmed that the mobile export/import test works before release.
 
 **Use:** Edit → Export and import card. Reload the frontend after downloading through HACS. Existing cards need no migration.
 
@@ -30,7 +30,7 @@ Exportación e importación de tarjetas completas desde el editor visual.
 
 Los archivos contienen configuración, no lecturas ni imágenes adjuntas. Títulos, notas y URL de imágenes se conservan incluso al quitar entidades: revísalos antes de compartir. Las entidades y rutas locales deben existir en el destino. Importar no crea sensores ni envía órdenes al vehículo.
 
-**Validación:** 64 pruebas automáticas correctas. Además, se ha comprobado la exportación e importación completa y sin entidades de las cuatro tarjetas existentes: XPeng G6, Gastos y ahorro, Mapa del vehículo y Seat Ibiza. La prueba visual móvil y del selector de archivos queda como requisito pendiente en el PR de publicación.
+**Validación:** 64 pruebas automáticas correctas. Además, se ha comprobado la exportación e importación completa y sin entidades de las cuatro tarjetas existentes: XPeng G6, Gastos y ahorro, Mapa del vehículo y Seat Ibiza. El mantenedor ha confirmado el funcionamiento de la prueba móvil de exportación e importación antes de liberar.
 
 **Uso:** Editar → Exportar e importar tarjeta. Recarga la interfaz después de descargar desde HACS. Las tarjetas existentes no requieren migración.
 
