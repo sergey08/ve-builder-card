@@ -1613,12 +1613,171 @@ for(const [code,entries]of Object.entries({
  }
 }))Object.assign(EXTRA[code],entries);
 
+Object.assign(EN,{
+ "Lluvia sobre el vehículo": "Rain over the vehicle",
+ "Mostrar lluvia": "Show rain",
+ "Origen de la lluvia": "Rain source",
+ "Entidad de lluvia": "Rain entity",
+ "Estado que significa lluvia": "State meaning rain",
+ "Lluvia si el valor es mayor que": "Rain when the value is greater than",
+ "Animar lluvia": "Animate rain",
+ "Intensidad visual": "Visual intensity",
+ "Antigüedad máxima de lluvia · minutos": "Maximum rain reading age · minutes",
+ "Solo cuando el coche esté en casa": "Only when the vehicle is at home",
+ "Coche bajo techo": "Vehicle under cover",
+ "Sensor de coche bajo techo (opcional)": "Covered vehicle sensor (optional)",
+ "Estado que significa bajo techo": "State meaning under cover",
+ "Estado que significa al aire libre": "State meaning outdoors",
+ "Vista previa de lluvia (datos de ejemplo)": "Rain preview (sample data)",
+ "Entidad meteorológica": "Weather entity",
+ "Sensor de lluvia · sí/no": "Rain sensor · yes/no",
+ "Sensor de precipitación actual": "Current precipitation sensor",
+ "Ligera": "Light",
+ "Intensa": "Heavy",
+ "Lluvia de ejemplo": "Sample rain",
+ "Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.": "Use current conditions, not forecasts or accumulated rainfall. Without recent data no rain is shown. Intensity is visual and does not estimate actual precipitation.",
+ "Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.": "Enable home-only mode if the sensor belongs to your home. Under cover hides rain; an unknown cover sensor also hides it.",
+ "La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.": "Preview ignores sensors, location and cover and displays a sample label. Turn it off after testing."
+});
+for(const [code,entries]of Object.entries({
+ "pt": {
+  "Lluvia sobre el vehículo": "Chuva sobre o veículo",
+  "Mostrar lluvia": "Mostrar chuva",
+  "Origen de la lluvia": "Origem da chuva",
+  "Entidad de lluvia": "Entidade de chuva",
+  "Estado que significa lluvia": "Estado que significa chuva",
+  "Lluvia si el valor es mayor que": "Chuva se o valor for maior que",
+  "Animar lluvia": "Animar chuva",
+  "Intensidad visual": "Intensidade visual",
+  "Antigüedad máxima de lluvia · minutos": "Idade máxima da leitura de chuva · minutos",
+  "Solo cuando el coche esté en casa": "Só quando o veículo estiver em casa",
+  "Coche bajo techo": "Veículo coberto",
+  "Sensor de coche bajo techo (opcional)": "Sensor de veículo coberto (opcional)",
+  "Estado que significa bajo techo": "Estado que significa coberto",
+  "Estado que significa al aire libre": "Estado que significa ao ar livre",
+  "Vista previa de lluvia (datos de ejemplo)": "Pré-visualização de chuva (exemplo)",
+  "Entidad meteorológica": "Entidade meteorológica",
+  "Sensor de lluvia · sí/no": "Sensor de chuva · sim/não",
+  "Sensor de precipitación actual": "Sensor de precipitação atual",
+  "Ligera": "Fraca",
+  "Intensa": "Forte",
+  "Lluvia de ejemplo": "Chuva de exemplo",
+  "Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.": "Use condições atuais, não previsões nem chuva acumulada. Sem dados recentes não mostra chuva. A intensidade é visual e não estima a precipitação real.",
+  "Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.": "Ative só em casa se o sensor pertencer à sua casa. Coberto oculta a chuva; um sensor de cobertura desconhecido também a oculta.",
+  "La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.": "A pré-visualização ignora sensores, localização e cobertura e mostra uma etiqueta de exemplo. Desative após testar."
+ },
+ "fr": {
+  "Lluvia sobre el vehículo": "Pluie sur le véhicule",
+  "Mostrar lluvia": "Afficher la pluie",
+  "Origen de la lluvia": "Source de pluie",
+  "Entidad de lluvia": "Entité de pluie",
+  "Estado que significa lluvia": "État indiquant la pluie",
+  "Lluvia si el valor es mayor que": "Pluie si la valeur est supérieure à",
+  "Animar lluvia": "Animer la pluie",
+  "Intensidad visual": "Intensité visuelle",
+  "Antigüedad máxima de lluvia · minutos": "Âge maximal de la lecture de pluie · minutes",
+  "Solo cuando el coche esté en casa": "Seulement si le véhicule est à la maison",
+  "Coche bajo techo": "Véhicule à l’abri",
+  "Sensor de coche bajo techo (opcional)": "Capteur de véhicule à l’abri (facultatif)",
+  "Estado que significa bajo techo": "État indiquant à l’abri",
+  "Estado que significa al aire libre": "État indiquant à l’extérieur",
+  "Vista previa de lluvia (datos de ejemplo)": "Aperçu de pluie (exemple)",
+  "Entidad meteorológica": "Entité météo",
+  "Sensor de lluvia · sí/no": "Capteur de pluie · oui/non",
+  "Sensor de precipitación actual": "Capteur de précipitations actuelles",
+  "Ligera": "Légère",
+  "Intensa": "Forte",
+  "Lluvia de ejemplo": "Pluie d’exemple",
+  "Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.": "Utilisez les conditions actuelles, pas les prévisions ni la pluie cumulée. Sans données récentes, aucune pluie n’est affichée. L’intensité est visuelle et n’estime pas les précipitations réelles.",
+  "Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.": "Activez seulement à la maison si le capteur appartient au domicile. À l’abri masque la pluie ; un capteur d’abri inconnu la masque aussi.",
+  "La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.": "L’aperçu ignore les capteurs, la localisation et l’abri et affiche une étiquette d’exemple. Désactivez-le après le test."
+ },
+ "de": {
+  "Lluvia sobre el vehículo": "Regen über dem Fahrzeug",
+  "Mostrar lluvia": "Regen anzeigen",
+  "Origen de la lluvia": "Regenquelle",
+  "Entidad de lluvia": "Regenentität",
+  "Estado que significa lluvia": "Zustand für Regen",
+  "Lluvia si el valor es mayor que": "Regen bei einem Wert größer als",
+  "Animar lluvia": "Regen animieren",
+  "Intensidad visual": "Visuelle Stärke",
+  "Antigüedad máxima de lluvia · minutos": "Maximales Alter der Regenmessung · Minuten",
+  "Solo cuando el coche esté en casa": "Nur wenn das Fahrzeug zu Hause ist",
+  "Coche bajo techo": "Fahrzeug überdacht",
+  "Sensor de coche bajo techo (opcional)": "Sensor für überdachtes Fahrzeug (optional)",
+  "Estado que significa bajo techo": "Zustand für überdacht",
+  "Estado que significa al aire libre": "Zustand für im Freien",
+  "Vista previa de lluvia (datos de ejemplo)": "Regenvorschau (Beispieldaten)",
+  "Entidad meteorológica": "Wetterentität",
+  "Sensor de lluvia · sí/no": "Regensensor · ja/nein",
+  "Sensor de precipitación actual": "Sensor für aktuellen Niederschlag",
+  "Ligera": "Leicht",
+  "Intensa": "Stark",
+  "Lluvia de ejemplo": "Beispielregen",
+  "Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.": "Verwende aktuelle Bedingungen, keine Vorhersagen oder aufsummierten Niederschläge. Ohne aktuelle Daten wird kein Regen angezeigt. Die Stärke ist nur visuell und schätzt keinen tatsächlichen Niederschlag.",
+  "Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.": "Aktiviere nur zu Hause, wenn der Sensor zum Haus gehört. Überdacht blendet Regen aus; ein unbekannter Überdachungssensor ebenfalls.",
+  "La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.": "Die Vorschau ignoriert Sensoren, Standort und Überdachung und zeigt eine Beispielmarkierung. Schalte sie nach dem Test aus."
+ },
+ "it": {
+  "Lluvia sobre el vehículo": "Pioggia sul veicolo",
+  "Mostrar lluvia": "Mostra pioggia",
+  "Origen de la lluvia": "Origine della pioggia",
+  "Entidad de lluvia": "Entità della pioggia",
+  "Estado que significa lluvia": "Stato che significa pioggia",
+  "Lluvia si el valor es mayor que": "Pioggia se il valore è maggiore di",
+  "Animar lluvia": "Anima pioggia",
+  "Intensidad visual": "Intensità visiva",
+  "Antigüedad máxima de lluvia · minutos": "Età massima lettura pioggia · minuti",
+  "Solo cuando el coche esté en casa": "Solo quando il veicolo è a casa",
+  "Coche bajo techo": "Veicolo al coperto",
+  "Sensor de coche bajo techo (opcional)": "Sensore veicolo al coperto (facoltativo)",
+  "Estado que significa bajo techo": "Stato che significa al coperto",
+  "Estado que significa al aire libre": "Stato che significa all’aperto",
+  "Vista previa de lluvia (datos de ejemplo)": "Anteprima pioggia (dati di esempio)",
+  "Entidad meteorológica": "Entità meteo",
+  "Sensor de lluvia · sí/no": "Sensore pioggia · sì/no",
+  "Sensor de precipitación actual": "Sensore precipitazione attuale",
+  "Ligera": "Leggera",
+  "Intensa": "Intensa",
+  "Lluvia de ejemplo": "Pioggia di esempio",
+  "Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.": "Usa condizioni attuali, non previsioni o pioggia accumulata. Senza dati recenti non mostra pioggia. L’intensità è visiva e non stima le precipitazioni reali.",
+  "Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.": "Attiva solo a casa se il sensore appartiene alla casa. Al coperto nasconde la pioggia; anche un sensore di copertura sconosciuto la nasconde.",
+  "La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.": "L’anteprima ignora sensori, posizione e copertura e mostra un’etichetta di esempio. Disattivala dopo la prova."
+ },
+ "nl": {
+  "Lluvia sobre el vehículo": "Regen over het voertuig",
+  "Mostrar lluvia": "Regen tonen",
+  "Origen de la lluvia": "Regenbron",
+  "Entidad de lluvia": "Regenentiteit",
+  "Estado que significa lluvia": "Status die regen betekent",
+  "Lluvia si el valor es mayor que": "Regen als de waarde groter is dan",
+  "Animar lluvia": "Regen animeren",
+  "Intensidad visual": "Visuele intensiteit",
+  "Antigüedad máxima de lluvia · minutos": "Maximale leeftijd regenmeting · minuten",
+  "Solo cuando el coche esté en casa": "Alleen wanneer het voertuig thuis is",
+  "Coche bajo techo": "Voertuig onder een dak",
+  "Sensor de coche bajo techo (opcional)": "Sensor voor overdekt voertuig (optioneel)",
+  "Estado que significa bajo techo": "Status die overdekt betekent",
+  "Estado que significa al aire libre": "Status die in de open lucht betekent",
+  "Vista previa de lluvia (datos de ejemplo)": "Regenvoorbeeld (voorbeeldgegevens)",
+  "Entidad meteorológica": "Weerentiteit",
+  "Sensor de lluvia · sí/no": "Regensensor · ja/nee",
+  "Sensor de precipitación actual": "Sensor voor actuele neerslag",
+  "Ligera": "Licht",
+  "Intensa": "Zwaar",
+  "Lluvia de ejemplo": "Voorbeeldregen",
+  "Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.": "Gebruik actuele omstandigheden, geen voorspellingen of opgetelde neerslag. Zonder recente gegevens wordt geen regen getoond. De intensiteit is visueel en schat de werkelijke neerslag niet.",
+  "Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.": "Schakel alleen thuis in als de sensor bij je woning hoort. Overdekt verbergt regen; een onbekende overkappingssensor ook.",
+  "La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.": "Het voorbeeld negeert sensoren, locatie en overkapping en toont een voorbeeldlabel. Schakel dit na het testen uit."
+ }
+}))Object.assign(EXTRA[code],entries);
+
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EXTRA[lang]?.[value])return EXTRA[lang][value];if(EN[value])return EN[value];const fragments={fr:[' réglage(s) à vérifier : ',': choisissez une entité.',': entité indisponible (',': le maximum doit être supérieur au minimum.','Type de bloc inconnu : '],pt:[' definição(ões) pendente(s): ',': escolha uma entidade.',': entidade indisponível (',': o máximo deve ser maior do que o mínimo.','Tipo de bloco desconhecido: '],de:[' ausstehende Einstellung(en): ',': wähle eine Entität.',': Entität nicht verfügbar (',': das Maximum muss größer als das Minimum sein.','Unbekannter Blocktyp: '],it:[' impostazione/i da verificare: ',': scegli un’entità.',': entità non disponibile (',': il massimo deve essere maggiore del minimo.','Tipo di blocco sconosciuto: '],nl:[' instelling(en) te controleren: ',': kies een entiteit.',': entiteit niet beschikbaar (',': het maximum moet groter zijn dan het minimum.','Onbekend bloktype: ']}[lang];if(fragments)return [' ajuste(s) pendiente(s): ',': elige una entidad.',': entidad no disponible (',': el máximo debe ser mayor que el mínimo.','Tipo de bloque desconocido: '].reduce((out,part,index)=>out.replaceAll(part,fragments[index]),value);return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
 function missingTranslations(code){return code==='es'||code==='en'?[]:Object.keys(EN).filter(key=>!EXTRA[code]?.[key]);}
 
-const VERSION = '1.5.0';
+const VERSION = '1.6.0-beta.1';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1868,6 +2027,28 @@ const alertSummaryStyles = `
 `;
 
 
+const known=value=>value!==undefined&&value!==null&&!['unknown','unavailable','none','null',''].includes(String(value).toLowerCase());
+function vehicleRain(options={},states={},now=Date.now()){
+ const off=reason=>({active:false,reason});
+ if(!options.enabled)return off('disabled');
+ const intensity=['light','normal','heavy'].includes(options.intensity)?options.intensity:'normal';
+ if(options.preview)return {active:true,intensity,animated:options.animate!==false,preview:true};
+ if(options.covered)return off('covered');
+ if(options.home_only){const location=states[options.location_entity]?.state;if(!known(location)||location!==String(options.home_value??'home'))return off('location');}
+ if(options.covered_entity){const value=states[options.covered_entity]?.state;if(!known(value)||value===String(options.covered_value??'on'))return off('covered');if(value!==String(options.uncovered_value??'off'))return off('unknown-cover');}
+ const state=states[options.entity];if(!known(state?.state))return off('unknown');
+ const stamp=Date.parse(state.last_reported??state.last_updated),age=now-stamp,max=number(options.max_age_minutes)??180;
+ if(!Number.isFinite(age)||age < -120000||age>Math.max(1,max)*60000)return off('stale');
+ const domain=String(options.entity??'').split('.')[0];let raining=false;
+ if((options.source??'weather')==='weather'&&domain==='weather')raining=['rainy','pouring','lightning-rainy','snowy-rainy'].includes(state.state);
+ else if(options.source==='binary'&&['binary_sensor','input_boolean'].includes(domain))raining=state.state===String(options.rain_value??'on');
+ else if(options.source==='numeric'&&['sensor','number','input_number'].includes(domain)){const value=number(state.state),threshold=number(options.threshold)??0;raining=value!==null&&value>Math.max(0,threshold);}
+ return raining?{active:true,intensity,animated:options.animate!==false,preview:false}:off('dry');
+}
+
+const rainStyles=`.rain-host{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;border-radius:12px}.rain-overlay{display:block;width:100%;height:100%;color:#75b6db;opacity:.65}.rain-drops{stroke:currentColor;stroke-width:1.6;stroke-linecap:round;fill:none}.rain-animated .rain-drops{animation:ve-rain-fall 1.1s linear infinite}.rain-light{opacity:.4}.rain-light .rain-drops{stroke-width:1}.rain-heavy{opacity:.8}.rain-heavy .rain-drops{stroke-width:2}.rain-heavy.rain-animated .rain-drops{animation-duration:.7s}.rain-light.rain-animated .rain-drops{animation-duration:1.6s}.rain-preview-label{position:absolute;left:8px;bottom:8px;padding:4px 7px;border-radius:8px;background:var(--card-background-color);color:var(--secondary-text-color);font-size:10px;z-index:4;pointer-events:none}@keyframes ve-rain-fall{from{transform:translateY(-230px)}to{transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.rain-animated .rain-drops{animation:none}}`;
+
+
 const TRANSFER_LIMIT=512*1024;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const fail=message=>{throw Error(message);};
@@ -1900,7 +2081,7 @@ function inspectCardImport(source,states={}) {
  for(const block of card.blocks){
   checkObject(block);checkTexts(block);if(!Object.hasOwn(TYPES,block.type))fail('El archivo contiene un tipo de apartado no compatible.');
   list(block.fields);list(block.prices);list(block.groups,g=>list(g.fields));
-  for(const key of ['freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
+  for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
   if(block.positions!==undefined){checkObject(block.positions);if(Object.values(block.positions).some(v=>typeof v!=='string'))fail('La estructura de la tarjeta no es válida.');}
   if(block.body_parts!==undefined){checkObject(block.body_parts);Object.values(block.body_parts).forEach(part=>{checkObject(part);checkTexts(part);});}
  }
@@ -2131,12 +2312,28 @@ class VEBuilderEditor extends HTMLElement {
     this.form(panel,{max_age_minutes:60,...options},[numeric('max_age_minutes',1,10080),entity('timestamp_entity','sensor')],patch=>{block.freshness={...block.freshness,...patch};this.emit();});
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un sensor cuyo valor sea una fecha de lectura. Sin él se usa el cambio más antiguo de las entidades; un valor estable no demuestra que el coche haya dejado de informar. Los datos antiguos se atenúan sin bloquear controles.');panel.append(hint);
   }
+  rainEditor(parent,block){
+    const panel=this.panel(parent,block.id+'-rain','Lluvia sobre el vehículo'),options={enabled:false,source:'weather',animate:true,intensity:'normal',home_value:'home',rain_value:'on',threshold:0,max_age_minutes:180,covered_value:'on',uncovered_value:'off',...block.rain};
+    const labels={enabled:'Mostrar lluvia',source:'Origen de la lluvia',entity:'Entidad de lluvia',rain_value:'Estado que significa lluvia',threshold:'Lluvia si el valor es mayor que',animate:'Animar lluvia',intensity:'Intensidad visual',max_age_minutes:'Antigüedad máxima de lluvia · minutos',home_only:'Solo cuando el coche esté en casa',location_entity:'Entidad de ubicación del vehículo',home_value:'Estado que significa en casa',covered:'Coche bajo techo',covered_entity:'Sensor de coche bajo techo (opcional)',covered_value:'Estado que significa bajo techo',uncovered_value:'Estado que significa al aire libre',preview:'Vista previa de lluvia (datos de ejemplo)'};
+    const update=patch=>{const changed=('enabled'in patch&&patch.enabled!==options.enabled)||('source'in patch&&patch.source!==options.source)||('home_only'in patch&&patch.home_only!==options.home_only);block.rain={...options,...block.rain,...patch};this.emit();if(changed)this.render();};
+    const toggle=this.form(panel,options,[bool('enabled')],update);toggle.computeLabel=f=>this.t(labels[f.name]);if(!options.enabled)return;
+    const domain=options.source==='binary'?['binary_sensor','input_boolean']:options.source==='numeric'?['sensor','number','input_number']:'weather';
+    const schema=[select('source',{weather:'Entidad meteorológica',binary:'Sensor de lluvia · sí/no',numeric:'Sensor de precipitación actual'}),entity('entity',domain)];
+    if(options.source==='binary')schema.push(text('rain_value'));
+    if(options.source==='numeric')schema.push(numeric('threshold',0,100000,0.1));
+    schema.push(select('intensity',{light:'Ligera',normal:'Normal',heavy:'Intensa'}),bool('animate'),numeric('max_age_minutes',1,1440),bool('home_only'));
+    if(options.home_only)schema.push(entity('location_entity',['person','device_tracker','binary_sensor','input_boolean']),text('home_value'));
+    schema.push(bool('covered'),entity('covered_entity',['binary_sensor','input_boolean']),text('covered_value'),text('uncovered_value'),bool('preview'));
+    const form=this.form(panel,options,schema,update);form.computeLabel=f=>this.t(labels[f.name]);
+    for(const message of ['Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.','Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.','La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.']){const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t(message);panel.append(hint);}
+  }
   blockEditor(panel,block){
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=block.title||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
+      this.rainEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);
@@ -2217,7 +2414,7 @@ class VEBuilderCard extends HTMLElement {
   connectedCallback(){this.syncFreshnessTimer();this.updateFreshness();}
   disconnectedCallback(){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}}
   syncFreshnessTimer(){
-    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled||b.pressure_advice?.enabled);
+    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled||b.pressure_advice?.enabled||b.rain?.enabled);
     if(!enabled){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}return;}
     if(!this.isConnected||typeof window.setInterval!=='function'||this._freshnessTimer)return;
     this._freshnessTimer=window.setInterval(()=>{if(document.visibilityState!=='hidden')this.updateFreshness();},60000);
@@ -2238,6 +2435,7 @@ class VEBuilderCard extends HTMLElement {
   updateFreshness(){
     if(!this.config||!this._hass||!this.shadowRoot)return;
     for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=this.freshnessLabel(block,info);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
+    this.refreshRain();
     this.refreshAlertSummary();
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host._adviceMarkup!==html){const open=host.querySelector('details')?.open;host.innerHTML=html;host._adviceMarkup=html;if(open&&host.querySelector('details'))host.querySelector('details').open=true;}}}
 
@@ -2265,11 +2463,20 @@ class VEBuilderCard extends HTMLElement {
     return `<button class="vehicle-badge configurable-field display-${escape(display)} size-${size} style-${style} ${width} ${this.severity(field)}" data-field="${escape(field.id)}" ${disabled?'disabled':''}><ha-icon icon="${escape(icon)}"></ha-icon><div class="field-content">${compact?`<span class="compact-value">${escape(label)} · ${escape(value)}</span>`:`<span class="field-name">${escape(label)}</span><strong class="field-value">${escape(value)}</strong>`}${display==='bar'?`<div class="field-track" role="progressbar" aria-label="${escape(label)}" aria-valuemin="${escape(field.min??0)}" aria-valuemax="${escape(field.max??100)}" ${number(state?.state)!==null?`aria-valuenow="${escape(Math.max(Number(field.min??0),Math.min(Number(field.max??100),Number(state.state))))}"`:''}><div class="field-fill" style="width:${pct??0}%"></div></div><div class="field-scale">${pct===null?this.t('Configura un intervalo válido'):`${escape(field.min??0)} — ${escape(field.max??100)}`}</div>`:''}</div></button>`;
   }
   fields(fields=[]){return `<div class="vehicle-badges">${fields.length?fields.map(f=>this.field(f)).join(''):`<p class="empty">${this.t('Añade campos desde el editor visual.')}</p>`}</div>`;}
+  rainOverlay(block){
+    const result=vehicleRain(block.rain,this.state);if(!result.active)return '';
+    const count={light:12,normal:20,heavy:28}[result.intensity];let path='';
+    for(let row=0;row<2;row++)for(let i=0;i<count;i++){const x=(i*97)%400,y=(i*67)%230+row*230;path+=`M${x} ${y}l-7 17`;}
+    return `<svg class="rain-overlay rain-${result.intensity} ${result.animated?'rain-animated':''}" viewBox="0 0 400 230" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g class="rain-drops"><path d="${path}"/></g></svg>${result.preview?`<span class="rain-preview-label">${escape(this.t('Lluvia de ejemplo'))}</span>`:''}`;
+  }
+  refreshRain(){
+    for(const host of this.shadowRoot.querySelectorAll('[data-rain]')){const block=this.config.blocks.find(b=>b.id===host.dataset.rain);if(!block)continue;const html=this.rainOverlay(block);if(host.innerHTML!==html)host.innerHTML=html;}
+  }
   start(block){
     const plugged=this.state[block.connector_entity]?.state==='on',charging=this.state[block.charging_entity]?.state===(block.charging_value??'Charging');
     const power=number(this.state[block.power_entity]?.state),active=block.power_entity?power!==null&&power>0:charging,animated=active&&block.animate!==false;
     const image=imageUrl(block.image),cable=(plugged||active)&&block.show_cable!==false;
-    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.config.title||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'');
+    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.config.title||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/><div class="rain-host" data-rain="${escape(block.id)}">${this.rainOverlay(block)}</div>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'');
   }
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
@@ -2338,7 +2545,7 @@ class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${rainStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}

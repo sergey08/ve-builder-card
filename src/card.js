@@ -1,3 +1,4 @@
+import {vehicleRain,rainStyles} from './rain.js';
 import {language,translate} from './i18n.js';
 import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
 import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles} from './styles.js';
@@ -13,7 +14,7 @@ export class VEBuilderCard extends HTMLElement {
   connectedCallback(){this.syncFreshnessTimer();this.updateFreshness();}
   disconnectedCallback(){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}}
   syncFreshnessTimer(){
-    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled||b.pressure_advice?.enabled);
+    const enabled=this.config?.blocks?.some(b=>b.freshness?.enabled||b.pressure_advice?.enabled||b.rain?.enabled);
     if(!enabled){if(this._freshnessTimer){window.clearInterval(this._freshnessTimer);this._freshnessTimer=null;}if(this._visibilityHandler){document.removeEventListener('visibilitychange',this._visibilityHandler);this._visibilityHandler=null;}return;}
     if(!this.isConnected||typeof window.setInterval!=='function'||this._freshnessTimer)return;
     this._freshnessTimer=window.setInterval(()=>{if(document.visibilityState!=='hidden')this.updateFreshness();},60000);
@@ -34,6 +35,7 @@ export class VEBuilderCard extends HTMLElement {
   updateFreshness(){
     if(!this.config||!this._hass||!this.shadowRoot)return;
     for(const el of this.shadowRoot.querySelectorAll('[data-freshness]')){const block=this.config.blocks.find(b=>b.id===el.dataset.freshness);if(!block)continue;const info=this.blockFreshness(block);el.textContent=this.freshnessLabel(block,info);el.classList.toggle('reading-old',info.status==='stale');el.closest('section')?.classList.toggle('data-stale',info.status==='stale');}
+    this.refreshRain();
     this.refreshAlertSummary();
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host._adviceMarkup!==html){const open=host.querySelector('details')?.open;host.innerHTML=html;host._adviceMarkup=html;if(open&&host.querySelector('details'))host.querySelector('details').open=true;}}}
 
@@ -61,11 +63,20 @@ export class VEBuilderCard extends HTMLElement {
     return `<button class="vehicle-badge configurable-field display-${escape(display)} size-${size} style-${style} ${width} ${this.severity(field)}" data-field="${escape(field.id)}" ${disabled?'disabled':''}><ha-icon icon="${escape(icon)}"></ha-icon><div class="field-content">${compact?`<span class="compact-value">${escape(label)} · ${escape(value)}</span>`:`<span class="field-name">${escape(label)}</span><strong class="field-value">${escape(value)}</strong>`}${display==='bar'?`<div class="field-track" role="progressbar" aria-label="${escape(label)}" aria-valuemin="${escape(field.min??0)}" aria-valuemax="${escape(field.max??100)}" ${number(state?.state)!==null?`aria-valuenow="${escape(Math.max(Number(field.min??0),Math.min(Number(field.max??100),Number(state.state))))}"`:''}><div class="field-fill" style="width:${pct??0}%"></div></div><div class="field-scale">${pct===null?this.t('Configura un intervalo válido'):`${escape(field.min??0)} — ${escape(field.max??100)}`}</div>`:''}</div></button>`;
   }
   fields(fields=[]){return `<div class="vehicle-badges">${fields.length?fields.map(f=>this.field(f)).join(''):`<p class="empty">${this.t('Añade campos desde el editor visual.')}</p>`}</div>`;}
+  rainOverlay(block){
+    const result=vehicleRain(block.rain,this.state);if(!result.active)return '';
+    const count={light:12,normal:20,heavy:28}[result.intensity];let path='';
+    for(let row=0;row<2;row++)for(let i=0;i<count;i++){const x=(i*97)%400,y=(i*67)%230+row*230;path+=`M${x} ${y}l-7 17`;}
+    return `<svg class="rain-overlay rain-${result.intensity} ${result.animated?'rain-animated':''}" viewBox="0 0 400 230" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g class="rain-drops"><path d="${path}"/></g></svg>${result.preview?`<span class="rain-preview-label">${escape(this.t('Lluvia de ejemplo'))}</span>`:''}`;
+  }
+  refreshRain(){
+    for(const host of this.shadowRoot.querySelectorAll('[data-rain]')){const block=this.config.blocks.find(b=>b.id===host.dataset.rain);if(!block)continue;const html=this.rainOverlay(block);if(host.innerHTML!==html)host.innerHTML=html;}
+  }
   start(block){
     const plugged=this.state[block.connector_entity]?.state==='on',charging=this.state[block.charging_entity]?.state===(block.charging_value??'Charging');
     const power=number(this.state[block.power_entity]?.state),active=block.power_entity?power!==null&&power>0:charging,animated=active&&block.animate!==false;
     const image=imageUrl(block.image),cable=(plugged||active)&&block.show_cable!==false;
-    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.config.title||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'');
+    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.config.title||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/><div class="rain-host" data-rain="${escape(block.id)}">${this.rainOverlay(block)}</div>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'');
   }
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
@@ -134,7 +145,7 @@ export class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${rainStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}

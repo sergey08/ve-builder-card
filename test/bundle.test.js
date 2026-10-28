@@ -206,3 +206,15 @@ test('location-based temperature rendering identifies selected source and unknow
  card._hass.states['person.car']={state:'unknown'};assert.match(card.pressureAdvice(block),/Ubicación desconocida/);
  card._hass.language='en';assert.match(card.pressureAdvice(block),/Unknown location/);
 });
+
+test('rain overlays retain image and cable, escape preview labels and disappear without repainting the car',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card'),card=new Card();
+ card.setConfig({language:'en',blocks:[{id:'start',type:'start',image:'/local/car.png',connector_entity:'binary_sensor.plug',rain:{enabled:true,preview:true,intensity:'heavy'}}]});
+ card.hass={states:{'binary_sensor.plug':{state:'on'}}};
+ assert.match(card.shadowRoot.innerHTML,/rain-overlay rain-heavy rain-animated/);assert.match(card.shadowRoot.innerHTML,/Sample rain/);assert.match(card.shadowRoot.innerHTML,/src="\/local\/car.png"/);assert.match(card.shadowRoot.innerHTML,/cable-static/);
+ const host={dataset:{rain:'start'},innerHTML:'old rain'};card.shadowRoot.querySelectorAll=selector=>selector==='[data-rain]'?[host]:[];
+ card.config.blocks[0].rain.preview=false;card.refreshRain();assert.equal(host.innerHTML,'');
+ card.config.blocks[0].show_image=false;card._dirty=true;card.render();assert.doesNotMatch(card.shadowRoot.innerHTML,/<svg class="rain-overlay/);
+});

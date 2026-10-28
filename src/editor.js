@@ -218,12 +218,28 @@ export class VEBuilderEditor extends HTMLElement {
     this.form(panel,{max_age_minutes:60,...options},[numeric('max_age_minutes',1,10080),entity('timestamp_entity','sensor')],patch=>{block.freshness={...block.freshness,...patch};this.emit();});
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un sensor cuyo valor sea una fecha de lectura. Sin él se usa el cambio más antiguo de las entidades; un valor estable no demuestra que el coche haya dejado de informar. Los datos antiguos se atenúan sin bloquear controles.');panel.append(hint);
   }
+  rainEditor(parent,block){
+    const panel=this.panel(parent,block.id+'-rain','Lluvia sobre el vehículo'),options={enabled:false,source:'weather',animate:true,intensity:'normal',home_value:'home',rain_value:'on',threshold:0,max_age_minutes:180,covered_value:'on',uncovered_value:'off',...block.rain};
+    const labels={enabled:'Mostrar lluvia',source:'Origen de la lluvia',entity:'Entidad de lluvia',rain_value:'Estado que significa lluvia',threshold:'Lluvia si el valor es mayor que',animate:'Animar lluvia',intensity:'Intensidad visual',max_age_minutes:'Antigüedad máxima de lluvia · minutos',home_only:'Solo cuando el coche esté en casa',location_entity:'Entidad de ubicación del vehículo',home_value:'Estado que significa en casa',covered:'Coche bajo techo',covered_entity:'Sensor de coche bajo techo (opcional)',covered_value:'Estado que significa bajo techo',uncovered_value:'Estado que significa al aire libre',preview:'Vista previa de lluvia (datos de ejemplo)'};
+    const update=patch=>{const changed=('enabled'in patch&&patch.enabled!==options.enabled)||('source'in patch&&patch.source!==options.source)||('home_only'in patch&&patch.home_only!==options.home_only);block.rain={...options,...block.rain,...patch};this.emit();if(changed)this.render();};
+    const toggle=this.form(panel,options,[bool('enabled')],update);toggle.computeLabel=f=>this.t(labels[f.name]);if(!options.enabled)return;
+    const domain=options.source==='binary'?['binary_sensor','input_boolean']:options.source==='numeric'?['sensor','number','input_number']:'weather';
+    const schema=[select('source',{weather:'Entidad meteorológica',binary:'Sensor de lluvia · sí/no',numeric:'Sensor de precipitación actual'}),entity('entity',domain)];
+    if(options.source==='binary')schema.push(text('rain_value'));
+    if(options.source==='numeric')schema.push(numeric('threshold',0,100000,0.1));
+    schema.push(select('intensity',{light:'Ligera',normal:'Normal',heavy:'Intensa'}),bool('animate'),numeric('max_age_minutes',1,1440),bool('home_only'));
+    if(options.home_only)schema.push(entity('location_entity',['person','device_tracker','binary_sensor','input_boolean']),text('home_value'));
+    schema.push(bool('covered'),entity('covered_entity',['binary_sensor','input_boolean']),text('covered_value'),text('uncovered_value'),bool('preview'));
+    const form=this.form(panel,options,schema,update);form.computeLabel=f=>this.t(labels[f.name]);
+    for(const message of ['Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.','Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.','La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.']){const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t(message);panel.append(hint);}
+  }
   blockEditor(panel,block){
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=block.title||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
+      this.rainEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);

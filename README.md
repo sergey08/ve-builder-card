@@ -68,6 +68,12 @@ Assign each tyre pressure sensor and choose bar, kPa or psi. Optionally assign g
 
 The cable remains visible and stationary while connected without energy flow. Set **Actual charging power** to distinguish charging from waiting: with a power entity, positive power determines charging and animation, even when the vehicle status is delayed. Zero power means waiting; unavailable power is identified explicitly. Without a power entity, the display follows the charging state. Reduced-motion preferences are respected.
 
+### Rain over the vehicle (1.6.0 beta)
+
+In **Edit → Overview → Rain over the vehicle**, enable the overlay and choose a current-weather entity, binary rain sensor or current precipitation sensor. Choose light, normal or heavy cosmetic intensity and animation. Unknown or old rain readings show no effect (maximum age: 180 minutes by default). Reduced-motion preferences produce a static effect.
+
+For a home sensor, optionally restrict the effect to the vehicle’s home location. **Vehicle under cover** or a cover sensor can suppress rain in a garage. Use **Rain preview (sample data)** to test the appearance; it is labelled and ignores sensors/location/cover, so turn it off afterwards. No entities are preassigned. Current weather conditions are documented by [Home Assistant](https://www.home-assistant.io/integrations/weather/); forecasts and accumulated rain are not used to infer current rain.
+
 ### Images and languages
 
 Use an image URL or a Home Assistant `/local/` image path in the Overview block. The interface supports **English, Spanish, Portuguese, French, German, Italian and Dutch**, follows Home Assistant automatically, and also offers a language override in the editor. Your custom titles, field names and notes are preserved as entered.
@@ -185,6 +191,12 @@ Asigna cada sensor de presión y elige bar, kPa o psi. Opcionalmente, añade la 
 ### Visualización de la carga
 
 La manguera permanece visible y quieta cuando el coche está conectado sin recibir energía. Configura **Potencia real de carga** para distinguir la carga de la espera: si hay una entidad de potencia, su lectura positiva determina la carga y la animación, aunque el estado del vehículo llegue con retraso. Con potencia cero queda en espera y se indica expresamente si la potencia no está disponible. Sin entidad de potencia, sigue el estado de carga. Se respeta la preferencia de movimiento reducido.
+
+### Lluvia sobre el vehículo (beta 1.6.0)
+
+En **Editar → Inicio → Lluvia sobre el vehículo**, activa la capa y selecciona una entidad meteorológica, sensor binario de lluvia o sensor de precipitación actual. Elige intensidad decorativa ligera, normal o intensa y animación. Sin datos recientes de lluvia no hay efecto (antigüedad máxima de 180 minutos por defecto). La preferencia de movimiento reducido deja el efecto estático.
+
+Si usas un sensor de casa, puedes restringirlo a cuando el coche esté en casa. **Coche bajo techo** o un sensor de cobertura oculta la lluvia en el garaje. La **Vista previa de lluvia (datos de ejemplo)** permite probar el aspecto; lleva etiqueta e ignora sensores, ubicación y techo, por lo que debe desactivarse después. No trae entidades preasignadas. Se usan condiciones actuales según [Home Assistant](https://www.home-assistant.io/integrations/weather/), no previsiones ni lluvia acumulada.
 
 ### Imágenes e idiomas
 
