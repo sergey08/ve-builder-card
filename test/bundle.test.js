@@ -218,3 +218,16 @@ test('rain overlays retain image and cable, escape preview labels and disappear 
  card.config.blocks[0].rain.preview=false;card.refreshRain();assert.equal(host.innerHTML,'');
  card.config.blocks[0].show_image=false;card._dirty=true;card.render();assert.doesNotMatch(card.shadowRoot.innerHTML,/<svg class="rain-overlay/);
 });
+
+test('rain uses bounded layered depth, varied drop lengths and stable placement across refreshes',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[]});card.hass={language:'en',states:{}};
+ for(const intensity of ['light','normal','heavy']){
+  const block={rain:{enabled:true,preview:true,intensity}},markup=card.rainOverlay(block);
+  assert.equal((markup.match(/class="rain-drops rain-depth-/g)||[]).length,3);
+  assert.equal(markup,card.rainOverlay(block));assert.ok((markup.match(/M-?\d+ /g)||[]).length<=80);
+  const lengths=[...markup.matchAll(/l-\d+ (\d+)/g)].map(m=>m[1]);assert.ok(new Set(lengths).size>3);
+ }
+ const staticRain=card.rainOverlay({rain:{enabled:true,preview:true,animate:false}});assert.doesNotMatch(staticRain,/rain-animated/);assert.match(staticRain,/rain-depth-near/);
+});

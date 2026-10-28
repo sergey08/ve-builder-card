@@ -65,9 +65,16 @@ export class VEBuilderCard extends HTMLElement {
   fields(fields=[]){return `<div class="vehicle-badges">${fields.length?fields.map(f=>this.field(f)).join(''):`<p class="empty">${this.t('Añade campos desde el editor visual.')}</p>`}</div>`;}
   rainOverlay(block){
     const result=vehicleRain(block.rain,this.state);if(!result.active)return '';
-    const count={light:12,normal:20,heavy:28}[result.intensity];let path='';
-    for(let row=0;row<2;row++)for(let i=0;i<count;i++){const x=(i*97)%400,y=(i*67)%230+row*230;path+=`M${x} ${y}l-7 17`;}
-    return `<svg class="rain-overlay rain-${result.intensity} ${result.animated?'rain-animated':''}" viewBox="0 0 400 230" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g class="rain-drops"><path d="${path}"/></g></svg>${result.preview?`<span class="rain-preview-label">${escape(this.t('Lluvia de ejemplo'))}</span>`:''}`;
+    const density={light:[6,5,3],normal:[10,9,6],heavy:[16,14,10]}[result.intensity];
+    const layers=['far','mid','near'].map((depth,layer)=>{
+      let path='';for(let row=0;row<2;row++)for(let i=0;i<density[layer];i++){
+        // Stable irregular positions: sensor refreshes do not reshuffle the rain.
+        const seed=(i+1)*(i+17)*(layer+3),x=(seed*73+layer*109)%420-10,y=(seed*47+layer*61)%230+row*230;
+        const length=5+layer*5+(seed%7),slant=2+layer+(seed%3);path+=`M${x} ${y}l-${slant} ${length}`;
+      }
+      return `<g class="rain-drops rain-depth-${depth}"><path d="${path}"/></g>`;
+    }).join('');
+    return `<svg class="rain-overlay rain-${result.intensity} ${result.animated?'rain-animated':''}" viewBox="0 0 400 230" preserveAspectRatio="none" aria-hidden="true" focusable="false">${layers}</svg>${result.preview?`<span class="rain-preview-label">${escape(this.t('Lluvia de ejemplo'))}</span>`:''}`;
   }
   refreshRain(){
     for(const host of this.shadowRoot.querySelectorAll('[data-rain]')){const block=this.config.blocks.find(b=>b.id===host.dataset.rain);if(!block)continue;const html=this.rainOverlay(block);if(host.innerHTML!==html)host.innerHTML=html;}
