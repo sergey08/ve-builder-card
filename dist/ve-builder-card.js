@@ -1888,7 +1888,7 @@ function translateSchema(schema,lang){const output=structuredClone(schema);for(c
 
 function missingTranslations(code){return code==='es'||code==='en'?[]:Object.keys(EN).filter(key=>!EXTRA[code]?.[key]);}
 
-const VERSION = '1.7.0-beta.1';
+const VERSION = '1.7.0-beta.2';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -2189,7 +2189,7 @@ function vehicleStatus(item,states={},lang='es'){
  }
  return {level,label,icon,name:item.name||'',entity:item.entity||''};
 }
-const vehicleStatusStyles=`.vehicle-statuses{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:8px 16px 4px}.vehicle-statuses .vehicle-status{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;max-width:100%;padding:5px 10px;border:1px solid transparent;border-radius:14px;background:var(--secondary-background-color);font-size:12px;color:var(--secondary-text-color);line-height:1.4}.vehicle-status span{margin:0;overflow-wrap:anywhere;color:inherit}.vehicle-status ha-icon{--mdc-icon-size:18px;flex-shrink:0}.vehicle-status.status-attention{color:var(--warning-color,#ff9800);border-color:currentColor;background:color-mix(in srgb,var(--warning-color,#ff9800) 10%,var(--card-background-color))}.vehicle-status.status-unknown{opacity:.65}.vehicle-status:disabled{cursor:default}.vehicle-status:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}`;
+const vehicleStatusStyles=`.vehicle-statuses{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 14px;padding:4px 16px 0}.vehicle-statuses .vehicle-status{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:28px;max-width:100%;padding:2px 0;border:0;border-radius:0;background:transparent;font:inherit;font-size:11px;color:var(--secondary-text-color);line-height:1.4}.vehicle-status span{margin:0;overflow-wrap:anywhere;color:inherit}.vehicle-status ha-icon{--mdc-icon-size:15px;flex-shrink:0}.vehicle-status.status-attention{color:var(--warning-color,#ff9800)}.vehicle-status.status-unknown{opacity:.65}.vehicle-status:disabled{cursor:default}.vehicle-status:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}`;
 
 
 const TRANSFER_LIMIT=512*1024;
