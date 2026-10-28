@@ -1442,12 +1442,183 @@ const EXTRA={
 };
 for(const [code,label] of Object.entries({fr:'Âge maximal de la température · minutes',pt:'Idade máxima da temperatura · minutos',de:'Maximales Alter der Temperatur · Minuten',it:'Età massima della temperatura · minuti',nl:'Maximale leeftijd temperatuur · minuten'}))EXTRA[code]['Antigüedad máxima de temperatura · minutos']=label;
 
+Object.assign(EN,{
+ "Exportar e importar tarjeta": "Export and import card",
+ "Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.": "Save a JSON backup or share the layout. Files contain no vehicle readings. Images retain their URL; image files are not included.",
+ "Incluir entidades en la exportación": "Include entities in export",
+ "Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.": "Uncheck to share the layout without entity assignments. Also review titles, notes and image addresses before sharing.",
+ "Descargar tarjeta JSON": "Download card JSON",
+ "Abrir archivo JSON": "Open JSON file",
+ "O pega aquí la configuración JSON": "Or paste JSON configuration here",
+ "Revisar importación": "Review import",
+ "Apartados": "Sections",
+ "Campos": "Fields",
+ "Entidades": "Entities",
+ "Entidades no disponibles": "Unavailable entities",
+ "Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.": "Add keeps the current title and settings. Replace changes this entire card. No sensors are created and no vehicle commands are sent.",
+ "Añadir solo los apartados": "Add sections only",
+ "Reemplazar esta tarjeta": "Replace this card",
+ "Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.": "Import applied. Review entities and select Save. You can undo this change.",
+ "El archivo supera el límite de 512 KB.": "The file exceeds the 512 KB limit.",
+ "El texto no es un archivo JSON válido.": "The text is not valid JSON.",
+ "La configuración tiene demasiados niveles.": "The configuration has too many nesting levels.",
+ "El archivo contiene claves no admitidas.": "The file contains unsupported keys.",
+ "El archivo no contiene una tarjeta VE Builder Card.": "The file does not contain a VE Builder Card.",
+ "La versión del archivo no es compatible.": "The file version is not supported.",
+ "La tarjeta admite hasta 100 apartados por importación.": "Up to 100 sections can be imported at once.",
+ "La estructura de la tarjeta no es válida.": "The card structure is invalid.",
+ "El archivo contiene un tipo de apartado no compatible.": "The file contains an unsupported section type.",
+ "No se pudo leer el archivo.": "Could not read the file."
+});
+for(const [code,entries]of Object.entries({
+ "pt": {
+  "Exportar e importar tarjeta": "Exportar e importar cartão",
+  "Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.": "Guarde uma cópia JSON ou partilhe o desenho. Os ficheiros não incluem leituras do veículo. As imagens mantêm o URL; não são incluídas.",
+  "Incluir entidades en la exportación": "Incluir entidades na exportação",
+  "Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.": "Desmarque para partilhar o desenho sem entidades atribuídas. Reveja também títulos, notas e endereços das imagens antes de partilhar.",
+  "Descargar tarjeta JSON": "Descarregar cartão JSON",
+  "Abrir archivo JSON": "Abrir ficheiro JSON",
+  "O pega aquí la configuración JSON": "Ou cole aqui a configuração JSON",
+  "Revisar importación": "Rever importação",
+  "Apartados": "Secções",
+  "Campos": "Campos",
+  "Entidades": "Entidades",
+  "Entidades no disponibles": "Entidades indisponíveis",
+  "Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.": "Adicionar conserva o título e as definições atuais. Substituir altera todo este cartão. Não são criados sensores nem enviadas ordens ao veículo.",
+  "Añadir solo los apartados": "Adicionar apenas as secções",
+  "Reemplazar esta tarjeta": "Substituir este cartão",
+  "Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.": "Importação aplicada. Reveja as entidades e guarde. Pode desfazer esta alteração.",
+  "El archivo supera el límite de 512 KB.": "O ficheiro excede o limite de 512 KB.",
+  "El texto no es un archivo JSON válido.": "O texto não é um JSON válido.",
+  "La configuración tiene demasiados niveles.": "A configuração tem demasiados níveis.",
+  "El archivo contiene claves no admitidas.": "O ficheiro contém chaves não permitidas.",
+  "El archivo no contiene una tarjeta VE Builder Card.": "O ficheiro não contém um cartão VE Builder Card.",
+  "La versión del archivo no es compatible.": "A versão do ficheiro não é compatível.",
+  "La tarjeta admite hasta 100 apartados por importación.": "Podem ser importadas até 100 secções de cada vez.",
+  "La estructura de la tarjeta no es válida.": "A estrutura do cartão não é válida.",
+  "El archivo contiene un tipo de apartado no compatible.": "O ficheiro contém um tipo de secção não compatível.",
+  "No se pudo leer el archivo.": "Não foi possível ler o ficheiro."
+ },
+ "fr": {
+  "Exportar e importar tarjeta": "Exporter et importer une carte",
+  "Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.": "Enregistrez une copie JSON ou partagez la présentation. Les fichiers ne contiennent pas de mesures du véhicule. Les images gardent leur URL ; elles ne sont pas jointes.",
+  "Incluir entidades en la exportación": "Inclure les entités dans l’export",
+  "Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.": "Décochez pour partager la présentation sans affectations d’entités. Vérifiez aussi les titres, notes et adresses des images avant de partager.",
+  "Descargar tarjeta JSON": "Télécharger la carte JSON",
+  "Abrir archivo JSON": "Ouvrir un fichier JSON",
+  "O pega aquí la configuración JSON": "Ou collez la configuration JSON ici",
+  "Revisar importación": "Vérifier l’import",
+  "Apartados": "Sections",
+  "Campos": "Champs",
+  "Entidades": "Entités",
+  "Entidades no disponibles": "Entités indisponibles",
+  "Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.": "Ajouter conserve le titre et les réglages actuels. Remplacer modifie toute cette carte. Aucun capteur n’est créé et aucune commande n’est envoyée au véhicule.",
+  "Añadir solo los apartados": "Ajouter seulement les sections",
+  "Reemplazar esta tarjeta": "Remplacer cette carte",
+  "Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.": "Import appliqué. Vérifiez les entités et enregistrez. Vous pouvez annuler cette modification.",
+  "El archivo supera el límite de 512 KB.": "Le fichier dépasse la limite de 512 Ko.",
+  "El texto no es un archivo JSON válido.": "Le texte n’est pas un JSON valide.",
+  "La configuración tiene demasiados niveles.": "La configuration comporte trop de niveaux.",
+  "El archivo contiene claves no admitidas.": "Le fichier contient des clés non autorisées.",
+  "El archivo no contiene una tarjeta VE Builder Card.": "Le fichier ne contient pas de VE Builder Card.",
+  "La versión del archivo no es compatible.": "La version du fichier n’est pas compatible.",
+  "La tarjeta admite hasta 100 apartados por importación.": "Vous pouvez importer jusqu’à 100 sections à la fois.",
+  "La estructura de la tarjeta no es válida.": "La structure de la carte n’est pas valide.",
+  "El archivo contiene un tipo de apartado no compatible.": "Le fichier contient un type de section non compatible.",
+  "No se pudo leer el archivo.": "Impossible de lire le fichier."
+ },
+ "de": {
+  "Exportar e importar tarjeta": "Karte exportieren und importieren",
+  "Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.": "Speichere eine JSON-Kopie oder teile das Layout. Dateien enthalten keine Fahrzeugmesswerte. Bilder behalten ihre URL; Bilddateien werden nicht angehängt.",
+  "Incluir entidades en la exportación": "Entitäten beim Export einschließen",
+  "Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.": "Deaktivieren, um das Layout ohne Entitätszuweisungen zu teilen. Prüfe vor dem Teilen auch Titel, Notizen und Bildadressen.",
+  "Descargar tarjeta JSON": "Karte als JSON herunterladen",
+  "Abrir archivo JSON": "JSON-Datei öffnen",
+  "O pega aquí la configuración JSON": "Oder JSON-Konfiguration hier einfügen",
+  "Revisar importación": "Import prüfen",
+  "Apartados": "Abschnitte",
+  "Campos": "Felder",
+  "Entidades": "Entitäten",
+  "Entidades no disponibles": "Nicht verfügbare Entitäten",
+  "Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.": "Hinzufügen behält Titel und Einstellungen bei. Ersetzen ändert die gesamte Karte. Es werden keine Sensoren erstellt oder Fahrzeugbefehle gesendet.",
+  "Añadir solo los apartados": "Nur Abschnitte hinzufügen",
+  "Reemplazar esta tarjeta": "Diese Karte ersetzen",
+  "Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.": "Import übernommen. Prüfe die Entitäten und speichere. Du kannst diese Änderung rückgängig machen.",
+  "El archivo supera el límite de 512 KB.": "Die Datei überschreitet die Grenze von 512 KB.",
+  "El texto no es un archivo JSON válido.": "Der Text ist kein gültiges JSON.",
+  "La configuración tiene demasiados niveles.": "Die Konfiguration hat zu viele Verschachtelungsebenen.",
+  "El archivo contiene claves no admitidas.": "Die Datei enthält unzulässige Schlüssel.",
+  "El archivo no contiene una tarjeta VE Builder Card.": "Die Datei enthält keine VE Builder Card.",
+  "La versión del archivo no es compatible.": "Die Dateiversion wird nicht unterstützt.",
+  "La tarjeta admite hasta 100 apartados por importación.": "Es können höchstens 100 Abschnitte auf einmal importiert werden.",
+  "La estructura de la tarjeta no es válida.": "Die Kartenstruktur ist ungültig.",
+  "El archivo contiene un tipo de apartado no compatible.": "Die Datei enthält einen nicht unterstützten Abschnittstyp.",
+  "No se pudo leer el archivo.": "Die Datei konnte nicht gelesen werden."
+ },
+ "it": {
+  "Exportar e importar tarjeta": "Esporta e importa scheda",
+  "Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.": "Salva una copia JSON o condividi il layout. I file non includono letture del veicolo. Le immagini mantengono l’URL; non vengono allegate.",
+  "Incluir entidades en la exportación": "Includi entità nell’esportazione",
+  "Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.": "Deseleziona per condividere il layout senza entità assegnate. Controlla anche titoli, note e indirizzi delle immagini prima di condividere.",
+  "Descargar tarjeta JSON": "Scarica scheda JSON",
+  "Abrir archivo JSON": "Apri file JSON",
+  "O pega aquí la configuración JSON": "Oppure incolla qui la configurazione JSON",
+  "Revisar importación": "Controlla importazione",
+  "Apartados": "Sezioni",
+  "Campos": "Campi",
+  "Entidades": "Entità",
+  "Entidades no disponibles": "Entità non disponibili",
+  "Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.": "Aggiungi mantiene titolo e impostazioni attuali. Sostituisci modifica tutta la scheda. Non vengono creati sensori né inviati comandi al veicolo.",
+  "Añadir solo los apartados": "Aggiungi solo le sezioni",
+  "Reemplazar esta tarjeta": "Sostituisci questa scheda",
+  "Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.": "Importazione applicata. Controlla le entità e salva. Puoi annullare questa modifica.",
+  "El archivo supera el límite de 512 KB.": "Il file supera il limite di 512 KB.",
+  "El texto no es un archivo JSON válido.": "Il testo non è JSON valido.",
+  "La configuración tiene demasiados niveles.": "La configurazione ha troppi livelli.",
+  "El archivo contiene claves no admitidas.": "Il file contiene chiavi non consentite.",
+  "El archivo no contiene una tarjeta VE Builder Card.": "Il file non contiene una VE Builder Card.",
+  "La versión del archivo no es compatible.": "La versione del file non è supportata.",
+  "La tarjeta admite hasta 100 apartados por importación.": "È possibile importare fino a 100 sezioni alla volta.",
+  "La estructura de la tarjeta no es válida.": "La struttura della scheda non è valida.",
+  "El archivo contiene un tipo de apartado no compatible.": "Il file contiene un tipo di sezione non supportato.",
+  "No se pudo leer el archivo.": "Impossibile leggere il file."
+ },
+ "nl": {
+  "Exportar e importar tarjeta": "Kaart exporteren en importeren",
+  "Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.": "Bewaar een JSON-kopie of deel de indeling. Bestanden bevatten geen voertuigmetingen. Afbeeldingen behouden hun URL; afbeeldingsbestanden zijn niet inbegrepen.",
+  "Incluir entidades en la exportación": "Entiteiten opnemen in export",
+  "Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.": "Vink uit om de indeling zonder entiteitstoewijzingen te delen. Controleer ook titels, notities en afbeeldingsadressen voordat je deelt.",
+  "Descargar tarjeta JSON": "Kaart als JSON downloaden",
+  "Abrir archivo JSON": "JSON-bestand openen",
+  "O pega aquí la configuración JSON": "Of plak hier de JSON-configuratie",
+  "Revisar importación": "Import controleren",
+  "Apartados": "Secties",
+  "Campos": "Velden",
+  "Entidades": "Entiteiten",
+  "Entidades no disponibles": "Niet-beschikbare entiteiten",
+  "Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.": "Toevoegen behoudt de huidige titel en instellingen. Vervangen wijzigt deze hele kaart. Er worden geen sensoren gemaakt of voertuigopdrachten verzonden.",
+  "Añadir solo los apartados": "Alleen secties toevoegen",
+  "Reemplazar esta tarjeta": "Deze kaart vervangen",
+  "Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.": "Import toegepast. Controleer de entiteiten en sla op. Je kunt deze wijziging ongedaan maken.",
+  "El archivo supera el límite de 512 KB.": "Het bestand overschrijdt de limiet van 512 KB.",
+  "El texto no es un archivo JSON válido.": "De tekst is geen geldige JSON.",
+  "La configuración tiene demasiados niveles.": "De configuratie heeft te veel geneste niveaus.",
+  "El archivo contiene claves no admitidas.": "Het bestand bevat niet-toegestane sleutels.",
+  "El archivo no contiene una tarjeta VE Builder Card.": "Het bestand bevat geen VE Builder Card.",
+  "La versión del archivo no es compatible.": "De bestandsversie wordt niet ondersteund.",
+  "La tarjeta admite hasta 100 apartados por importación.": "Er kunnen maximaal 100 secties tegelijk worden geïmporteerd.",
+  "La estructura de la tarjeta no es válida.": "De kaartstructuur is ongeldig.",
+  "El archivo contiene un tipo de apartado no compatible.": "Het bestand bevat een niet-ondersteund sectietype.",
+  "No se pudo leer el archivo.": "Het bestand kon niet worden gelezen."
+ }
+}))Object.assign(EXTRA[code],entries);
+
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EXTRA[lang]?.[value])return EXTRA[lang][value];if(EN[value])return EN[value];const fragments={fr:[' réglage(s) à vérifier : ',': choisissez une entité.',': entité indisponible (',': le maximum doit être supérieur au minimum.','Type de bloc inconnu : '],pt:[' definição(ões) pendente(s): ',': escolha uma entidade.',': entidade indisponível (',': o máximo deve ser maior do que o mínimo.','Tipo de bloco desconhecido: '],de:[' ausstehende Einstellung(en): ',': wähle eine Entität.',': Entität nicht verfügbar (',': das Maximum muss größer als das Minimum sein.','Unbekannter Blocktyp: '],it:[' impostazione/i da verificare: ',': scegli un’entità.',': entità non disponibile (',': il massimo deve essere maggiore del minimo.','Tipo di blocco sconosciuto: '],nl:[' instelling(en) te controleren: ',': kies een entiteit.',': entiteit niet beschikbaar (',': het maximum moet groter zijn dan het minimum.','Onbekend bloktype: ']}[lang];if(fragments)return [' ajuste(s) pendiente(s): ',': elige una entidad.',': entidad no disponible (',': el máximo debe ser mayor que el mínimo.','Tipo de bloque desconocido: '].reduce((out,part,index)=>out.replaceAll(part,fragments[index]),value);return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
 function missingTranslations(code){return code==='es'||code==='en'?[]:Object.keys(EN).filter(key=>!EXTRA[code]?.[key]);}
 
-const VERSION = '1.4.1';
+const VERSION = '1.5.0-beta.1';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1697,13 +1868,60 @@ const alertSummaryStyles = `
 `;
 
 
+const TRANSFER_LIMIT=512*1024;
+const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+const fail=message=>{throw Error(message);};
+
+// Files contain configuration only: no state snapshots or service execution.
+function exportCard(config,{includeEntities=true}={}) {
+ const card=clone(config);
+ if(!includeEntities){
+  const clear=value=>{if(!object(value)&&!Array.isArray(value))return;for(const [key,item]of Object.entries(value)){if(key==='entity'||key.endsWith('_entity'))value[key]='';else if(key==='positions'&&object(item))for(const position of Object.keys(item))item[position]='';else clear(item);}};
+  clear(card);
+ }
+ return JSON.stringify({format:'ve-builder-card',schema_version:1,card_version:VERSION,card},null,2);
+}
+
+function inspectCardImport(source,states={}) {
+ if(typeof source!=='string'||new TextEncoder().encode(source).byteLength>TRANSFER_LIMIT)fail('El archivo supera el límite de 512 KB.');
+ let data;try{data=JSON.parse(source);}catch{fail('El texto no es un archivo JSON válido.');}
+ const safe=(value,depth=0)=>{if(depth>30)fail('La configuración tiene demasiados niveles.');if(value&&typeof value==='object')for(const [key,item]of Object.entries(value)){if(['__proto__','prototype','constructor'].includes(key))fail('El archivo contiene claves no admitidas.');safe(item,depth+1);}};safe(data);
+ if(!object(data))fail('El archivo no contiene una tarjeta VE Builder Card.');
+ let card=data;
+ if('format' in data){if(data.format!=='ve-builder-card')fail('El archivo no contiene una tarjeta VE Builder Card.');if(data.schema_version!==1)fail('La versión del archivo no es compatible.');card=data.card;}
+ if(!object(card)||(card.type!==undefined&&card.type!=='custom:ve-builder-card')||!Array.isArray(card.blocks))fail('El archivo no contiene una tarjeta VE Builder Card.');
+ if(card.version!==undefined&&card.version!==1)fail('La versión del archivo no es compatible.');
+ if(card.blocks.length>100)fail('La tarjeta admite hasta 100 apartados por importación.');
+ const checkObject=value=>{if(!object(value))fail('La estructura de la tarjeta no es válida.');};
+ const textKeys=['title','name','entity','image','icon','note','language','gear_name'];
+ const checkTexts=value=>{for(const [key,item]of Object.entries(value))if((textKeys.includes(key)||key.endsWith('_entity'))&&typeof item!=='string')fail('La estructura de la tarjeta no es válida.');};
+ const list=(value,visit)=>{if(value===undefined)return;if(!Array.isArray(value)||value.length>1000)fail('La estructura de la tarjeta no es válida.');value.forEach(item=>{checkObject(item);checkTexts(item);visit?.(item);});};
+ checkTexts(card);
+ for(const block of card.blocks){
+  checkObject(block);checkTexts(block);if(!Object.hasOwn(TYPES,block.type))fail('El archivo contiene un tipo de apartado no compatible.');
+  list(block.fields);list(block.prices);list(block.groups,g=>list(g.fields));
+  for(const key of ['freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
+  if(block.positions!==undefined){checkObject(block.positions);if(Object.values(block.positions).some(v=>typeof v!=='string'))fail('La estructura de la tarjeta no es válida.');}
+  if(block.body_parts!==undefined){checkObject(block.body_parts);Object.values(block.body_parts).forEach(part=>{checkObject(part);checkTexts(part);});}
+ }
+ // New IDs make every imported section independent, including repeated imports.
+ card=clone(card);const fresh=item=>{item.id=uid();};
+ for(const block of card.blocks){fresh(block);block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
+ const config=normalize(card),entities=new Set();
+ const collect=(value,key='')=>{if(!value||typeof value!=='object')return;for(const [name,item]of Object.entries(value)){if(typeof item==='string'&&(name==='entity'||name.endsWith('_entity')||key==='positions')&&item)entities.add(item);else collect(item,name);}};collect(config);
+ const missing=[...entities].filter(id=>!states[id]);
+ const fields=config.blocks.reduce((n,b)=>n+(b.fields?.length??0)+(b.prices?.length??0)+(b.groups??[]).reduce((sum,g)=>sum+(g.fields?.length??0),0),0);
+ return {config,blocks:config.blocks.length,fields,entities:[...entities],missing};
+}
+
+
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
 const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:'box'}}});
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
 const LABELS={max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
-const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
+const CSS=`textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;padding:10px;margin:8px 0;border:1px solid var(--divider-color);border-radius:8px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;resize:vertical}.transfer-file{display:block;margin:14px 0}.transfer-file input{display:block;max-width:100%;margin:8px 0}.transfer-preview{padding:12px;margin-top:12px;border:1px solid var(--primary-color);border-radius:10px}.transfer-preview p{overflow-wrap:anywhere}.transfer-preview details p{font-size:12px}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 let copiedSection=null;
 
@@ -1751,6 +1969,53 @@ class VEBuilderEditor extends HTMLElement {
     const paste=this.button(box,'Pegar apartado',()=>this.pasteSection());paste.disabled=!copiedSection;
     if(copiedSection){const label=document.createElement('p');label.className='muted';label.textContent=this.t('Apartado copiado')+': '+(copiedSection.title||this.t(TYPES[copiedSection.type]||'Bloque'));box.append(label);this.button(box,'Borrar copia temporal',()=>{copiedSection=null;this.copyFeedback='';this.render();});}
     if(this.copyFeedback){const feedback=document.createElement('p');feedback.className='muted';feedback.setAttribute('role','status');feedback.textContent=this.t(this.copyFeedback);box.append(feedback);}
+  }
+  previewImport(){
+    try{this.importPreview=inspectCardImport(this.importText??'',this._hass?.states??{});this.transferMessage='';}
+    catch(error){this.importPreview=null;this.transferMessage=error.message;}
+    this.openKey='card-transfer';this.render();
+  }
+  applyImport(mode){
+    if(!this.importPreview)return false;
+    // Revalidate the exact text at apply time, after any edit or state update.
+    let result;try{result=inspectCardImport(this.importText??'',this._hass?.states??{});}catch(error){this.importPreview=null;this.transferMessage=error.message;this.render();return false;}
+    if(mode==='append')this.config.blocks.push(...result.config.blocks);
+    else if(mode==='replace')this.config=result.config;
+    else return false;
+    this.importPreview=null;this.importText='';this.transferMessage='Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.';
+    this.openKey='card-transfer';this.emit();this.render();return true;
+  }
+  transferPanel(parent){
+    const panel=this.panel(parent,'card-transfer','Exportar e importar tarjeta');
+    const paragraph=value=>{const p=document.createElement('p');p.className='muted';p.textContent=this.t(value);panel.append(p);return p;};
+    paragraph('Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.');
+    const label=document.createElement('label'),checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=this.exportEntities!==false;checkbox.onchange=()=>{this.exportEntities=checkbox.checked;};label.append(checkbox,document.createTextNode(' '+this.t('Incluir entidades en la exportación')));panel.append(label);
+    paragraph('Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.');
+    this.button(panel,'Descargar tarjeta JSON',()=>{
+      const blob=new Blob([exportCard(this.config,{includeEntities:this.exportEntities!==false})],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+      link.href=url;link.download='ve-builder-card.json';panel.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    });
+    const fileLabel=document.createElement('label');fileLabel.className='transfer-file';fileLabel.textContent=this.t('Abrir archivo JSON');
+    const file=document.createElement('input');file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label',this.t('Abrir archivo JSON'));file.onchange=async()=>{
+      const selected=file.files?.[0];if(!selected)return;this.importPreview=null;panel.querySelector('[data-import-preview]')?.remove();const request=this._importRequest=(this._importRequest??0)+1;
+      if(selected.size>TRANSFER_LIMIT){this.importPreview=null;this.transferMessage='El archivo supera el límite de 512 KB.';this.render();return;}
+      try{const source=await selected.text();if(request!==this._importRequest)return;this.importText=source;this.previewImport();}catch{if(request===this._importRequest){this.importPreview=null;this.transferMessage='No se pudo leer el archivo.';this.render();}}
+    };fileLabel.append(file);panel.append(fileLabel);
+    const areaLabel=document.createElement('label');areaLabel.className='transfer-file';areaLabel.textContent=this.t('O pega aquí la configuración JSON');
+    const area=document.createElement('textarea');area.value=this.importText??'';area.rows=6;area.spellcheck=false;area.maxLength=TRANSFER_LIMIT;area.setAttribute('aria-label',this.t('O pega aquí la configuración JSON'));
+    area.oninput=()=>{this._importRequest=(this._importRequest??0)+1;this.importText=area.value;this.importPreview=null;panel.querySelector('[data-import-preview]')?.remove();};areaLabel.append(area);panel.append(areaLabel);
+    this.button(panel,'Revisar importación',()=>this.previewImport());
+    if(this.importPreview){
+      const preview=document.createElement('div');preview.dataset.importPreview='';preview.className='transfer-preview';panel.append(preview);
+      const heading=document.createElement('strong');heading.textContent=this.importPreview.config.title;preview.append(heading);
+      for(const [key,count]of [['Apartados',this.importPreview.blocks],['Campos',this.importPreview.fields],['Entidades',this.importPreview.entities.length],['Entidades no disponibles',this.importPreview.missing.length]]){const line=document.createElement('p');line.textContent=this.t(key)+': '+count;preview.append(line);}
+      if(this.importPreview.missing.length){const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=this.t('Entidades no disponibles');details.append(summary);for(const id of this.importPreview.missing){const line=document.createElement('p');line.textContent=id;details.append(line);}preview.append(details);}
+      const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.');preview.append(hint);
+      this.button(preview,'Añadir solo los apartados',()=>this.applyImport('append'));
+      this.button(preview,'Reemplazar esta tarjeta',()=>this.applyImport('replace'),true);
+      this.button(preview,'Cancelar',()=>{this.importPreview=null;this.render();});
+    }
+    if(this.transferMessage){const status=paragraph(this.transferMessage);status.setAttribute('role','status');}
   }
   historyToolbar(parent){
     const bar=document.createElement('div');bar.className='toolbar';
@@ -1922,6 +2187,7 @@ class VEBuilderEditor extends HTMLElement {
     this.historyToolbar(root);
     this.alertsEditor(root);
     this.sectionClipboard(root);
+    this.transferPanel(root);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.wizardPanel(root);
     this.templates(root);

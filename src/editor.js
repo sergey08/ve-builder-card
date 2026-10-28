@@ -1,3 +1,4 @@
+import {exportCard,inspectCardImport,TRANSFER_LIMIT} from './transfer.js';
 import {language,translate,translateSchema,LANGUAGES} from './i18n.js';
 import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity} from './core.js';
 
@@ -7,7 +8,7 @@ const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
 const LABELS={max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
-const CSS=`summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
+const CSS=`textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;padding:10px;margin:8px 0;border:1px solid var(--divider-color);border-radius:8px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;resize:vertical}.transfer-file{display:block;margin:14px 0}.transfer-file input{display:block;max-width:100%;margin:8px 0}.transfer-preview{padding:12px;margin-top:12px;border:1px solid var(--primary-color);border-radius:10px}.transfer-preview p{overflow-wrap:anywhere}.transfer-preview details p{font-size:12px}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 let copiedSection=null;
 
@@ -55,6 +56,53 @@ export class VEBuilderEditor extends HTMLElement {
     const paste=this.button(box,'Pegar apartado',()=>this.pasteSection());paste.disabled=!copiedSection;
     if(copiedSection){const label=document.createElement('p');label.className='muted';label.textContent=this.t('Apartado copiado')+': '+(copiedSection.title||this.t(TYPES[copiedSection.type]||'Bloque'));box.append(label);this.button(box,'Borrar copia temporal',()=>{copiedSection=null;this.copyFeedback='';this.render();});}
     if(this.copyFeedback){const feedback=document.createElement('p');feedback.className='muted';feedback.setAttribute('role','status');feedback.textContent=this.t(this.copyFeedback);box.append(feedback);}
+  }
+  previewImport(){
+    try{this.importPreview=inspectCardImport(this.importText??'',this._hass?.states??{});this.transferMessage='';}
+    catch(error){this.importPreview=null;this.transferMessage=error.message;}
+    this.openKey='card-transfer';this.render();
+  }
+  applyImport(mode){
+    if(!this.importPreview)return false;
+    // Revalidate the exact text at apply time, after any edit or state update.
+    let result;try{result=inspectCardImport(this.importText??'',this._hass?.states??{});}catch(error){this.importPreview=null;this.transferMessage=error.message;this.render();return false;}
+    if(mode==='append')this.config.blocks.push(...result.config.blocks);
+    else if(mode==='replace')this.config=result.config;
+    else return false;
+    this.importPreview=null;this.importText='';this.transferMessage='Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.';
+    this.openKey='card-transfer';this.emit();this.render();return true;
+  }
+  transferPanel(parent){
+    const panel=this.panel(parent,'card-transfer','Exportar e importar tarjeta');
+    const paragraph=value=>{const p=document.createElement('p');p.className='muted';p.textContent=this.t(value);panel.append(p);return p;};
+    paragraph('Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.');
+    const label=document.createElement('label'),checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=this.exportEntities!==false;checkbox.onchange=()=>{this.exportEntities=checkbox.checked;};label.append(checkbox,document.createTextNode(' '+this.t('Incluir entidades en la exportación')));panel.append(label);
+    paragraph('Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.');
+    this.button(panel,'Descargar tarjeta JSON',()=>{
+      const blob=new Blob([exportCard(this.config,{includeEntities:this.exportEntities!==false})],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+      link.href=url;link.download='ve-builder-card.json';panel.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    });
+    const fileLabel=document.createElement('label');fileLabel.className='transfer-file';fileLabel.textContent=this.t('Abrir archivo JSON');
+    const file=document.createElement('input');file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label',this.t('Abrir archivo JSON'));file.onchange=async()=>{
+      const selected=file.files?.[0];if(!selected)return;this.importPreview=null;panel.querySelector('[data-import-preview]')?.remove();const request=this._importRequest=(this._importRequest??0)+1;
+      if(selected.size>TRANSFER_LIMIT){this.importPreview=null;this.transferMessage='El archivo supera el límite de 512 KB.';this.render();return;}
+      try{const source=await selected.text();if(request!==this._importRequest)return;this.importText=source;this.previewImport();}catch{if(request===this._importRequest){this.importPreview=null;this.transferMessage='No se pudo leer el archivo.';this.render();}}
+    };fileLabel.append(file);panel.append(fileLabel);
+    const areaLabel=document.createElement('label');areaLabel.className='transfer-file';areaLabel.textContent=this.t('O pega aquí la configuración JSON');
+    const area=document.createElement('textarea');area.value=this.importText??'';area.rows=6;area.spellcheck=false;area.maxLength=TRANSFER_LIMIT;area.setAttribute('aria-label',this.t('O pega aquí la configuración JSON'));
+    area.oninput=()=>{this._importRequest=(this._importRequest??0)+1;this.importText=area.value;this.importPreview=null;panel.querySelector('[data-import-preview]')?.remove();};areaLabel.append(area);panel.append(areaLabel);
+    this.button(panel,'Revisar importación',()=>this.previewImport());
+    if(this.importPreview){
+      const preview=document.createElement('div');preview.dataset.importPreview='';preview.className='transfer-preview';panel.append(preview);
+      const heading=document.createElement('strong');heading.textContent=this.importPreview.config.title;preview.append(heading);
+      for(const [key,count]of [['Apartados',this.importPreview.blocks],['Campos',this.importPreview.fields],['Entidades',this.importPreview.entities.length],['Entidades no disponibles',this.importPreview.missing.length]]){const line=document.createElement('p');line.textContent=this.t(key)+': '+count;preview.append(line);}
+      if(this.importPreview.missing.length){const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=this.t('Entidades no disponibles');details.append(summary);for(const id of this.importPreview.missing){const line=document.createElement('p');line.textContent=id;details.append(line);}preview.append(details);}
+      const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.');preview.append(hint);
+      this.button(preview,'Añadir solo los apartados',()=>this.applyImport('append'));
+      this.button(preview,'Reemplazar esta tarjeta',()=>this.applyImport('replace'),true);
+      this.button(preview,'Cancelar',()=>{this.importPreview=null;this.render();});
+    }
+    if(this.transferMessage){const status=paragraph(this.transferMessage);status.setAttribute('role','status');}
   }
   historyToolbar(parent){
     const bar=document.createElement('div');bar.className='toolbar';
@@ -226,6 +274,7 @@ export class VEBuilderEditor extends HTMLElement {
     this.historyToolbar(root);
     this.alertsEditor(root);
     this.sectionClipboard(root);
+    this.transferPanel(root);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.wizardPanel(root);
     this.templates(root);

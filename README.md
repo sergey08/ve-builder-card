@@ -100,6 +100,12 @@ In **Recommended pressures**, enter cold front and rear pressures in bar. A smal
 
 In Edit, open a block and **Reading age**. Enable the option and choose the age limit in minutes (default 60). You can select a sensor whose value is the actual reading timestamp, in ISO or Unix format. Without one, the oldest entity state change is shown explicitly: an unchanged value can remain valid. Old readings are dimmed without blocking controls; a sleeping vehicle is not a fault.
 
+## Whole-card export and import (1.5.0 beta)
+
+In **Edit → Export and import card**, download a JSON backup with entity assignments or uncheck **Include entities in export** to share a layout. Titles, notes and image URLs remain; review them before sharing. Vehicle readings and image files are not included.
+
+Open a JSON file or paste its contents and select **Review import**. The preview shows sections, fields and unavailable entities. **Add sections only** preserves the current title and settings; **Replace this card** imports the full configuration. Undo/redo works, and you must still save the card. Imported items get independent identifiers. Imports do not create entities or send commands. File size limit: 512 KB. Local images and entities must be available on the destination system.
+
 ## Reuse sections
 
 Select **Copy section** at the end of a block. In another card on the same page open **Edit → Reuse sections → Paste section**. Entities and appearance are preserved in an independent copy. Review entities and save. The temporary copy clears on page reload.
@@ -211,6 +217,12 @@ En **Presiones recomendadas**, introduce los valores en frío para delante y det
 ## Antigüedad de las lecturas
 
 En Editar, abre un apartado y **Antigüedad de las lecturas**. Activa la opción y elige a partir de cuántos minutos considerar los datos antiguos (por defecto 60). Puedes seleccionar un sensor cuyo valor sea la fecha real de lectura, en ISO o Unix. Si no lo configuras, se muestra el cambio más antiguo de las entidades del apartado, identificado como tal: un valor estable puede seguir siendo válido. Los datos antiguos se atenúan sin bloquear controles; no significa que el coche esté averiado.
+
+## Exportar e importar tarjetas completas (beta 1.5.0)
+
+En **Editar → Exportar e importar tarjeta**, descarga una copia JSON con entidades o desmarca **Incluir entidades en la exportación** para compartir un diseño. Se conservan títulos, notas y URL de imágenes; revísalos antes de compartir. No incluye lecturas del vehículo ni archivos de imagen.
+
+Abre un archivo JSON o pega su contenido y pulsa **Revisar importación**. La vista previa muestra apartados, campos y entidades no disponibles. **Añadir solo los apartados** conserva el título y los ajustes actuales; **Reemplazar esta tarjeta** importa la configuración completa. Admite deshacer y rehacer y debes Guardar la tarjeta. Los elementos importados reciben identificadores independientes. No crea entidades ni envía órdenes. Límite del archivo: 512 KB. Las imágenes locales y entidades deben existir en la instalación de destino.
 
 ## Reutilizar apartados
 

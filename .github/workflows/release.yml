@@ -2,7 +2,7 @@
 name: Release
 on:
   push:
-    branches: [main]
+    branches: [main, "beta/**"]
     paths: ['package.json', '.github/workflows/release.yml']
     tags: ['v*']
   workflow_dispatch:
