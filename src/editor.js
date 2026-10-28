@@ -1,4 +1,4 @@
-import {language,translate,translateSchema} from './i18n.js';
+import {language,translate,translateSchema,LANGUAGES} from './i18n.js';
 import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity} from './core.js';
 
 const text=name=>({name,selector:{text:{}}});
@@ -41,20 +41,20 @@ export class VEBuilderEditor extends HTMLElement {
     const form=this.form(panel,{include_values:true,include_tyres:true,include_openings:true,include_stale:true,...options},Object.keys(labels).map(bool),patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();});form.computeLabel=field=>this.t(labels[field.name]);
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Solo resume esta tarjeta y utiliza sus umbrales y entidades configurados. Desaparece cuando no hay avisos. Pulsa un aviso para ver detalles, sin ejecutar acciones.');panel.append(hint);
   }
-  copySection(block){copiedSection=clone(block);this.copyFeedback=this.t('Apartado copiado. Abre otra tarjeta de este panel y pulsa Pegar apartado.');this.render();}
+  copySection(block){copiedSection=clone(block);this.copyFeedback='Apartado copiado. Abre otra tarjeta de este panel y pulsa Pegar apartado.';this.render();}
   pasteSection(){
     if(!copiedSection)return false;
     const copy=clone(copiedSection);copy.id=uid();
     for(const fields of [copy.fields,copy.prices])fields?.forEach(f=>f.id=uid());
     copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});
-    this.config.blocks.push(copy);this.openKey=copy.id;this.copyFeedback=this.t('Apartado pegado. Revisa sus entidades y pulsa Guardar.');this.emit();this.render();return true;
+    this.config.blocks.push(copy);this.openKey=copy.id;this.copyFeedback='Apartado pegado. Revisa sus entidades y pulsa Guardar.';this.emit();this.render();return true;
   }
   sectionClipboard(parent){
     const box=this.panel(parent,'section-clipboard','Reutilizar apartados');
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Copia un apartado desde sus botones y pégalo en otra tarjeta abierta en esta misma página. Conserva entidades, nombres y estilo. La copia temporal se borra al recargar; no usa el portapapeles del sistema.');box.append(hint);
     const paste=this.button(box,'Pegar apartado',()=>this.pasteSection());paste.disabled=!copiedSection;
     if(copiedSection){const label=document.createElement('p');label.className='muted';label.textContent=this.t('Apartado copiado')+': '+(copiedSection.title||this.t(TYPES[copiedSection.type]||'Bloque'));box.append(label);this.button(box,'Borrar copia temporal',()=>{copiedSection=null;this.copyFeedback='';this.render();});}
-    if(this.copyFeedback){const feedback=document.createElement('p');feedback.className='muted';feedback.setAttribute('role','status');feedback.textContent=this.copyFeedback;box.append(feedback);}
+    if(this.copyFeedback){const feedback=document.createElement('p');feedback.className='muted';feedback.setAttribute('role','status');feedback.textContent=this.t(this.copyFeedback);box.append(feedback);}
   }
   historyToolbar(parent){
     const bar=document.createElement('div');bar.className='toolbar';
@@ -140,7 +140,7 @@ export class VEBuilderEditor extends HTMLElement {
       const schema=[this.entitySchema('entity',domain,this.deviceFilters?.[field.id]),text('name')];if(kind!=='limit')schema.push({name:'icon',selector:{icon:{}}});
       if(['info','expense','price','power'].includes(kind))schema.push(...(['expense','price'].includes(kind)?[numeric('decimals',0,6)]:[]),text('unit'));
       if(kind==='info')schema.push(select('format',{auto:'Automático',connection:'Conectado / desconectado',presence:'Presencia'}));
-      this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);row.querySelector('summary').textContent=field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo';this.emit();if(domainChanged)this.render();});
+      this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);row.querySelector('summary').textContent=field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||this.t('Nuevo campo');this.emit();if(domainChanged)this.render();});
       if(['info','power','expense','price','limit'].includes(kind))this.colorEditor(row,field,'colors',field.id);
       if(!['limit','expense','price'].includes(kind)){
         if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
@@ -171,7 +171,7 @@ export class VEBuilderEditor extends HTMLElement {
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un sensor cuyo valor sea una fecha de lectura. Sin él se usa el cambio más antiguo de las entidades; un valor estable no demuestra que el coche haya dejado de informar. Los datos antiguos se atenúan sin bloquear controles.');panel.append(hint);
   }
   blockEditor(panel,block){
-    this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=block.title||TYPES[block.type];this.emit();});
+    this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=block.title||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
@@ -212,7 +212,7 @@ export class VEBuilderEditor extends HTMLElement {
     }else if(block.type==='expenses'){
       this.fieldList(this.panel(panel,block.id+'-prices','Precios de referencia'),block.prices??(block.prices=[]),block.id,'price');
       const groups=block.groups??(block.groups=[]);
-      groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.reorderHandle(box,groups,index,block.id+'-groups');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=group.name||'Grupo';this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});
+      groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.reorderHandle(box,groups,index,block.id+'-groups');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=group.name||this.t('Grupo');this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});
       this.button(panel,'＋ Añadir grupo',()=>{groups.push({id:uid(),name:this.t('Nuevo grupo'),icon:'mdi:cash',fields:[]});this.emit();this.render();});
     }
     this.form(panel,block,[{name:'note',selector:{text:{multiline:true}}}],patch=>{Object.assign(block,patch);this.emit();});
@@ -222,7 +222,7 @@ export class VEBuilderEditor extends HTMLElement {
     const state=new Map([...root.querySelectorAll('details[data-key]')].map(el=>[el.dataset.key,el.open]));
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
-    this.form(root,{language:'auto',...this.config},[text('title'),select('language',{auto:'Automatic / Automático',en:'English',es:'Español'})],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
+    this.form(root,{language:'auto',...this.config},[text('title'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
     this.historyToolbar(root);
     this.alertsEditor(root);
     this.sectionClipboard(root);

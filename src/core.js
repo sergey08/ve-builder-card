@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.4.0-beta.8';
+export const VERSION = '1.4.0-beta.9';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -7,7 +7,7 @@ export const clone = value => structuredClone(value);
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 export function number(value) { return value !== null && value !== undefined && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null; }
 export function decimals(value, fallback=0) { const n=number(value); return n === null ? fallback : Math.max(0,Math.min(6,Math.trunc(n))); }
-export function format(value, precision=0,lang='es') { const n=number(value); return n===null?translate('Sin datos',lang):n.toLocaleString(lang==='es'?'es-ES':'en-US',{minimumFractionDigits:decimals(precision),maximumFractionDigits:decimals(precision)}); }
+export function format(value, precision=0,lang='es') { const n=number(value); return n===null?translate('Sin datos',lang):n.toLocaleString(lang,{minimumFractionDigits:decimals(precision),maximumFractionDigits:decimals(precision)}); }
 export function percentage(value, min=0, max=100) { const n=number(value),lo=number(min),hi=number(max); return n===null||lo===null||hi===null||hi<=lo?null:Math.max(0,Math.min(100,(n-lo)/(hi-lo)*100)); }
 export function pressure(value, from, to='bar') { const n=number(value); if(n===null)return null; const scale={bar:1,kPa:0.01,psi:0.0689475729}; return scale[from]&&scale[to]?n*scale[from]/scale[to]:null; }
 export function imageUrl(value) { const s=String(value??'').trim(); return /^\/(?!\/)/.test(s)||/^https?:\/\//i.test(s)?s:''; }
@@ -126,12 +126,13 @@ export function readingFreshness(options={},states={},entities=[],now=Date.now()
  return {status:ageMinutes>=(limit!==null&&limit>0?limit:60)?'stale':'fresh',source,timestamp,ageMinutes};
 }
 export function freshnessText(info,lang='es') {
- const en=lang==='en';if(info.status==='disabled')return '';
- if(info.status==='unknown')return en?'Reading time unavailable':'Fecha de lectura no disponible';
- const minutes=Math.floor(info.ageMinutes),amount=minutes<60?minutes:minutes<1440?Math.floor(minutes/60):Math.floor(minutes/1440),unit=minutes<60?'min':minutes<1440?'h':en?'d':'d';
- const ago=minutes<1?(en?'just now':'ahora'):(en?`${amount} ${unit} ago`:`hace ${amount} ${unit}`);
- const label=info.source==='changes'?(en?'Oldest state change':'Cambio más antiguo'):(en?'Last reading':'Última lectura');
- return `${info.status==='stale'?(en?'Old data · ':'Datos antiguos · '):''}${label} · ${ago}`;
+ if(info.status==='disabled')return '';
+ const words={es:['Fecha de lectura no disponible','ahora','hace {n} {u}','Cambio más antiguo'],en:['Reading time unavailable','just now','{n} {u} ago','Oldest state change'],fr:['Horodatage indisponible','à l’instant','il y a {n} {u}','Changement le plus ancien'],pt:['Data de leitura indisponível','agora','há {n} {u}','Alteração mais antiga'],de:['Messzeitpunkt nicht verfügbar','gerade eben','vor {n} {u}','Älteste Zustandsänderung'],it:['Data di lettura non disponibile','adesso','{n} {u} fa','Modifica di stato più vecchia'],nl:['Meettijdstip niet beschikbaar','zojuist','{n} {u} geleden','Oudste statuswijziging']}[lang]??['Reading time unavailable','just now','{n} {u} ago','Oldest state change'];
+ if(info.status==='unknown')return words[0];
+ const minutes=Math.floor(info.ageMinutes),amount=minutes<60?minutes:minutes<1440?Math.floor(minutes/60):Math.floor(minutes/1440),unit=minutes<60?'min':minutes<1440?'h':lang==='fr'?'j':'d';
+ const ago=minutes<1?words[1]:words[2].replace('{n}',amount).replace('{u}',unit);
+ const label=info.source==='changes'?words[3]:translate('Última lectura',lang);
+ return `${info.status==='stale'?translate('Datos antiguos',lang)+' · ':''}${label} · ${ago}`;
 }
 
 export function readingEntities(block){

@@ -33,3 +33,21 @@ test('starter templates are generic, localised and independent',async()=>{
  assert.equal(templateBlocks('electric','en')[0].fields[1].name,'Battery');
  assert.equal(templateBlocks('electric','es')[0].fields[1].name,'Batería');
 });
+
+test('new locale catalogues cover every interface key and recognise regional codes',async()=>{
+ const {missingTranslations}=await import('../src/i18n.js');
+ for(const code of ['fr','pt','de','it','nl'])assert.deepEqual(missingTranslations(code),[]);
+ assert.equal(language({}, {language:'fr-FR'}),'fr');
+ assert.equal(language({}, {language:'pt_BR'}),'pt');
+ assert.equal(language({language:'ja'}, {language:'es'}),'en');
+ assert.equal(translate('Potencia de carga','fr'),'Puissance de charge');
+ assert.equal(translate('Conectado · Sin carga','pt'),'Ligado · Sem carregamento');
+ assert.equal(format(1234.5,1,'fr'),new Intl.NumberFormat('fr',{minimumFractionDigits:1,maximumFractionDigits:1}).format(1234.5));
+ assert.equal(translate('My custom car name','pt'),'My custom car name');
+});
+
+test('language selector explicitly requests a compact Home Assistant dropdown',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const editor=await readFile(new URL('../src/editor.js',import.meta.url),'utf8');
+ assert.match(editor,/name:'language',selector:\{select:\{mode:'dropdown'/);
+});
