@@ -8,6 +8,16 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
+## See the card
+
+A configurable vehicle dashboard with compact readings, a vehicle image and charging controls, plus a vehicle diagram with tyre pressures, confirmed openings, gear and expandable alerts.
+
+| Vehicle overview and charging controls | Vehicle diagram, tyre pressures and alerts |
+| --- | --- |
+| ![Vehicle overview and charging controls](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png) | ![Vehicle diagram, tyre pressures and alerts](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png) |
+
+Real screenshots from the maintainer’s installation, captured during development. They illustrate the layout; readings, labels and features may differ from the current release. Entities, titles and images are configured by each user.
+
 ## Install with HACS
 
 Click the button above, confirm the custom repository and download the latest stable release. HACS must already be installed. Alternatively, add `https://github.com/sergey08/ve-builder-card` in HACS → Custom repositories, with category **Dashboard**.
