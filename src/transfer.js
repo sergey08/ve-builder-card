@@ -31,17 +31,17 @@ export function inspectCardImport(source,states={}) {
  checkTexts(card);
  for(const block of card.blocks){
   checkObject(block);checkTexts(block);if(!Object.hasOwn(TYPES,block.type))fail('El archivo contiene un tipo de apartado no compatible.');
-  list(block.fields);list(block.prices);list(block.groups,g=>list(g.fields));
+  list(block.fields);list(block.prices);list(block.vehicle_status);list(block.groups,g=>list(g.fields));
   for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
   if(block.positions!==undefined){checkObject(block.positions);if(Object.values(block.positions).some(v=>typeof v!=='string'))fail('La estructura de la tarjeta no es válida.');}
   if(block.body_parts!==undefined){checkObject(block.body_parts);Object.values(block.body_parts).forEach(part=>{checkObject(part);checkTexts(part);});}
  }
  // New IDs make every imported section independent, including repeated imports.
  card=clone(card);const fresh=item=>{item.id=uid();};
- for(const block of card.blocks){fresh(block);block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
+ for(const block of card.blocks){fresh(block);block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.vehicle_status?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
  const config=normalize(card),entities=new Set();
  const collect=(value,key='')=>{if(!value||typeof value!=='object')return;for(const [name,item]of Object.entries(value)){if(typeof item==='string'&&(name==='entity'||name.endsWith('_entity')||key==='positions')&&item)entities.add(item);else collect(item,name);}};collect(config);
  const missing=[...entities].filter(id=>!states[id]);
- const fields=config.blocks.reduce((n,b)=>n+(b.fields?.length??0)+(b.prices?.length??0)+(b.groups??[]).reduce((sum,g)=>sum+(g.fields?.length??0),0),0);
+ const fields=config.blocks.reduce((n,b)=>n+(b.fields?.length??0)+(b.prices?.length??0)+(b.vehicle_status?.length??0)+(b.groups??[]).reduce((sum,g)=>sum+(g.fields?.length??0),0),0);
  return {config,blocks:config.blocks.length,fields,entities:[...entities],missing};
 }

@@ -74,6 +74,12 @@ In **Edit → Overview → Rain over the vehicle**, enable the overlay and choos
 
 For a home sensor, optionally restrict the effect to the vehicle’s home location. **Vehicle under cover** or a cover sensor can suppress rain in a garage. Use **Rain preview (sample data)** to test the appearance; it is labelled and ignores sensors/location/cover, so turn it off afterwards. No entities are preassigned. Current weather conditions are documented by [Home Assistant](https://www.home-assistant.io/integrations/weather/); forecasts and accumulated rain are not used to infer current rain.
 
+### States below the vehicle (1.7.0 beta)
+
+In **Edit → Overview → States below the vehicle**, add lock, door or window indicators. Select each entity and optionally customise its name, icon, normal/warning values and labels. Drag to reorder or remove unwanted indicators. Normal readings are subtle; openings and unlocked states are amber. Unknown readings show No data. Selecting an indicator opens details only and never operates a lock or window.
+
+Defaults follow the entity domain: locked/unlocked for locks, closed/open for covers and off/on for binary sensors. For an aggregate door/window sensor, labels apply to that sensor’s meaning; individual sensors can have individual names. No entities are preassigned.
+
 ### Images and languages
 
 Use an image URL or a Home Assistant `/local/` image path in the Overview block. The interface supports **English, Spanish, Portuguese, French, German, Italian and Dutch**, follows Home Assistant automatically, and also offers a language override in the editor. Your custom titles, field names and notes are preserved as entered.
@@ -197,6 +203,12 @@ La manguera permanece visible y quieta cuando el coche está conectado sin recib
 En **Editar → Inicio → Lluvia sobre el vehículo**, activa la capa y selecciona una entidad meteorológica, sensor binario de lluvia o sensor de precipitación actual. Elige intensidad decorativa ligera, normal o intensa y animación. Sin datos recientes de lluvia no hay efecto (antigüedad máxima de 180 minutos por defecto). La preferencia de movimiento reducido deja el efecto estático.
 
 Si usas un sensor de casa, puedes restringirlo a cuando el coche esté en casa. **Coche bajo techo** o un sensor de cobertura oculta la lluvia en el garaje. La **Vista previa de lluvia (datos de ejemplo)** permite probar el aspecto; lleva etiqueta e ignora sensores, ubicación y techo, por lo que debe desactivarse después. No trae entidades preasignadas. Se usan condiciones actuales según [Home Assistant](https://www.home-assistant.io/integrations/weather/), no previsiones ni lluvia acumulada.
+
+### Estados bajo el vehículo (beta 1.7.0)
+
+En **Editar → Inicio → Estados bajo el vehículo**, añade indicadores de cerradura, puertas o ventanillas. Selecciona cada entidad y personaliza opcionalmente nombre, icono, valores normal/de aviso y textos. Arrastra para ordenar o elimina los que no necesites. Estados normales discretos; aperturas y desbloqueado en ámbar. Lecturas desconocidas muestran Sin datos. Al pulsar solo abre detalles, nunca acciona cerraduras ni ventanas.
+
+Valores por defecto según entidad: locked/unlocked para lock, closed/open para cover y off/on para sensores binarios. Si usas un sensor conjunto de puertas o ventanillas, las etiquetas corresponden al significado de ese sensor; los sensores individuales pueden llevar nombres propios. No hay entidades preasignadas.
 
 ### Imágenes e idiomas
 

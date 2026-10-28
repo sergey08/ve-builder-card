@@ -1770,6 +1770,117 @@ for(const [code,entries]of Object.entries({
  }
 }))Object.assign(EXTRA[code],entries);
 
+Object.assign(EN,{
+ "Estados bajo el vehículo": "States below the vehicle",
+ "Cerradura": "Lock",
+ "Puertas": "Doors",
+ "Ventanillas": "Windows",
+ "Puertas cerradas": "Doors closed",
+ "Puertas abiertas": "Doors open",
+ "Ventanillas cerradas": "Windows closed",
+ "Ventanillas abiertas": "Windows open",
+ "Estado normal": "Normal state",
+ "Estado de aviso": "Warning state",
+ "Texto normal (opcional)": "Normal text (optional)",
+ "Texto de aviso (opcional)": "Warning text (optional)",
+ "Tipo de indicador": "Indicator type",
+ "Añadir indicador": "Add indicator",
+ "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Add a lock, doors or windows. Normal states are subtle and openings are highlighted. Tapping only opens details; no commands are sent.",
+ "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Defaults: locked/unlocked for locks, closed/open for covers and off/on for binary sensors. Check your integration’s values. Unrecognised states show No data."
+});
+for(const [code,entries]of Object.entries({
+ "pt": {
+  "Estados bajo el vehículo": "Estados sob o veículo",
+  "Cerradura": "Fechadura",
+  "Puertas": "Portas",
+  "Ventanillas": "Vidros",
+  "Puertas cerradas": "Portas fechadas",
+  "Puertas abiertas": "Portas abertas",
+  "Ventanillas cerradas": "Vidros fechados",
+  "Ventanillas abiertas": "Vidros abertos",
+  "Estado normal": "Estado normal",
+  "Estado de aviso": "Estado de aviso",
+  "Texto normal (opcional)": "Texto normal (opcional)",
+  "Texto de aviso (opcional)": "Texto de aviso (opcional)",
+  "Tipo de indicador": "Tipo de indicador",
+  "Añadir indicador": "Adicionar indicador",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Adicione fechadura, portas ou vidros. Os estados normais são discretos e as aberturas destacam-se. Ao tocar abre apenas detalhes; não envia ordens.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Predefinições: locked/unlocked para fechaduras, closed/open para cover e off/on para sensores binários. Reveja os valores da integração. Estados não reconhecidos mostram Sem dados."
+ },
+ "fr": {
+  "Estados bajo el vehículo": "États sous le véhicule",
+  "Cerradura": "Serrure",
+  "Puertas": "Portes",
+  "Ventanillas": "Vitres",
+  "Puertas cerradas": "Portes fermées",
+  "Puertas abiertas": "Portes ouvertes",
+  "Ventanillas cerradas": "Vitres fermées",
+  "Ventanillas abiertas": "Vitres ouvertes",
+  "Estado normal": "État normal",
+  "Estado de aviso": "État d’alerte",
+  "Texto normal (opcional)": "Texte normal (facultatif)",
+  "Texto de aviso (opcional)": "Texte d’alerte (facultatif)",
+  "Tipo de indicador": "Type d’indicateur",
+  "Añadir indicador": "Ajouter un indicateur",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Ajoutez serrure, portes ou vitres. Les états normaux sont discrets et les ouvertures sont mises en évidence. Un appui ouvre seulement les détails ; aucune commande n’est envoyée.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Valeurs par défaut : locked/unlocked pour les serrures, closed/open pour cover et off/on pour les capteurs binaires. Vérifiez les valeurs de votre intégration. Les états inconnus affichent Aucune donnée."
+ },
+ "de": {
+  "Estados bajo el vehículo": "Zustände unter dem Fahrzeug",
+  "Cerradura": "Schloss",
+  "Puertas": "Türen",
+  "Ventanillas": "Fenster",
+  "Puertas cerradas": "Türen geschlossen",
+  "Puertas abiertas": "Türen offen",
+  "Ventanillas cerradas": "Fenster geschlossen",
+  "Ventanillas abiertas": "Fenster offen",
+  "Estado normal": "Normalzustand",
+  "Estado de aviso": "Warnzustand",
+  "Texto normal (opcional)": "Normaler Text (optional)",
+  "Texto de aviso (opcional)": "Warntext (optional)",
+  "Tipo de indicador": "Anzeigetyp",
+  "Añadir indicador": "Anzeige hinzufügen",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Füge Schloss, Türen oder Fenster hinzu. Normale Zustände sind dezent, Öffnungen werden hervorgehoben. Antippen öffnet nur Details; es werden keine Befehle gesendet.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Standard: locked/unlocked für Schlösser, closed/open für cover und off/on für binäre Sensoren. Prüfe die Werte deiner Integration. Unbekannte Zustände zeigen Keine Daten."
+ },
+ "it": {
+  "Estados bajo el vehículo": "Stati sotto il veicolo",
+  "Cerradura": "Serratura",
+  "Puertas": "Porte",
+  "Ventanillas": "Finestrini",
+  "Puertas cerradas": "Porte chiuse",
+  "Puertas abiertas": "Porte aperte",
+  "Ventanillas cerradas": "Finestrini chiusi",
+  "Ventanillas abiertas": "Finestrini aperti",
+  "Estado normal": "Stato normale",
+  "Estado de aviso": "Stato di avviso",
+  "Texto normal (opcional)": "Testo normale (facoltativo)",
+  "Texto de aviso (opcional)": "Testo di avviso (facoltativo)",
+  "Tipo de indicador": "Tipo di indicatore",
+  "Añadir indicador": "Aggiungi indicatore",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Aggiungi serratura, porte o finestrini. Gli stati normali sono discreti e le aperture sono evidenziate. Il tocco apre solo i dettagli; non invia comandi.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Predefiniti: locked/unlocked per serrature, closed/open per cover e off/on per sensori binari. Controlla i valori dell’integrazione. Gli stati non riconosciuti mostrano Nessun dato."
+ },
+ "nl": {
+  "Estados bajo el vehículo": "Status onder het voertuig",
+  "Cerradura": "Slot",
+  "Puertas": "Portieren",
+  "Ventanillas": "Ramen",
+  "Puertas cerradas": "Portieren gesloten",
+  "Puertas abiertas": "Portieren open",
+  "Ventanillas cerradas": "Ramen gesloten",
+  "Ventanillas abiertas": "Ramen open",
+  "Estado normal": "Normale status",
+  "Estado de aviso": "Waarschuwingsstatus",
+  "Texto normal (opcional)": "Normale tekst (optioneel)",
+  "Texto de aviso (opcional)": "Waarschuwingstekst (optioneel)",
+  "Tipo de indicador": "Indicatortype",
+  "Añadir indicador": "Indicator toevoegen",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Voeg slot, portieren of ramen toe. Normale statussen zijn subtiel en openingen vallen op. Tikken opent alleen details; er worden geen opdrachten verzonden.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Standaard: locked/unlocked voor sloten, closed/open voor cover en off/on voor binaire sensoren. Controleer de waarden van je integratie. Onbekende statussen tonen Geen gegevens."
+ }
+}))Object.assign(EXTRA[code],entries);
+
 export function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EXTRA[lang]?.[value])return EXTRA[lang][value];if(EN[value])return EN[value];const fragments={fr:[' réglage(s) à vérifier : ',': choisissez une entité.',': entité indisponible (',': le maximum doit être supérieur au minimum.','Type de bloc inconnu : '],pt:[' definição(ões) pendente(s): ',': escolha uma entidade.',': entidade indisponível (',': o máximo deve ser maior do que o mínimo.','Tipo de bloco desconhecido: '],de:[' ausstehende Einstellung(en): ',': wähle eine Entität.',': Entität nicht verfügbar (',': das Maximum muss größer als das Minimum sein.','Unbekannter Blocktyp: '],it:[' impostazione/i da verificare: ',': scegli un’entità.',': entità non disponibile (',': il massimo deve essere maggiore del minimo.','Tipo di blocco sconosciuto: '],nl:[' instelling(en) te controleren: ',': kies een entiteit.',': entiteit niet beschikbaar (',': het maximum moet groter zijn dan het minimum.','Onbekend bloktype: ']}[lang];if(fragments)return [' ajuste(s) pendiente(s): ',': elige una entidad.',': entidad no disponible (',': el máximo debe ser mayor que el mínimo.','Tipo de bloque desconocido: '].reduce((out,part,index)=>out.replaceAll(part,fragments[index]),value);return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 export function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 

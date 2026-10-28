@@ -231,3 +231,14 @@ test('rain uses bounded layered depth, varied drop lengths and stable placement 
  }
  const staticRain=card.rainOverlay({rain:{enabled:true,preview:true,animate:false}});assert.doesNotMatch(staticRain,/rain-animated/);assert.match(staticRain,/rain-depth-near/);
 });
+
+test('vehicle indicators render below the image with escaped text and separate detail-only buttons',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card'),card=new Card();
+ const items=[{id:'lock',kind:'lock',entity:'lock.car',tap:'toggle'},{id:'doors',kind:'doors',entity:'binary_sensor.doors',name:'<Rear>'},{id:'windows',kind:'windows',entity:'cover.windows'}];
+ card.setConfig({language:'en',blocks:[{type:'start',image:'/local/car.png',vehicle_status:items}]});card.hass={states:{'lock.car':{state:'locked'},'binary_sensor.doors':{state:'on'}}};
+ const html=card.shadowRoot.innerHTML;assert.ok(html.indexOf('class="vehicle-statuses"')>html.indexOf('src="/local/car.png"'));assert.match(html,/status-normal/);assert.match(html,/status-attention/);assert.match(html,/&lt;Rear&gt;/);assert.match(html,/data-vehicle-status="windows"[^>]*disabled/);assert.doesNotMatch(card.vehicleStatuses(card.config.blocks[0]),/data-field=/);
+ let opened='',services=0;card.moreInfo=id=>opened=id;card._hass.callService=()=>services++;const buttons=items.map(item=>({dataset:{vehicleStatus:item.id},addEventListener(type,fn){this.click=fn;}}));
+ card.shadowRoot.querySelectorAll=selector=>selector==='[data-vehicle-status]'?buttons:[];card._dirty=true;card.render();buttons[0].click();assert.equal(opened,'lock.car');assert.equal(services,0);
+});
