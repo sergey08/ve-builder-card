@@ -1,3 +1,92 @@
+# VE Builder Card 1.6.0
+
+## English
+
+Optional rain over the vehicle image, validated during the 1.6.0 betas.
+
+- Current-weather, binary rain or numeric current-precipitation source, with configurable state or threshold.
+- Light, normal or heavy visual intensity, animated or static. Three depth layers vary drop lengths, opacity and fall speeds, with staggered phases, stable irregular positions and soft image edges.
+- Optional home-only location gate, manual under-cover setting and optional cover sensor.
+- Missing, unavailable, invalid or old rain readings show no rain. Default maximum age: 180 minutes, configurable; expired effects are removed by the existing minute refresh.
+- Clearly labelled sample preview for testing on a dry day. Preview ignores sensors, location and cover; turn it off after testing.
+- Reduced-motion support and a click-through overlay that preserves the car image and charging cable.
+- Controls and help in English, Spanish, Portuguese, French, German, Italian and Dutch. Rain settings survive full-card export/import and entity-free sharing.
+
+**Configure:** Edit → Overview → Rain over the vehicle. For a binary sensor, choose Rain sensor · yes/no, select the entity and use its rain state (default on). Use current conditions, not forecasts, rain probability or daily accumulated precipitation. Visual intensity does not estimate actual rainfall.
+
+**Validation:** 72 automated tests and official HACS checks passed on the beta; the maintainer validated the refined animation. Existing cards keep rain disabled until configured. No migration or vehicle commands. Update from HACS and reload the frontend.
+
+## Español
+
+Lluvia opcional sobre la imagen del vehículo, validada durante las betas 1.6.0.
+
+- Origen meteorológico, sensor binario de lluvia o sensor numérico de precipitación actual, con estado o umbral configurable.
+- Intensidad visual ligera, normal o intensa, animada o estática. Tres capas de profundidad con distintas longitudes, transparencias y velocidades, fases desfasadas, distribución irregular estable y bordes suaves.
+- Restricción opcional a cuando el coche está en casa, ajuste manual de coche bajo techo y sensor opcional de cobertura.
+- Sin lectura reciente válida no muestra lluvia. Antigüedad máxima de 180 minutos por defecto, configurable; la revisión por minuto retira efectos caducados.
+- Vista previa etiquetada como ejemplo para probar sin lluvia real. Ignora sensores, ubicación y techo; desactivarla después de probar.
+- Respeta movimiento reducido y no intercepta pulsaciones; conserva imagen y manguera de carga.
+- Controles y ayudas en inglés, español, portugués, francés, alemán, italiano y neerlandés. La configuración se conserva al exportar/importar y compartir sin entidades.
+
+**Configurar:** Editar → Inicio → Lluvia sobre el vehículo. Para un sensor binario, elige Sensor de lluvia · sí/no, selecciona la entidad y configura el estado de lluvia (on por defecto). Usa condiciones actuales, no previsiones, probabilidad ni lluvia diaria acumulada. La intensidad visual no estima la lluvia real.
+
+**Validación:** 72 pruebas automáticas y validación oficial HACS superadas en la beta; el mantenedor ha validado la animación mejorada. Las tarjetas existentes mantienen la lluvia desactivada hasta configurarla. Sin migración ni órdenes al vehículo. Actualiza desde HACS y recarga la interfaz.
+
+
+# VE Builder Card 1.6.0-beta.2
+
+## English
+
+Small visual refinement of the rain animation:
+
+- Three depth layers with different fall speeds, drop lengths, stroke widths and transparency.
+- Irregular, deterministic placement and staggered animation phases for less uniform rainfall.
+- Soft fade at the upper and lower image edges, with light/normal/heavy intensity retained.
+- Lightweight SVG with three animated groups; static mode and reduced-motion support remain available.
+
+Existing rain sensor, location, cover and charging settings are preserved. No configuration migration or new controls. 72 automated tests pass. Visual review on desktop and mobile is still required before stable release.
+
+## Español
+
+Pequeño ajuste visual de la animación de lluvia:
+
+- Tres capas de profundidad con distintas velocidades, longitudes, grosores y transparencias.
+- Distribución irregular y estable, con fases desfasadas para evitar una lluvia tan uniforme.
+- Desvanecimiento suave en los bordes superior e inferior, conservando intensidad ligera, normal e intensa.
+- SVG ligero con tres grupos animados; se mantienen el modo estático y el movimiento reducido.
+
+Conserva sensor de lluvia, ubicación, techo y ajustes de carga. Sin migración ni opciones nuevas. Pasan 72 pruebas automáticas. Falta revisar el aspecto en escritorio y móvil antes de liberar la estable.
+
+
+# VE Builder Card 1.6.0-beta.1
+
+## English
+
+- Optional rain overlay on the vehicle image, using the current state of a weather entity, binary rain sensor or current precipitation sensor.
+- Configurable light, normal or heavy visual intensity, animated or static. Reduced-motion preferences disable animation.
+- Optional home-only location gate, manual under-cover setting and an optional covered-vehicle sensor. Unknown location or cover states suppress the effect when the corresponding gate is configured.
+- Missing, unavailable, old or invalid rain readings do not show rain. Maximum reading age defaults to 180 minutes and is configurable. A minute refresh removes expired rain without repainting the whole card.
+- Clearly labelled sample preview for testing on a dry day. Preview ignores sensors, location and cover; turn it off after testing.
+- All controls and help in English, Spanish, Portuguese, French, German, Italian and Dutch. Configuration is retained by full-card export/import and optional entity-free sharing.
+
+**Try it:** Edit → Overview → Rain over the vehicle → Show rain. Select a source and entity. Use current conditions, not forecasts, rain probability or daily accumulated precipitation. For a numeric source, rain appears when the value is strictly greater than the configured threshold, using that sensor’s unit. The intensity is cosmetic and does not estimate actual rain rate.
+
+The photo and charging cable are preserved. The overlay receives no clicks and sends no vehicle commands. No entities are preassigned and the effect is disabled on existing cards until configured. 71 automated tests pass; mobile visual validation remains pending. The user downloads betas from HACS; no automatic installation.
+
+## Español
+
+- Capa opcional de lluvia sobre la imagen del vehículo, basada en el estado actual de una entidad meteorológica, sensor binario de lluvia o sensor de precipitación actual.
+- Intensidad visual ligera, normal o intensa, con animación o estática. La preferencia de movimiento reducido desactiva la animación.
+- Restricción opcional a cuando el coche está en casa, ajuste manual de coche bajo techo y sensor opcional de cobertura. La ubicación o cobertura desconocida oculta el efecto si se configura esa condición.
+- Lecturas de lluvia ausentes, no disponibles, antiguas o inválidas no muestran lluvia. Antigüedad máxima de 180 minutos por defecto, configurable. La revisión cada minuto retira el efecto caducado sin redibujar toda la tarjeta.
+- Vista previa marcada como ejemplo para probar sin lluvia real. Ignora sensores, ubicación y techo; desactívala después de probar.
+- Controles y ayudas en inglés, español, portugués, francés, alemán, italiano y neerlandés. La configuración se conserva al exportar/importar y al compartir sin entidades.
+
+**Prueba:** Editar → Inicio → Lluvia sobre el vehículo → Mostrar lluvia. Elige origen y entidad. Usa condiciones actuales, no previsiones, probabilidades o precipitación diaria acumulada. En origen numérico, muestra lluvia si el valor supera estrictamente el umbral, en la unidad del sensor. La intensidad es decorativa y no estima la precipitación real.
+
+Conserva la imagen y la manguera de carga. La capa no intercepta pulsaciones ni envía órdenes. No trae entidades preasignadas y queda desactivada en las tarjetas existentes hasta configurarla. Pasan 71 pruebas automáticas; queda pendiente la validación visual móvil. El usuario descarga las betas desde HACS; no se instalan automáticamente.
+
+
 # VE Builder Card 1.5.0
 
 ## English

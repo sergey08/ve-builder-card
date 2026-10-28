@@ -206,3 +206,28 @@ test('location-based temperature rendering identifies selected source and unknow
  card._hass.states['person.car']={state:'unknown'};assert.match(card.pressureAdvice(block),/Ubicación desconocida/);
  card._hass.language='en';assert.match(card.pressureAdvice(block),/Unknown location/);
 });
+
+test('rain overlays retain image and cable, escape preview labels and disappear without repainting the car',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card'),card=new Card();
+ card.setConfig({language:'en',blocks:[{id:'start',type:'start',image:'/local/car.png',connector_entity:'binary_sensor.plug',rain:{enabled:true,preview:true,intensity:'heavy'}}]});
+ card.hass={states:{'binary_sensor.plug':{state:'on'}}};
+ assert.match(card.shadowRoot.innerHTML,/rain-overlay rain-heavy rain-animated/);assert.match(card.shadowRoot.innerHTML,/Sample rain/);assert.match(card.shadowRoot.innerHTML,/src="\/local\/car.png"/);assert.match(card.shadowRoot.innerHTML,/cable-static/);
+ const host={dataset:{rain:'start'},innerHTML:'old rain'};card.shadowRoot.querySelectorAll=selector=>selector==='[data-rain]'?[host]:[];
+ card.config.blocks[0].rain.preview=false;card.refreshRain();assert.equal(host.innerHTML,'');
+ card.config.blocks[0].show_image=false;card._dirty=true;card.render();assert.doesNotMatch(card.shadowRoot.innerHTML,/<svg class="rain-overlay/);
+});
+
+test('rain uses bounded layered depth, varied drop lengths and stable placement across refreshes',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();card.setConfig({blocks:[]});card.hass={language:'en',states:{}};
+ for(const intensity of ['light','normal','heavy']){
+  const block={rain:{enabled:true,preview:true,intensity}},markup=card.rainOverlay(block);
+  assert.equal((markup.match(/class="rain-drops rain-depth-/g)||[]).length,3);
+  assert.equal(markup,card.rainOverlay(block));assert.ok((markup.match(/M-?\d+ /g)||[]).length<=80);
+  const lengths=[...markup.matchAll(/l-\d+ (\d+)/g)].map(m=>m[1]);assert.ok(new Set(lengths).size>3);
+ }
+ const staticRain=card.rainOverlay({rain:{enabled:true,preview:true,animate:false}});assert.doesNotMatch(staticRain,/rain-animated/);assert.match(staticRain,/rain-depth-near/);
+});
