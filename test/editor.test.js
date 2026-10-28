@@ -46,3 +46,12 @@ test('sections copy across editor instances with independent nested objects and 
  copy.prices[0].colors.warning=999;assert.equal(original.prices[0].colors.warning,30);target.pasteSection();assert.equal(target.config.blocks[1].prices[0].colors.warning,30);assert.notEqual(copy.id,target.config.blocks[1].id);
  target.travelHistory('undo');assert.equal(target.config.blocks.length,1);target.travelHistory('redo');assert.equal(target.config.blocks.length,2);
 });
+
+test('whole-card import previews before mutation, supports append/replace and undo, and invalidates changed text',async()=>{
+ const {exportCard}=await import('../src/transfer.js');
+ const e=new VEBuilderEditor();e.render=()=>{};e.updateHistoryButtons=()=>{};e.emit=()=>e.recordHistory();e.setConfig({title:'Existing',language:'en',blocks:[{id:'old',type:'fields',fields:[]}]});
+ const before=structuredClone(e.config);e.importText=exportCard({title:'Imported',language:'fr',blocks:[{id:'new',type:'fields',fields:[{id:'one',entity:'sensor.missing'}]}]});e.previewImport();assert.deepEqual(e.config,before);assert.equal(e.importPreview.missing.length,1);
+ assert.equal(e.applyImport('append'),true);assert.equal(e.config.title,'Existing');assert.equal(e.config.blocks.length,2);e.travelHistory('undo');assert.deepEqual(e.config,before);e.travelHistory('redo');assert.equal(e.config.blocks.length,2);
+ e.importText=exportCard({title:'Replacement',blocks:[]});e.previewImport();assert.equal(e.applyImport('replace'),true);assert.equal(e.config.title,'Replacement');e.travelHistory('undo');assert.equal(e.config.title,'Existing');assert.equal(e.config.blocks.length,2);
+ e.importText=exportCard({title:'Valid',blocks:[]});e.previewImport();e.importText='invalid';const safe=structuredClone(e.config);assert.equal(e.applyImport('replace'),false);assert.deepEqual(e.config,safe);assert.equal(e.importPreview,null);
+});

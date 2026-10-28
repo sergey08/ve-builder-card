@@ -1,3 +1,69 @@
+# VE Builder Card 1.5.0
+
+## English
+
+Export and import complete vehicle cards from the visual editor.
+
+- Download a JSON backup with entity assignments, or remove those assignments to share a reusable layout.
+- Open a JSON file or paste JSON and review its title, sections, fields and unavailable entities before applying it.
+- Add sections while retaining the current card settings, or replace the whole card. Both support undo and redo; Save in Home Assistant remains required.
+- Keep custom text, appearance, alert thresholds and pressure-advice settings. Imported items receive independent identifiers.
+- Reject unsupported or malformed imports and files over 512 KB without modifying the current card.
+- New controls, help and errors are available in English, Spanish, Portuguese, French, German, Italian and Dutch.
+
+Files contain configuration, not live readings or image files. Titles, notes and image URLs remain even when entity assignments are removed: review them before sharing. Referenced entities and local image paths must exist on the destination system. Importing creates no sensors and sends no vehicle commands.
+
+**Validation:** 64 automated tests pass. Round-trip and entity-free export were additionally verified against all four existing maintainer cards: XPeng G6, Costs and savings, Vehicle map and Seat Ibiza. The maintainer confirmed that the mobile export/import test works before release.
+
+**Use:** Edit → Export and import card. Reload the frontend after downloading through HACS. Existing cards need no migration.
+
+## Español
+
+Exportación e importación de tarjetas completas desde el editor visual.
+
+- Descarga una copia JSON con asignaciones de entidades o quítalas para compartir un diseño reutilizable.
+- Abre un archivo JSON o pega el texto y revisa título, apartados, campos y entidades no disponibles antes de aplicar.
+- Añade apartados conservando los ajustes actuales o reemplaza toda la tarjeta. Ambas opciones admiten deshacer y rehacer; sigue siendo necesario Guardar en Home Assistant.
+- Conserva textos personalizados, aspecto, umbrales de avisos y consejos de presión. Los elementos importados reciben identificadores independientes.
+- Rechaza importaciones incompatibles o inválidas y archivos de más de 512 KB sin modificar la tarjeta actual.
+- Controles, ayudas y errores nuevos en inglés, español, portugués, francés, alemán, italiano y neerlandés.
+
+Los archivos contienen configuración, no lecturas ni imágenes adjuntas. Títulos, notas y URL de imágenes se conservan incluso al quitar entidades: revísalos antes de compartir. Las entidades y rutas locales deben existir en el destino. Importar no crea sensores ni envía órdenes al vehículo.
+
+**Validación:** 64 pruebas automáticas correctas. Además, se ha comprobado la exportación e importación completa y sin entidades de las cuatro tarjetas existentes: XPeng G6, Gastos y ahorro, Mapa del vehículo y Seat Ibiza. El mantenedor ha confirmado el funcionamiento de la prueba móvil de exportación e importación antes de liberar.
+
+**Uso:** Editar → Exportar e importar tarjeta. Recarga la interfaz después de descargar desde HACS. Las tarjetas existentes no requieren migración.
+
+
+# VE Builder Card 1.5.0-beta.1
+
+## English
+
+- Export a whole card as a JSON backup, including its configured sections, appearance, alert settings, pressure advice and custom text.
+- Optionally remove entity assignments to share a reusable layout. Titles, notes and image URLs remain: review these before sharing. No vehicle readings or image files are exported.
+- Import a JSON file or paste JSON. Review the card title, section/field counts and unavailable entities before applying anything.
+- Choose **Add sections only** to keep the existing card settings, or **Replace this card** to import the complete configuration. Both support undo/redo; Home Assistant Save is still required.
+- Imported items receive new identifiers. Unsupported formats, malformed structures and files over 512 KB are rejected without modifying the current card.
+- All new controls, help and errors are translated into English, Spanish, Portuguese, French, German, Italian and Dutch.
+
+**Try it:** Edit → Export and import card. Export a configured card, import it into a temporary card, review the preview and test Add, Replace and Undo. Local image paths and entities must exist in the target Home Assistant installation. Import does not create entities or run vehicle commands.
+
+This prerelease is developed on the beta/1.5.0 branch; main and stable 1.4.1 remain available separately. Mobile and native file-picker review are still needed.
+
+## Español
+
+- Exporta una tarjeta completa como copia JSON, incluidos apartados, aspecto, avisos, consejos de presión y textos personalizados.
+- Permite quitar las asignaciones de entidades para compartir un diseño reutilizable. Se conservan títulos, notas y URL de imágenes: revísalos antes de compartir. No exporta lecturas del coche ni archivos de imagen.
+- Importa un archivo JSON o pega el texto. Revisa el título, número de apartados y campos, y entidades no disponibles antes de aplicar cambios.
+- Elige **Añadir solo los apartados** para conservar los ajustes actuales o **Reemplazar esta tarjeta** para importar toda la configuración. Ambas opciones admiten deshacer y rehacer; sigue siendo necesario Guardar en Home Assistant.
+- Los elementos importados reciben identificadores nuevos. Rechaza formatos incompatibles, estructuras inválidas y archivos de más de 512 KB sin modificar la tarjeta actual.
+- Controles, ayudas y errores nuevos en inglés, español, portugués, francés, alemán, italiano y neerlandés.
+
+**Prueba:** Editar → Exportar e importar tarjeta. Exporta una tarjeta configurada, impórtala en una temporal, revisa la vista previa y prueba Añadir, Reemplazar y Deshacer. Las imágenes locales y entidades deben existir en la instalación de destino. La importación no crea entidades ni envía órdenes al vehículo.
+
+Esta beta se desarrolla en la rama beta/1.5.0; main y la estable 1.4.1 siguen disponibles por separado. Queda pendiente la revisión móvil y del selector nativo de archivos.
+
+
 # VE Builder Card 1.4.1
 
 ## English
