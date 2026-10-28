@@ -74,3 +74,5 @@ export const alertSummaryStyles = `
 .alert-summary .alert-item>span{margin:0;flex:1;color:var(--primary-text-color);font-size:12px;line-height:1.5;overflow-wrap:anywhere}.alert-summary .alert-item>ha-icon{--mdc-icon-size:18px;color:var(--warning-color,#df9100)}.alert-summary .alert-critical>ha-icon{color:var(--error-color,#db4437)}
 .alert-summary .alert-note{margin:8px 2px 2px;font-size:10px;line-height:1.5;color:var(--secondary-text-color)}
 `;
+
+export const plainFieldStyles = `.configurable-field.style-plain{background:transparent!important;border:0!important;box-shadow:none!important}`;

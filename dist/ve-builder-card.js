@@ -1883,12 +1883,15 @@ for(const [code,entries]of Object.entries({
  }
 }))Object.assign(EXTRA[code],entries);
 
+EN['Sin fondo']='No background';
+for(const [code,label] of Object.entries({pt:'Sem fundo',fr:'Sans fond',de:'Ohne Hintergrund',it:'Senza sfondo',nl:'Zonder achtergrond'}))EXTRA[code]['Sin fondo']=label;
+
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EXTRA[lang]?.[value])return EXTRA[lang][value];if(EN[value])return EN[value];const fragments={fr:[' réglage(s) à vérifier : ',': choisissez une entité.',': entité indisponible (',': le maximum doit être supérieur au minimum.','Type de bloc inconnu : '],pt:[' definição(ões) pendente(s): ',': escolha uma entidade.',': entidade indisponível (',': o máximo deve ser maior do que o mínimo.','Tipo de bloco desconhecido: '],de:[' ausstehende Einstellung(en): ',': wähle eine Entität.',': Entität nicht verfügbar (',': das Maximum muss größer als das Minimum sein.','Unbekannter Blocktyp: '],it:[' impostazione/i da verificare: ',': scegli un’entità.',': entità non disponibile (',': il massimo deve essere maggiore del minimo.','Tipo di blocco sconosciuto: '],nl:[' instelling(en) te controleren: ',': kies een entiteit.',': entiteit niet beschikbaar (',': het maximum moet groter zijn dan het minimum.','Onbekend bloktype: ']}[lang];if(fragments)return [' ajuste(s) pendiente(s): ',': elige una entidad.',': entidad no disponible (',': el máximo debe ser mayor que el mínimo.','Tipo de bloque desconocido: '].reduce((out,part,index)=>out.replaceAll(part,fragments[index]),value);return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
 function missingTranslations(code){return code==='es'||code==='en'?[]:Object.keys(EN).filter(key=>!EXTRA[code]?.[key]);}
 
-const VERSION = '1.7.0-beta.2';
+const VERSION = '1.7.0-beta.3';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -2136,6 +2139,8 @@ const alertSummaryStyles = `
 .alert-summary .alert-item>span{margin:0;flex:1;color:var(--primary-text-color);font-size:12px;line-height:1.5;overflow-wrap:anywhere}.alert-summary .alert-item>ha-icon{--mdc-icon-size:18px;color:var(--warning-color,#df9100)}.alert-summary .alert-critical>ha-icon{color:var(--error-color,#db4437)}
 .alert-summary .alert-note{margin:8px 2px 2px;font-size:10px;line-height:1.5;color:var(--secondary-text-color)}
 `;
+
+const plainFieldStyles = `.configurable-field.style-plain{background:transparent!important;border:0!important;box-shadow:none!important}`;
 
 
 const known=value=>value!==undefined&&value!==null&&!['unknown','unavailable','none','null',''].includes(String(value).toLowerCase());
@@ -2430,7 +2435,7 @@ class VEBuilderEditor extends HTMLElement {
       if(!['limit','expense','price'].includes(kind)){
         if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
         const appearance=this.panel(row,field.id+'-appearance','Apariencia');
-        const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado'}),select('width',{auto:'Media fila',full:'Fila completa'})];
+        const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado',plain:'Sin fondo'}),select('width',{auto:'Media fila',full:'Fila completa'})];
         if(['info','power'].includes(kind))schemas.unshift(select('display',{info:'Información',button:'Botón',bar:'Barra'}));
         if(field.display==='bar')schemas.push(numeric('min',-1000000,1000000),numeric('max',-1000000,1000000));
         this.form(appearance,{display:'info',size:'small',style:'subtle',width:'auto',min:0,max:100,...field},schemas,patch=>{const changed=patch.display!==undefined&&patch.display!==(field.display??'info');Object.assign(field,patch);this.emit();if(changed)this.render();});
@@ -2614,7 +2619,7 @@ class VEBuilderCard extends HTMLElement {
   date(entity){const date=Date.parse(this.state[entity]?.last_updated);return Number.isFinite(date)?new Date(date).toLocaleString(this.lang):this.t('Sin fecha');}
   severity(field,value=this.state[field.entity]?.state){const severity=valueSeverity(value,field.colors);return severity?'value-'+severity:'';}
   field(field,forced){
-    const state=this.state[field.entity],display=forced??field.display??'info',size=['small','medium','large'].includes(field.size)?field.size:'small',style=['subtle','outline','accent'].includes(field.style)?field.style:'subtle';
+    const state=this.state[field.entity],display=forced??field.display??'info',size=['small','medium','large'].includes(field.size)?field.size:'small',style=['subtle','outline','accent','plain'].includes(field.style)?field.style:'subtle';
     const label=field.name||state?.attributes?.friendly_name||this.t('Elige una entidad'),value=stateText(state,field,this.lang),icon=field.icon||state?.attributes?.icon||'mdi:information-outline';
     const pct=percentage(state?.state,field.min??0,field.max??100),width=field.width==='full'?'field-full':'';
     const controlled=['toggle','press'].includes(field.tap),disabled=controlled&&!actionFor(field.entity,state,field.tap);
@@ -2718,7 +2723,7 @@ class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
