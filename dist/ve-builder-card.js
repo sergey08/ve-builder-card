@@ -1772,12 +1772,126 @@ for(const [code,entries]of Object.entries({
  }
 }))Object.assign(EXTRA[code],entries);
 
+Object.assign(EN,{
+ "Estados bajo el vehículo": "States below the vehicle",
+ "Cerradura": "Lock",
+ "Puertas": "Doors",
+ "Ventanillas": "Windows",
+ "Puertas cerradas": "Doors closed",
+ "Puertas abiertas": "Doors open",
+ "Ventanillas cerradas": "Windows closed",
+ "Ventanillas abiertas": "Windows open",
+ "Estado normal": "Normal state",
+ "Estado de aviso": "Warning state",
+ "Texto normal (opcional)": "Normal text (optional)",
+ "Texto de aviso (opcional)": "Warning text (optional)",
+ "Tipo de indicador": "Indicator type",
+ "Añadir indicador": "Add indicator",
+ "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Add a lock, doors or windows. Normal states are subtle and openings are highlighted. Tapping only opens details; no commands are sent.",
+ "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Defaults: locked/unlocked for locks, closed/open for covers and off/on for binary sensors. Check your integration’s values. Unrecognised states show No data."
+});
+for(const [code,entries]of Object.entries({
+ "pt": {
+  "Estados bajo el vehículo": "Estados sob o veículo",
+  "Cerradura": "Fechadura",
+  "Puertas": "Portas",
+  "Ventanillas": "Vidros",
+  "Puertas cerradas": "Portas fechadas",
+  "Puertas abiertas": "Portas abertas",
+  "Ventanillas cerradas": "Vidros fechados",
+  "Ventanillas abiertas": "Vidros abertos",
+  "Estado normal": "Estado normal",
+  "Estado de aviso": "Estado de aviso",
+  "Texto normal (opcional)": "Texto normal (opcional)",
+  "Texto de aviso (opcional)": "Texto de aviso (opcional)",
+  "Tipo de indicador": "Tipo de indicador",
+  "Añadir indicador": "Adicionar indicador",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Adicione fechadura, portas ou vidros. Os estados normais são discretos e as aberturas destacam-se. Ao tocar abre apenas detalhes; não envia ordens.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Predefinições: locked/unlocked para fechaduras, closed/open para cover e off/on para sensores binários. Reveja os valores da integração. Estados não reconhecidos mostram Sem dados."
+ },
+ "fr": {
+  "Estados bajo el vehículo": "États sous le véhicule",
+  "Cerradura": "Serrure",
+  "Puertas": "Portes",
+  "Ventanillas": "Vitres",
+  "Puertas cerradas": "Portes fermées",
+  "Puertas abiertas": "Portes ouvertes",
+  "Ventanillas cerradas": "Vitres fermées",
+  "Ventanillas abiertas": "Vitres ouvertes",
+  "Estado normal": "État normal",
+  "Estado de aviso": "État d’alerte",
+  "Texto normal (opcional)": "Texte normal (facultatif)",
+  "Texto de aviso (opcional)": "Texte d’alerte (facultatif)",
+  "Tipo de indicador": "Type d’indicateur",
+  "Añadir indicador": "Ajouter un indicateur",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Ajoutez serrure, portes ou vitres. Les états normaux sont discrets et les ouvertures sont mises en évidence. Un appui ouvre seulement les détails ; aucune commande n’est envoyée.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Valeurs par défaut : locked/unlocked pour les serrures, closed/open pour cover et off/on pour les capteurs binaires. Vérifiez les valeurs de votre intégration. Les états inconnus affichent Aucune donnée."
+ },
+ "de": {
+  "Estados bajo el vehículo": "Zustände unter dem Fahrzeug",
+  "Cerradura": "Schloss",
+  "Puertas": "Türen",
+  "Ventanillas": "Fenster",
+  "Puertas cerradas": "Türen geschlossen",
+  "Puertas abiertas": "Türen offen",
+  "Ventanillas cerradas": "Fenster geschlossen",
+  "Ventanillas abiertas": "Fenster offen",
+  "Estado normal": "Normalzustand",
+  "Estado de aviso": "Warnzustand",
+  "Texto normal (opcional)": "Normaler Text (optional)",
+  "Texto de aviso (opcional)": "Warntext (optional)",
+  "Tipo de indicador": "Anzeigetyp",
+  "Añadir indicador": "Anzeige hinzufügen",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Füge Schloss, Türen oder Fenster hinzu. Normale Zustände sind dezent, Öffnungen werden hervorgehoben. Antippen öffnet nur Details; es werden keine Befehle gesendet.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Standard: locked/unlocked für Schlösser, closed/open für cover und off/on für binäre Sensoren. Prüfe die Werte deiner Integration. Unbekannte Zustände zeigen Keine Daten."
+ },
+ "it": {
+  "Estados bajo el vehículo": "Stati sotto il veicolo",
+  "Cerradura": "Serratura",
+  "Puertas": "Porte",
+  "Ventanillas": "Finestrini",
+  "Puertas cerradas": "Porte chiuse",
+  "Puertas abiertas": "Porte aperte",
+  "Ventanillas cerradas": "Finestrini chiusi",
+  "Ventanillas abiertas": "Finestrini aperti",
+  "Estado normal": "Stato normale",
+  "Estado de aviso": "Stato di avviso",
+  "Texto normal (opcional)": "Testo normale (facoltativo)",
+  "Texto de aviso (opcional)": "Testo di avviso (facoltativo)",
+  "Tipo de indicador": "Tipo di indicatore",
+  "Añadir indicador": "Aggiungi indicatore",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Aggiungi serratura, porte o finestrini. Gli stati normali sono discreti e le aperture sono evidenziate. Il tocco apre solo i dettagli; non invia comandi.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Predefiniti: locked/unlocked per serrature, closed/open per cover e off/on per sensori binari. Controlla i valori dell’integrazione. Gli stati non riconosciuti mostrano Nessun dato."
+ },
+ "nl": {
+  "Estados bajo el vehículo": "Status onder het voertuig",
+  "Cerradura": "Slot",
+  "Puertas": "Portieren",
+  "Ventanillas": "Ramen",
+  "Puertas cerradas": "Portieren gesloten",
+  "Puertas abiertas": "Portieren open",
+  "Ventanillas cerradas": "Ramen gesloten",
+  "Ventanillas abiertas": "Ramen open",
+  "Estado normal": "Normale status",
+  "Estado de aviso": "Waarschuwingsstatus",
+  "Texto normal (opcional)": "Normale tekst (optioneel)",
+  "Texto de aviso (opcional)": "Waarschuwingstekst (optioneel)",
+  "Tipo de indicador": "Indicatortype",
+  "Añadir indicador": "Indicator toevoegen",
+  "Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.": "Voeg slot, portieren of ramen toe. Normale statussen zijn subtiel en openingen vallen op. Tikken opent alleen details; er worden geen opdrachten verzonden.",
+  "Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.": "Standaard: locked/unlocked voor sloten, closed/open voor cover en off/on voor binaire sensoren. Controleer de waarden van je integratie. Onbekende statussen tonen Geen gegevens."
+ }
+}))Object.assign(EXTRA[code],entries);
+
+EN['Sin fondo']='No background';
+for(const [code,label] of Object.entries({pt:'Sem fundo',fr:'Sans fond',de:'Ohne Hintergrund',it:'Senza sfondo',nl:'Zonder achtergrond'}))EXTRA[code]['Sin fondo']=label;
+
 function translate(text,lang='es') {if(lang==='es')return String(text??'');const value=String(text??'');if(EXTRA[lang]?.[value])return EXTRA[lang][value];if(EN[value])return EN[value];const fragments={fr:[' réglage(s) à vérifier : ',': choisissez une entité.',': entité indisponible (',': le maximum doit être supérieur au minimum.','Type de bloc inconnu : '],pt:[' definição(ões) pendente(s): ',': escolha uma entidade.',': entidade indisponível (',': o máximo deve ser maior do que o mínimo.','Tipo de bloco desconhecido: '],de:[' ausstehende Einstellung(en): ',': wähle eine Entität.',': Entität nicht verfügbar (',': das Maximum muss größer als das Minimum sein.','Unbekannter Blocktyp: '],it:[' impostazione/i da verificare: ',': scegli un’entità.',': entità non disponibile (',': il massimo deve essere maggiore del minimo.','Tipo di blocco sconosciuto: '],nl:[' instelling(en) te controleren: ',': kies een entiteit.',': entiteit niet beschikbaar (',': het maximum moet groter zijn dan het minimum.','Onbekend bloktype: ']}[lang];if(fragments)return [' ajuste(s) pendiente(s): ',': elige una entidad.',': entidad no disponible (',': el máximo debe ser mayor que el mínimo.','Tipo de bloque desconocido: '].reduce((out,part,index)=>out.replaceAll(part,fragments[index]),value);return value.replace(' ajuste(s) pendiente(s): ',' pending setting(s): ').replace(': elige una entidad.',': choose an entity.').replace(': entidad no disponible (',': entity unavailable (').replace(': el máximo debe ser mayor que el mínimo.',': maximum must be greater than minimum.').replace('Tipo de bloque desconocido: ','Unknown block type: ');}
 function translateSchema(schema,lang){const output=structuredClone(schema);for(const field of output){const opts=field.selector?.select?.options;if(opts)for(const option of opts)if(typeof option==='object')option.label=translate(option.label,lang);}return output;}
 
 function missingTranslations(code){return code==='es'||code==='en'?[]:Object.keys(EN).filter(key=>!EXTRA[code]?.[key]);}
 
-const VERSION = '1.6.0';
+const VERSION = '1.7.0';
 const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1813,7 +1927,7 @@ function normalize(config) {
   if(!Array.isArray(out.blocks))throw Error('Los bloques deben ser una lista.');
   const ids=new Set();
   const identify=item=>{if(!item.id||ids.has(item.id))item.id=uid();ids.add(item.id);return item;};
-  out.blocks.forEach(b=>{identify(b);b.fields?.forEach(identify);b.prices?.forEach(identify);b.groups?.forEach(g=>{identify(g);g.fields?.forEach(identify);});});
+  out.blocks.forEach(b=>{identify(b);b.fields?.forEach(identify);b.prices?.forEach(identify);b.vehicle_status?.forEach(identify);b.groups?.forEach(g=>{identify(g);g.fields?.forEach(identify);});});
   return out;
 }
 function validate(config, hass) {
@@ -2026,6 +2140,8 @@ const alertSummaryStyles = `
 .alert-summary .alert-note{margin:8px 2px 2px;font-size:10px;line-height:1.5;color:var(--secondary-text-color)}
 `;
 
+const plainFieldStyles = `.configurable-field.style-plain{background:transparent!important;border:0!important;box-shadow:none!important}`;
+
 
 const known=value=>value!==undefined&&value!==null&&!['unknown','unavailable','none','null',''].includes(String(value).toLowerCase());
 function vehicleRain(options={},states={},now=Date.now()){
@@ -2061,6 +2177,26 @@ const rainStyles=`
 `;
 
 
+const STATUS_TYPES={lock:'Cerradura',doors:'Puertas',windows:'Ventanillas'};
+const STATUS_PROFILES={
+ lock:{normal:'Bloqueado',attention:'Desbloqueado',icon:'mdi:lock',attention_icon:'mdi:lock-open-variant'},
+ doors:{normal:'Puertas cerradas',attention:'Puertas abiertas',icon:'mdi:car-door',attention_icon:'mdi:car-door'},
+ windows:{normal:'Ventanillas cerradas',attention:'Ventanillas abiertas',icon:'mdi:window-closed-variant',attention_icon:'mdi:window-open-variant'}
+};
+function newVehicleStatus(kind='lock'){return {id:uid(),kind:Object.hasOwn(STATUS_TYPES,kind)?kind:'lock',entity:''};}
+function vehicleStatusValues(item){const domain=String(item.entity??'').split('.')[0];return {normal_value:item.normal_value??(domain==='cover'?'closed':item.kind==='lock'&&domain==='lock'?'locked':'off'),attention_value:item.attention_value??(domain==='cover'?'open':item.kind==='lock'&&domain==='lock'?'unlocked':'on')};}
+function vehicleStatus(item,states={},lang='es'){
+ const profile=STATUS_PROFILES[item.kind]??STATUS_PROFILES.doors,state=states[item.entity]?.state,{normal_value,attention_value}=vehicleStatusValues(item);
+ let level='unknown',label=translate('Sin datos',lang),icon=item.icon||profile.icon;
+ if(state!==undefined&&state!==null&&!['unknown','unavailable','none','null',''].includes(String(state).toLowerCase())){
+  if(String(state)===String(normal_value)&&normal_value!==attention_value){level='normal';label=item.normal_text||translate(profile.normal,lang);}
+  else if(String(state)===String(attention_value)&&normal_value!==attention_value){level='attention';label=item.attention_text||translate(profile.attention,lang);icon=item.icon||profile.attention_icon;}
+ }
+ return {level,label,icon,name:item.name||'',entity:item.entity||''};
+}
+const vehicleStatusStyles=`.vehicle-statuses{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 14px;padding:4px 16px 0}.vehicle-statuses .vehicle-status{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:28px;max-width:100%;padding:2px 0;border:0;border-radius:0;background:transparent;font:inherit;font-size:11px;color:var(--secondary-text-color);line-height:1.4}.vehicle-status span{margin:0;overflow-wrap:anywhere;color:inherit}.vehicle-status ha-icon{--mdc-icon-size:15px;flex-shrink:0}.vehicle-status.status-attention{color:var(--warning-color,#ff9800)}.vehicle-status.status-unknown{opacity:.65}.vehicle-status:disabled{cursor:default}.vehicle-status:focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}`;
+
+
 const TRANSFER_LIMIT=512*1024;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const fail=message=>{throw Error(message);};
@@ -2092,18 +2228,18 @@ function inspectCardImport(source,states={}) {
  checkTexts(card);
  for(const block of card.blocks){
   checkObject(block);checkTexts(block);if(!Object.hasOwn(TYPES,block.type))fail('El archivo contiene un tipo de apartado no compatible.');
-  list(block.fields);list(block.prices);list(block.groups,g=>list(g.fields));
+  list(block.fields);list(block.prices);list(block.vehicle_status);list(block.groups,g=>list(g.fields));
   for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
   if(block.positions!==undefined){checkObject(block.positions);if(Object.values(block.positions).some(v=>typeof v!=='string'))fail('La estructura de la tarjeta no es válida.');}
   if(block.body_parts!==undefined){checkObject(block.body_parts);Object.values(block.body_parts).forEach(part=>{checkObject(part);checkTexts(part);});}
  }
  // New IDs make every imported section independent, including repeated imports.
  card=clone(card);const fresh=item=>{item.id=uid();};
- for(const block of card.blocks){fresh(block);block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
+ for(const block of card.blocks){fresh(block);block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.vehicle_status?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
  const config=normalize(card),entities=new Set();
  const collect=(value,key='')=>{if(!value||typeof value!=='object')return;for(const [name,item]of Object.entries(value)){if(typeof item==='string'&&(name==='entity'||name.endsWith('_entity')||key==='positions')&&item)entities.add(item);else collect(item,name);}};collect(config);
  const missing=[...entities].filter(id=>!states[id]);
- const fields=config.blocks.reduce((n,b)=>n+(b.fields?.length??0)+(b.prices?.length??0)+(b.groups??[]).reduce((sum,g)=>sum+(g.fields?.length??0),0),0);
+ const fields=config.blocks.reduce((n,b)=>n+(b.fields?.length??0)+(b.prices?.length??0)+(b.vehicle_status?.length??0)+(b.groups??[]).reduce((sum,g)=>sum+(g.fields?.length??0),0),0);
  return {config,blocks:config.blocks.length,fields,entities:[...entities],missing};
 }
 
@@ -2152,7 +2288,7 @@ class VEBuilderEditor extends HTMLElement {
   pasteSection(){
     if(!copiedSection)return false;
     const copy=clone(copiedSection);copy.id=uid();
-    for(const fields of [copy.fields,copy.prices])fields?.forEach(f=>f.id=uid());
+    for(const fields of [copy.fields,copy.prices,copy.vehicle_status])fields?.forEach(f=>f.id=uid());
     copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});
     this.config.blocks.push(copy);this.openKey=copy.id;this.copyFeedback='Apartado pegado. Revisa sus entidades y pulsa Guardar.';this.emit();this.render();return true;
   }
@@ -2299,7 +2435,7 @@ class VEBuilderEditor extends HTMLElement {
       if(!['limit','expense','price'].includes(kind)){
         if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
         const appearance=this.panel(row,field.id+'-appearance','Apariencia');
-        const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado'}),select('width',{auto:'Media fila',full:'Fila completa'})];
+        const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado',plain:'Sin fondo'}),select('width',{auto:'Media fila',full:'Fila completa'})];
         if(['info','power'].includes(kind))schemas.unshift(select('display',{info:'Información',button:'Botón',bar:'Barra'}));
         if(field.display==='bar')schemas.push(numeric('min',-1000000,1000000),numeric('max',-1000000,1000000));
         this.form(appearance,{display:'info',size:'small',style:'subtle',width:'auto',min:0,max:100,...field},schemas,patch=>{const changed=patch.display!==undefined&&patch.display!==(field.display??'info');Object.assign(field,patch);this.emit();if(changed)this.render();});
@@ -2324,6 +2460,21 @@ class VEBuilderEditor extends HTMLElement {
     this.form(panel,{max_age_minutes:60,...options},[numeric('max_age_minutes',1,10080),entity('timestamp_entity','sensor')],patch=>{block.freshness={...block.freshness,...patch};this.emit();});
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un sensor cuyo valor sea una fecha de lectura. Sin él se usa el cambio más antiguo de las entidades; un valor estable no demuestra que el coche haya dejado de informar. Los datos antiguos se atenúan sin bloquear controles.');panel.append(hint);
   }
+  statusEditor(parent,block){
+    const panel=this.panel(parent,block.id+'-statuses','Estados bajo el vehículo'),items=block.vehicle_status??[];
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.');panel.append(hint);
+    items.forEach((item,index)=>{
+      const row=this.panel(panel,item.id,item.name||STATUS_TYPES[item.kind]||'Información');this.reorderHandle(row,items,index,block.id+'-statuses');
+      this.form(row,item,[entity('entity',['lock','binary_sensor','cover','sensor','input_boolean'])],patch=>{Object.assign(item,patch);this.emit();this.render();});
+      const labels={name:'Nombre visible (opcional)',icon:'Icono',normal_value:'Estado normal',attention_value:'Estado de aviso',normal_text:'Texto normal (opcional)',attention_text:'Texto de aviso (opcional)'};
+      const form=this.form(row,{...vehicleStatusValues(item),...item},[text('name'),{name:'icon',selector:{icon:{}}},text('normal_value'),text('attention_value'),text('normal_text'),text('attention_text')],patch=>{Object.assign(item,patch);row.querySelector('summary').textContent=item.name||this.t(STATUS_TYPES[item.kind]||'Información');this.emit();});form.computeLabel=f=>this.t(labels[f.name]);
+      this.button(row,'Eliminar',()=>{items.splice(index,1);this.emit();this.render();},true);
+    });
+    const toolbar=document.createElement('div');toolbar.className='toolbar';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de indicador'));
+    for(const [value,label]of Object.entries(STATUS_TYPES)){const option=document.createElement('option');option.value=value;option.textContent=this.t(label);picker.append(option);}toolbar.append(picker);panel.append(toolbar);
+    this.button(toolbar,'Añadir indicador',()=>{const item=newVehicleStatus(picker.value);(block.vehicle_status??=[]).push(item);this.openKey=item.id;this.emit();this.render();});
+    const note=document.createElement('p');note.className='muted';note.textContent=this.t('Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.');panel.append(note);
+  }
   rainEditor(parent,block){
     const panel=this.panel(parent,block.id+'-rain','Lluvia sobre el vehículo'),options={enabled:false,source:'weather',animate:true,intensity:'normal',home_value:'home',rain_value:'on',threshold:0,max_age_minutes:180,covered_value:'on',uncovered_value:'off',...block.rain};
     const labels={enabled:'Mostrar lluvia',source:'Origen de la lluvia',entity:'Entidad de lluvia',rain_value:'Estado que significa lluvia',threshold:'Lluvia si el valor es mayor que',animate:'Animar lluvia',intensity:'Intensidad visual',max_age_minutes:'Antigüedad máxima de lluvia · minutos',home_only:'Solo cuando el coche esté en casa',location_entity:'Entidad de ubicación del vehículo',home_value:'Estado que significa en casa',covered:'Coche bajo techo',covered_entity:'Sensor de coche bajo techo (opcional)',covered_value:'Estado que significa bajo techo',uncovered_value:'Estado que significa al aire libre',preview:'Vista previa de lluvia (datos de ejemplo)'};
@@ -2346,6 +2497,7 @@ class VEBuilderEditor extends HTMLElement {
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
       this.rainEditor(panel,block);
+      this.statusEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);
@@ -2403,7 +2555,7 @@ class VEBuilderEditor extends HTMLElement {
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
-      this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
+      this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.vehicle_status?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
       this.button(toolbar,'Copiar apartado',()=>this.copySection(block));
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });
@@ -2467,7 +2619,7 @@ class VEBuilderCard extends HTMLElement {
   date(entity){const date=Date.parse(this.state[entity]?.last_updated);return Number.isFinite(date)?new Date(date).toLocaleString(this.lang):this.t('Sin fecha');}
   severity(field,value=this.state[field.entity]?.state){const severity=valueSeverity(value,field.colors);return severity?'value-'+severity:'';}
   field(field,forced){
-    const state=this.state[field.entity],display=forced??field.display??'info',size=['small','medium','large'].includes(field.size)?field.size:'small',style=['subtle','outline','accent'].includes(field.style)?field.style:'subtle';
+    const state=this.state[field.entity],display=forced??field.display??'info',size=['small','medium','large'].includes(field.size)?field.size:'small',style=['subtle','outline','accent','plain'].includes(field.style)?field.style:'subtle';
     const label=field.name||state?.attributes?.friendly_name||this.t('Elige una entidad'),value=stateText(state,field,this.lang),icon=field.icon||state?.attributes?.icon||'mdi:information-outline';
     const pct=percentage(state?.state,field.min??0,field.max??100),width=field.width==='full'?'field-full':'';
     const controlled=['toggle','press'].includes(field.tap),disabled=controlled&&!actionFor(field.entity,state,field.tap);
@@ -2491,11 +2643,18 @@ class VEBuilderCard extends HTMLElement {
   refreshRain(){
     for(const host of this.shadowRoot.querySelectorAll('[data-rain]')){const block=this.config.blocks.find(b=>b.id===host.dataset.rain);if(!block)continue;const html=this.rainOverlay(block);if(host.innerHTML!==html)host.innerHTML=html;}
   }
+  vehicleStatuses(block){
+    const items=block.vehicle_status??[];if(!items.length)return '';
+    return `<div class="vehicle-statuses" aria-label="${escape(this.t('Estados bajo el vehículo'))}">${items.map(item=>{
+      const result=vehicleStatus(item,this.state,this.lang),label=(result.name?result.name+' · ':'')+result.label;
+      return `<button type="button" class="vehicle-status status-${result.level}" data-vehicle-status="${escape(item.id)}" aria-label="${escape(label)}" ${result.entity&&this.state[result.entity]?'':'disabled'}><ha-icon icon="${escape(result.icon)}"></ha-icon><span>${escape(label)}</span></button>`;
+    }).join('')}</div>`;
+  }
   start(block){
     const plugged=this.state[block.connector_entity]?.state==='on',charging=this.state[block.charging_entity]?.state===(block.charging_value??'Charging');
     const power=number(this.state[block.power_entity]?.state),active=block.power_entity?power!==null&&power>0:charging,animated=active&&block.animate!==false;
     const image=imageUrl(block.image),cable=(plugged||active)&&block.show_cable!==false;
-    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.config.title||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/><div class="rain-host" data-rain="${escape(block.id)}">${this.rainOverlay(block)}</div>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'');
+    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.config.title||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/><div class="rain-host" data-rain="${escape(block.id)}">${this.rainOverlay(block)}</div>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'')+this.vehicleStatuses(block);
   }
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
@@ -2558,18 +2717,20 @@ class VEBuilderCard extends HTMLElement {
     const unchanged=!this._dirty&&this._renderLanguage===this.lang&&this._renderUser===this._hass.user&&this._renderStates?.length===states.length&&states.every((state,i)=>state===this._renderStates[i]);
     if(unchanged){if(this._mapHosts?.length)this.syncMaps();return;}
     this._dirty=false;this._renderStates=states;this._renderLanguage=this.lang;this._renderUser=this._hass.user;
-    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
+    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].vehicle_status?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
     const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${block.title?`<header>${escape(block.title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${block.note?`<footer>${escape(block.note)}</footer>`:''}</section>`;}).join('');
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${rainStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
+    const statuses=this.config.blocks.flatMap(b=>b.vehicle_status??[]);
+    this.shadowRoot.querySelectorAll('[data-vehicle-status]').forEach(el=>el.addEventListener('click',()=>{const item=statuses.find(item=>item.id===el.dataset.vehicleStatus);if(item?.entity&&this.state[item.entity])this.moreInfo(item.entity);}));
     this.shadowRoot.querySelectorAll('[data-entity]').forEach(el=>{const open=()=>this.moreInfo(el.dataset.entity);el.addEventListener('click',open);el.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();open();}});});
     this.shadowRoot.querySelectorAll('[data-limit]').forEach(el=>{el.addEventListener('input',()=>{this._editingSlider=true;const f=fields.find(f=>f.id===el.dataset.limit);[...this.shadowRoot.querySelectorAll('[data-limit-label]')].find(label=>label.dataset.limitLabel===el.dataset.limit).textContent=`${format(el.value,f.decimals,this.lang)} ${f.unit??this.state[f.entity]?.attributes.unit_of_measurement??''}`;});el.addEventListener('change',async()=>{const f=fields.find(f=>f.id===el.dataset.limit);try{await this._hass.callService('input_number','set_value',{entity_id:f.entity,value:Number(el.value)});this.feedback=this.t('Límite enviado.');}catch{this.feedback=this.t('No se pudo guardar el límite.');}finally{this._editingSlider=false;this._dirty=true;this.render();}});el.addEventListener('blur',()=>{if(this._editingSlider){this._editingSlider=false;this.render();}});});
     this._mapHosts=[...this.shadowRoot.querySelectorAll('[data-map]')];

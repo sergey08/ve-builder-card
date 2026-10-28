@@ -55,3 +55,9 @@ test('whole-card import previews before mutation, supports append/replace and un
  e.importText=exportCard({title:'Replacement',blocks:[]});e.previewImport();assert.equal(e.applyImport('replace'),true);assert.equal(e.config.title,'Replacement');e.travelHistory('undo');assert.equal(e.config.title,'Existing');assert.equal(e.config.blocks.length,2);
  e.importText=exportCard({title:'Valid',blocks:[]});e.previewImport();e.importText='invalid';const safe=structuredClone(e.config);assert.equal(e.applyImport('replace'),false);assert.deepEqual(e.config,safe);assert.equal(e.importPreview,null);
 });
+
+test('section copying refreshes under-vehicle indicator IDs and preserves their sensor settings',()=>{
+ const e=new VEBuilderEditor();e.render=()=>{};e.emit=()=>{};e.setConfig({blocks:[]});
+ const block={id:'start',type:'start',vehicle_status:[{id:'status',kind:'windows',entity:'cover.windows',normal_value:'closed'}]};e.copySection(block);e.pasteSection();
+ assert.notEqual(e.config.blocks[0].vehicle_status[0].id,'status');assert.equal(e.config.blocks[0].vehicle_status[0].entity,'cover.windows');assert.equal(block.vehicle_status[0].id,'status');
+});

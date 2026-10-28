@@ -1,3 +1,84 @@
+# VE Builder Card 1.7.0
+
+## English
+
+- Configurable lock, door and window status indicators below the vehicle image. Small text and icons, without borders or backgrounds; open/unlocked states appear in amber.
+- Indicators only open entity details. Unknown or unavailable readings never imply that the vehicle is closed or locked.
+- New **No background** field style, selectable in the visual editor. Combine sizes and ordering to highlight battery and range while keeping other information discreet.
+- Status indicators support reordering, copy, duplication and full-card export/import with independent identifiers.
+- Editor labels and help available in English, Spanish, Portuguese, French, German, Italian and Dutch.
+- Existing card configurations are preserved. Add status indicators and select the new field style when desired.
+
+**Validation:** 78 automated tests pass. The maintainer approved the beta layout in Home Assistant before this stable release.
+
+## Español
+
+- Indicadores configurables de cerradura, puertas y ventanillas bajo la imagen del vehículo. Texto e iconos pequeños, sin marcos ni fondos; abierto/desbloqueado se resalta en ámbar.
+- Al pulsar solo se abren los detalles de la entidad. Los datos desconocidos o no disponibles nunca se interpretan como vehículo cerrado o bloqueado.
+- Nuevo estilo **Sin fondo** para campos, disponible en el editor visual. Combina tamaños y orden para destacar batería y autonomía y mantener discretos los demás datos.
+- Los indicadores permiten ordenar, copiar, duplicar y exportar/importar la tarjeta con identificadores independientes.
+- Editor y ayuda en inglés, español, portugués, francés, alemán, italiano y neerlandés.
+- Se conservan las configuraciones existentes. Añade indicadores y elige el nuevo estilo cuando lo desees.
+
+**Validación:** 78 pruebas automáticas correctas. El mantenedor aprobó el diseño de la beta en Home Assistant antes de esta versión estable.
+
+# VE Builder Card 1.7.0-beta.3
+
+## English
+
+- New No background field style in the visual editor. Preserves icons, value colours, spacing and entity details.
+- Validation: 78 automated tests pass. Visual review pending.
+
+## Español
+
+- Nuevo estilo Sin fondo para campos en el editor visual. Conserva iconos, colores por valor, distribución y detalles de entidad.
+- Validación: 78 pruebas automáticas correctas. Pendiente revisión visual.
+
+# VE Builder Card 1.7.0-beta.2
+
+## English
+
+- Smaller informational indicators below the car: 11 px text and 15 px icons, without borders or backgrounds.
+- Open/unlocked indicators retain amber text. Selecting an indicator still only opens entity details.
+- Validation: 78 automated tests pass. Visual review pending.
+
+## Español
+
+- Indicadores informativos más pequeños bajo el coche: texto de 11 px e iconos de 15 px, sin marcos ni fondos.
+- Los estados abierto/desbloqueado conservan el texto ámbar. Al pulsar solo se abren los detalles de la entidad.
+- Validación: 78 pruebas automáticas correctas. Pendiente revisión visual.
+
+# VE Builder Card 1.7.0-beta.1
+
+## English
+
+Small addition: a compact, configurable state row below the vehicle image.
+
+- Add, remove and reorder indicators for the lock, doors and windows in **Edit → Overview → States below the vehicle**.
+- Configure each entity, display name, icon, normal/warning state and optional custom text. Normal readings stay subtle; unlocked/open readings are highlighted in amber.
+- Unknown, unavailable or unrecognised states show No data and never imply that doors or windows are closed.
+- Selecting an indicator only opens the entity details. No lock or window commands are sent, even if an imported item contains action settings.
+- Default mappings: locked/unlocked for lock entities, closed/open for covers and off/on for binary sensors. Review your integration’s actual states.
+- Full-card export/import, section copy and duplicate operations preserve the new indicators and generate independent identifiers.
+- Interface and help in English, Spanish, Portuguese, French, German, Italian and Dutch. Existing cards gain no indicators until configured.
+
+**Validation:** 78 automated tests pass, including state mappings, unknown states, escaping, detail-only behaviour, copy and import independence. Visual review on desktop/mobile remains pending before stable release.
+
+## Español
+
+Pequeña mejora: fila compacta y configurable de estados bajo la imagen del vehículo.
+
+- Añade, quita y ordena indicadores de cerradura, puertas y ventanillas en **Editar → Inicio → Estados bajo el vehículo**.
+- Configura entidad, nombre, icono, estados normal/de aviso y textos opcionales. Las lecturas normales son discretas; desbloqueado/abierto se resalta en ámbar.
+- Estados desconocidos, no disponibles o no reconocidos muestran Sin datos; nunca se interpretan como puertas o ventanillas cerradas.
+- Al pulsar solo se abren los detalles de la entidad. No envía órdenes a cerraduras o ventanillas, aunque un elemento importado contenga ajustes de acciones.
+- Valores predeterminados: locked/unlocked para entidades lock, closed/open para cover y off/on para sensores binarios. Revisa los estados reales de tu integración.
+- Exportar/importar, copiar y duplicar apartados conservan los indicadores y generan identificadores independientes.
+- Interfaz y ayuda en inglés, español, portugués, francés, alemán, italiano y neerlandés. Las tarjetas existentes no añaden indicadores hasta configurarlos.
+
+**Validación:** 78 pruebas automáticas correctas, incluidos estados, datos desconocidos, escape de texto, pulsación solo de detalles e independencia al copiar/importar. Pendiente revisión visual en escritorio/móvil antes de liberar la estable.
+
+
 # VE Builder Card 1.6.0
 
 ## English

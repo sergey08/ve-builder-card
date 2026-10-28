@@ -1,3 +1,4 @@
+import {STATUS_TYPES,newVehicleStatus,vehicleStatusValues} from './vehicle-status.js';
 import {exportCard,inspectCardImport,TRANSFER_LIMIT} from './transfer.js';
 import {language,translate,translateSchema,LANGUAGES} from './i18n.js';
 import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity} from './core.js';
@@ -46,7 +47,7 @@ export class VEBuilderEditor extends HTMLElement {
   pasteSection(){
     if(!copiedSection)return false;
     const copy=clone(copiedSection);copy.id=uid();
-    for(const fields of [copy.fields,copy.prices])fields?.forEach(f=>f.id=uid());
+    for(const fields of [copy.fields,copy.prices,copy.vehicle_status])fields?.forEach(f=>f.id=uid());
     copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});
     this.config.blocks.push(copy);this.openKey=copy.id;this.copyFeedback='Apartado pegado. Revisa sus entidades y pulsa Guardar.';this.emit();this.render();return true;
   }
@@ -193,7 +194,7 @@ export class VEBuilderEditor extends HTMLElement {
       if(!['limit','expense','price'].includes(kind)){
         if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
         const appearance=this.panel(row,field.id+'-appearance','Apariencia');
-        const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado'}),select('width',{auto:'Media fila',full:'Fila completa'})];
+        const schemas=[select('size',{small:'Pequeño',medium:'Mediano',large:'Grande'}),select('style',{subtle:'Suave',outline:'Contorno',accent:'Destacado',plain:'Sin fondo'}),select('width',{auto:'Media fila',full:'Fila completa'})];
         if(['info','power'].includes(kind))schemas.unshift(select('display',{info:'Información',button:'Botón',bar:'Barra'}));
         if(field.display==='bar')schemas.push(numeric('min',-1000000,1000000),numeric('max',-1000000,1000000));
         this.form(appearance,{display:'info',size:'small',style:'subtle',width:'auto',min:0,max:100,...field},schemas,patch=>{const changed=patch.display!==undefined&&patch.display!==(field.display??'info');Object.assign(field,patch);this.emit();if(changed)this.render();});
@@ -218,6 +219,21 @@ export class VEBuilderEditor extends HTMLElement {
     this.form(panel,{max_age_minutes:60,...options},[numeric('max_age_minutes',1,10080),entity('timestamp_entity','sensor')],patch=>{block.freshness={...block.freshness,...patch};this.emit();});
     const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un sensor cuyo valor sea una fecha de lectura. Sin él se usa el cambio más antiguo de las entidades; un valor estable no demuestra que el coche haya dejado de informar. Los datos antiguos se atenúan sin bloquear controles.');panel.append(hint);
   }
+  statusEditor(parent,block){
+    const panel=this.panel(parent,block.id+'-statuses','Estados bajo el vehículo'),items=block.vehicle_status??[];
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añade cerradura, puertas o ventanillas. Los estados normales son discretos y las aperturas se resaltan. Al pulsar solo se abren los detalles; no se envían órdenes.');panel.append(hint);
+    items.forEach((item,index)=>{
+      const row=this.panel(panel,item.id,item.name||STATUS_TYPES[item.kind]||'Información');this.reorderHandle(row,items,index,block.id+'-statuses');
+      this.form(row,item,[entity('entity',['lock','binary_sensor','cover','sensor','input_boolean'])],patch=>{Object.assign(item,patch);this.emit();this.render();});
+      const labels={name:'Nombre visible (opcional)',icon:'Icono',normal_value:'Estado normal',attention_value:'Estado de aviso',normal_text:'Texto normal (opcional)',attention_text:'Texto de aviso (opcional)'};
+      const form=this.form(row,{...vehicleStatusValues(item),...item},[text('name'),{name:'icon',selector:{icon:{}}},text('normal_value'),text('attention_value'),text('normal_text'),text('attention_text')],patch=>{Object.assign(item,patch);row.querySelector('summary').textContent=item.name||this.t(STATUS_TYPES[item.kind]||'Información');this.emit();});form.computeLabel=f=>this.t(labels[f.name]);
+      this.button(row,'Eliminar',()=>{items.splice(index,1);this.emit();this.render();},true);
+    });
+    const toolbar=document.createElement('div');toolbar.className='toolbar';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de indicador'));
+    for(const [value,label]of Object.entries(STATUS_TYPES)){const option=document.createElement('option');option.value=value;option.textContent=this.t(label);picker.append(option);}toolbar.append(picker);panel.append(toolbar);
+    this.button(toolbar,'Añadir indicador',()=>{const item=newVehicleStatus(picker.value);(block.vehicle_status??=[]).push(item);this.openKey=item.id;this.emit();this.render();});
+    const note=document.createElement('p');note.className='muted';note.textContent=this.t('Valores predeterminados: locked/unlocked para cerraduras, closed/open para cover y off/on para sensores binarios. Revisa los valores de tu integración. Los estados no reconocidos muestran Sin datos.');panel.append(note);
+  }
   rainEditor(parent,block){
     const panel=this.panel(parent,block.id+'-rain','Lluvia sobre el vehículo'),options={enabled:false,source:'weather',animate:true,intensity:'normal',home_value:'home',rain_value:'on',threshold:0,max_age_minutes:180,covered_value:'on',uncovered_value:'off',...block.rain};
     const labels={enabled:'Mostrar lluvia',source:'Origen de la lluvia',entity:'Entidad de lluvia',rain_value:'Estado que significa lluvia',threshold:'Lluvia si el valor es mayor que',animate:'Animar lluvia',intensity:'Intensidad visual',max_age_minutes:'Antigüedad máxima de lluvia · minutos',home_only:'Solo cuando el coche esté en casa',location_entity:'Entidad de ubicación del vehículo',home_value:'Estado que significa en casa',covered:'Coche bajo techo',covered_entity:'Sensor de coche bajo techo (opcional)',covered_value:'Estado que significa bajo techo',uncovered_value:'Estado que significa al aire libre',preview:'Vista previa de lluvia (datos de ejemplo)'};
@@ -240,6 +256,7 @@ export class VEBuilderEditor extends HTMLElement {
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
       this.rainEditor(panel,block);
+      this.statusEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);
@@ -297,7 +314,7 @@ export class VEBuilderEditor extends HTMLElement {
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
-      this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
+      this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.vehicle_status?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
       this.button(toolbar,'Copiar apartado',()=>this.copySection(block));
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });

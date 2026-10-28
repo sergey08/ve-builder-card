@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.6.0';
+export const VERSION = '1.7.0';
 export const TYPES = {start:'Inicio', fields:'Información', modes:'Modos de carga', power:'Carga', limits:'Límites', actions:'Acciones', map:'Mapa', expenses:'Gastos y ahorro', tyres:'Mapa del vehículo'};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 export const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -35,7 +35,7 @@ export function normalize(config) {
   if(!Array.isArray(out.blocks))throw Error('Los bloques deben ser una lista.');
   const ids=new Set();
   const identify=item=>{if(!item.id||ids.has(item.id))item.id=uid();ids.add(item.id);return item;};
-  out.blocks.forEach(b=>{identify(b);b.fields?.forEach(identify);b.prices?.forEach(identify);b.groups?.forEach(g=>{identify(g);g.fields?.forEach(identify);});});
+  out.blocks.forEach(b=>{identify(b);b.fields?.forEach(identify);b.prices?.forEach(identify);b.vehicle_status?.forEach(identify);b.groups?.forEach(g=>{identify(g);g.fields?.forEach(identify);});});
   return out;
 }
 export function validate(config, hass) {
