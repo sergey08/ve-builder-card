@@ -10,7 +10,7 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.4.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.0).
+**Versión estable: 1.4.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.4.1).
 
 ## Así se ve la tarjeta
 
