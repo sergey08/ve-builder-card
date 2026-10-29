@@ -255,6 +255,8 @@ export class VEBuilderEditor extends HTMLElement {
     if(block.type==='start'){
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
+      const otaPanel=this.panel(panel,block.id+'-ota','Versión del sistema y actualizaciones');
+      this.form(otaPanel,block,[entity('ota_version_entity','sensor'),entity('ota_status_entity',['sensor','binary_sensor','update'])],patch=>{Object.assign(block,patch);this.emit();});
       this.rainEditor(panel,block);
       this.statusEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
