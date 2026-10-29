@@ -42,6 +42,11 @@ export class VEBuilderCard extends HTMLElement {
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){const block=this.config.blocks.find(b=>b.id===host.dataset.tyreAdvice);if(block){const html=this.pressureAdvice(block);if(host._adviceMarkup!==html){const open=host.querySelector('details')?.open;host.innerHTML=html;host._adviceMarkup=html;if(open&&host.querySelector('details'))host.querySelector('details').open=true;}}}
 
   }
+  softwareUpdateBanner(){
+    const entity=this.config.software_update_entity;
+    if(!entity||this.state[entity]?.state!=='on')return '';
+    return `<button type="button" class="software-update-banner" data-software-update="${escape(entity)}"><ha-icon icon="mdi:cellphone-arrow-down"></ha-icon><span>${escape(this.lang==='es'?'Actualización de software disponible':'Software update available')}</span></button>`;
+  }
   alertSummary(){
     const alerts=collectCardAlerts(this.config,this.state,this.lang);if(!alerts.length)return '';
     const critical=alerts.filter(a=>a.severity==='critical').length,warning=alerts.length-critical;
@@ -161,9 +166,10 @@ export class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}.software-update-banner{display:flex;align-items:center;gap:9px;width:calc(100% - 24px);margin:12px;padding:10px 12px;border:1px solid var(--warning-color,#e6a23c);border-radius:10px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;text-align:left;cursor:pointer}.software-update-banner ha-icon{color:var(--warning-color,#e6a23c)}</style><ha-card>${this.config.title?`<header class="card-title">${escape(this.config.title)}</header>`:''}${this.softwareUpdateBanner()}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
+    this.shadowRoot.querySelector('[data-software-update]')?.addEventListener('click',()=>this.moreInfo(this.config.software_update_entity));
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
