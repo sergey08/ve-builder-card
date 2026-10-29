@@ -35,6 +35,16 @@ export class VEBuilderEditor extends HTMLElement {
   updateHistoryButtons(){
     for(const [key,list]of [['undo',this.history],['redo',this.future]]){const button=this.shadowRoot?.querySelector('[data-history="'+key+'"]');if(button)button.disabled=!list?.length;}
   }
+  softwareUpdateEditor(parent){
+    const panel=this.panel(parent,'software-update','Actualización de software');
+    this.form(panel,{software_update_entity:this.config.software_update_entity??''},[entity('software_update_entity','binary_sensor')],patch=>{
+      this.config.software_update_entity=patch.software_update_entity||'';
+      this.emit();
+    });
+    const hint=document.createElement('p');hint.className='muted';
+    hint.textContent='El aviso aparece arriba únicamente cuando el sensor está activado (on).';
+    panel.append(hint);
+  }
   alertsEditor(parent){
     const panel=this.panel(parent,'alerts-summary','Resumen de avisos');const options=this.config.alerts??{};
     const toggle=this.form(panel,{enabled:!!options.enabled},[bool('enabled')],patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();this.render();});toggle.computeLabel=()=>this.t('Mostrar resumen de avisos');
@@ -305,6 +315,7 @@ export class VEBuilderEditor extends HTMLElement {
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
     this.form(root,{language:'auto',...this.config},[text('title'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=patch.language!==undefined&&patch.language!==this.config.language;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
     this.historyToolbar(root);
+    this.softwareUpdateEditor(root);
     this.alertsEditor(root);
     this.sectionClipboard(root);
     this.transferPanel(root);
