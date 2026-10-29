@@ -34,7 +34,8 @@ jobs:
             exit 1
           fi
           if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release already exists: $TAG"
+            echo "Refreshing existing release asset: $TAG"
+            gh release upload "$TAG" dist/ve-builder-card.js --clobber
             exit 0
           fi
           OPTIONS=()
