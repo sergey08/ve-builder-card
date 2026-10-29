@@ -1,0 +1,47 @@
+name: Clean obsolete prereleases
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Preview only
+        type: boolean
+        default: true
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.event_name == 'workflow_dispatch' || (github.event.release.prerelease == false && github.event.release.draft == false)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove obsolete beta releases and tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          latest=$(gh api "repos/$REPO/releases?per_page=100" --paginate --jq '.[] | select(.draft == false and .prerelease == false and (.tag_name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))) | .tag_name' | sort -V | tail -1)
+          test -n "$latest" || { echo "No stable release"; exit 1; }
+          echo "Latest stable: $latest"
+          gh api "repos/$REPO/releases?per_page=100" --paginate --jq '.[] | select(.prerelease == true and .draft == false) | [.id, .tag_name] | @tsv' |
+          while IFS=$'\t' read -r id tag; do
+            if [[ "$tag" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+)-(beta\.[0-9]+|rc\.[0-9]+)$ ]]; then
+              base="${BASH_REMATCH[1]}"
+            else
+              echo "SKIP unexpected tag: $tag"
+              continue
+            fi
+            if [[ "$(printf '%s\n%s\n' "$base" "$latest" | sort -V | head -1)" != "$base" ]]; then
+              echo "KEEP future prerelease: $tag"
+              continue
+            fi
+            echo "CANDIDATE: $tag"
+            if [[ "$DRY_RUN" == "false" ]]; then
+              gh api -X DELETE "repos/$REPO/releases/$id"
+              gh api -X DELETE "repos/$REPO/git/refs/tags/$tag"
+              echo "DELETED: $tag"
+            fi
+          done
