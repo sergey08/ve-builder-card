@@ -1,5 +1,11 @@
 # VE Builder Card 1.7.1-beta.1
 
+## OTA version in overview / Versión OTA en inicio
+
+**English:** Optional version sensor and update-status sensor in the Overview with image block. The OS/version is displayed to the right of the vehicle title, with an amber alert icon only for positive update states. Empty or unavailable version sensors render nothing. Entity selection is user-configurable.
+
+**Español:** Sensores opcionales de versión y estado de actualización en Inicio con imagen. XOS y su versión aparecen a la derecha del título del vehículo; la exclamación ámbar solo aparece cuando hay una actualización confirmada. Si no se configura sensor o no hay datos válidos, no se muestra nada. Entidades seleccionables por el usuario.
+
 ## English
 
 - Add block now uses explicit generic types: Overview with image, Data and sensors, Selection buttons, Charging power, Slider controls, Action buttons, Location map, Costs and savings, and Vehicle status.
