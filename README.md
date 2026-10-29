@@ -12,6 +12,10 @@ The visual editor offers a compact language dropdown: Automatic (Home Assistant)
 
 **Stable release: 1.7.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.0).
 
+## OTA firmware version in the vehicle header (1.7.1 beta)
+
+In the **Overview with image** block, select an optional OTA version sensor (`ota_version_entity`) and update-status sensor (`ota_status_entity`). The card reads the `current_version` attribute (or a usable sensor state), displays the OS/version to the right of the vehicle title, and adds an amber alert icon only when an update is pending. Leave the version sensor blank to hide the indicator entirely. Example for XPeng Toolkit: `sensor.ota_update_xpeng_135818` and `sensor.ota_status_xpeng_135818`.
+
 ## See the card
 
 A configurable vehicle dashboard with compact readings, a vehicle image and charging controls, plus a vehicle diagram with tyre pressures, confirmed openings, gear and expandable alerts.
