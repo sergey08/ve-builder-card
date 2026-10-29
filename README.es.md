@@ -10,7 +10,11 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.6.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.6.0).
+**Versión estable: 1.7.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.0).
+
+## Versión OTA en la cabecera (beta 1.7.1)
+
+En **Inicio con imagen**, selecciona opcionalmente el sensor de versión OTA (`ota_version_entity`) y el sensor de estado de actualización (`ota_status_entity`). La tarjeta lee el atributo `current_version` (o un estado válido), muestra el nombre del sistema y su versión a la derecha del título y añade una exclamación ámbar solo cuando hay una actualización pendiente. Si dejas vacío el sensor de versión, no se muestra nada. Ejemplo para XPeng Toolkit: `sensor.ota_update_xpeng_135818` y `sensor.ota_status_xpeng_135818`.
 
 ## Así se ve la tarjeta
 
