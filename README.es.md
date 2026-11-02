@@ -10,9 +10,9 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.7.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.0).
+**Versión estable: 1.7.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.1).
 
-## Versión OTA en la cabecera (beta 1.7.1)
+## Versión OTA en la cabecera
 
 En **Inicio con imagen**, selecciona opcionalmente el sensor de versión OTA (`ota_version_entity`) y el sensor de estado de actualización (`ota_status_entity`). La tarjeta lee el atributo `current_version` (o un estado válido), muestra el nombre del sistema y su versión a la derecha del título y añade una exclamación ámbar solo cuando hay una actualización pendiente. Si dejas vacío el sensor de versión, no se muestra nada. Ejemplo para XPeng Toolkit: `sensor.ota_update_xpeng_135818` y `sensor.ota_status_xpeng_135818`.
 
@@ -88,7 +88,7 @@ En **Editar → Inicio → Lluvia sobre el vehículo**, activa la capa y selecci
 
 Si usas un sensor de casa, puedes restringirlo a cuando el coche esté en casa. **Coche bajo techo** o un sensor de cobertura oculta la lluvia en el garaje. La **Vista previa de lluvia (datos de ejemplo)** permite probar el aspecto; lleva etiqueta e ignora sensores, ubicación y techo, por lo que debe desactivarse después. No trae entidades preasignadas. Se usan condiciones actuales según [Home Assistant](https://www.home-assistant.io/integrations/weather/), no previsiones ni lluvia acumulada.
 
-### Estados bajo el vehículo (beta 1.7.0)
+### Estados bajo el vehículo
 
 En **Editar → Inicio → Estados bajo el vehículo**, añade indicadores de cerradura, puertas o ventanillas. Selecciona cada entidad y personaliza opcionalmente nombre, icono, valores normal/de aviso y textos. Arrastra para ordenar o elimina los que no necesites. Estados normales discretos; aperturas y desbloqueado en ámbar. Lecturas desconocidas muestran Sin datos. Al pulsar solo abre detalles, nunca acciona cerraduras ni ventanas.
 

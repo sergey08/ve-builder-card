@@ -1,24 +1,26 @@
-# VE Builder Card 1.7.1-beta.1
-
-## OTA version in overview / Versión OTA en inicio
-
-**English:** Optional version sensor and update-status sensor in the Overview with image block. The OS/version is displayed to the right of the vehicle title, with an amber alert icon only for positive update states. Empty or unavailable version sensors render nothing. Entity selection is user-configurable.
-
-**Español:** Sensores opcionales de versión y estado de actualización en Inicio con imagen. XOS y su versión aparecen a la derecha del título del vehículo; la exclamación ámbar solo aparece cuando hay una actualización confirmada. Si no se configura sensor o no hay datos válidos, no se muestra nada. Entidades seleccionables por el usuario.
+# VE Builder Card 1.7.1
 
 ## English
 
-- Add block now uses explicit generic types: Overview with image, Data and sensors, Selection buttons, Charging power, Slider controls, Action buttons, Location map, Costs and savings, and Vehicle status.
-- New blocks start empty. Configure their title and entities afterwards; existing blocks and entity assignments remain unchanged.
-- Each type has a brief description that updates when selected.
-- Clarifying help and labels in all seven interface languages.
+- Generic block types in Add block, each with a short description: Overview with image, Data and sensors, Selection buttons, Charging power, Slider controls, Action buttons, Location map, Costs and savings, and Vehicle status.
+- New blocks start empty; configure their title, entities and appearance without copying another block's data.
+- Optional OTA version and update-status sensors in Overview with image. The OS/version appears to the right of the vehicle title, with an amber exclamation icon when an update is confirmed.
+- Leave the version sensor empty, or without a usable reading, to hide the version indicator.
+- Editor labels and help in English, Spanish, Portuguese, French, German, Italian and Dutch.
+- Existing cards and entity assignments remain compatible.
+
+Stable release published on 29 October 2026. This documentation update corrects obsolete beta labels; it does not change the card code or distributed JavaScript.
 
 ## Español
 
-- Añadir bloque muestra tipos genéricos explícitos: Inicio con imagen, Datos y sensores, Botones de selección, Potencia de carga, Controles deslizantes, Botones de acciones, Mapa de ubicación, Gastos y ahorro y Estado del vehículo.
-- Los bloques nuevos empiezan vacíos. Después configura título y entidades; se conservan los bloques existentes y sus entidades.
-- Cada tipo incluye una descripción breve que cambia al seleccionarlo.
-- Etiquetas y ayuda en los siete idiomas de la interfaz.
+- Tipos genéricos en Añadir bloque, cada uno con una descripción breve: Inicio con imagen, Datos y sensores, Botones de selección, Potencia de carga, Controles deslizantes, Botones de acciones, Mapa de ubicación, Gastos y ahorro y Estado del vehículo.
+- Los bloques nuevos empiezan vacíos; configura título, entidades y presentación sin copiar datos de otro bloque.
+- Sensores opcionales de versión OTA y estado de actualización en Inicio con imagen. El sistema y su versión aparecen a la derecha del título, con una exclamación ámbar cuando se confirma una actualización.
+- Si el sensor de versión está vacío o no tiene una lectura válida, se oculta el indicador.
+- Editor y ayuda en inglés, español, portugués, francés, alemán, italiano y neerlandés.
+- Se conserva la compatibilidad de las tarjetas y entidades existentes.
+
+Versión estable publicada el 29 de octubre de 2026. Esta actualización de documentación corrige etiquetas antiguas de beta; no cambia el código de la tarjeta ni el JavaScript distribuido.
 
 # VE Builder Card 1.7.0
 

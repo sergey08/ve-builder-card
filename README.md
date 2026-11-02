@@ -10,9 +10,9 @@ Create your own vehicle dashboard in Home Assistant. Combine vehicle information
 
 The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered.
 
-**Stable release: 1.7.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.0).
+**Stable release: 1.7.1.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.1).
 
-## OTA firmware version in the vehicle header (1.7.1 beta)
+## OTA firmware version in the vehicle header
 
 In the **Overview with image** block, select an optional OTA version sensor (`ota_version_entity`) and update-status sensor (`ota_status_entity`). The card reads the `current_version` attribute (or a usable sensor state), displays the OS/version to the right of the vehicle title, and adds an amber alert icon only when an update is pending. Leave the version sensor blank to hide the indicator entirely. Example for XPeng Toolkit: `sensor.ota_update_xpeng_135818` and `sensor.ota_status_xpeng_135818`.
 
@@ -150,7 +150,7 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.7.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.0).
+**Versión estable: 1.7.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.1).
 
 ## Así se ve la tarjeta
 
