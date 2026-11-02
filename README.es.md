@@ -28,7 +28,15 @@ Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo
 
 ## Instalar con HACS
 
-Pulsa el botón anterior, confirma el repositorio personalizado y descarga la última versión estable. HACS debe estar instalado. También puedes añadir `https://github.com/sergey08/ve-builder-card` en HACS → Repositorios personalizados, con la categoría **Panel de control** (Dashboard).
+VE Builder Card está incluida en el catálogo general de HACS. HACS debe estar instalado.
+
+1. Abre **HACS** en Home Assistant.
+2. Busca **VE Builder Card**.
+3. Abre el resultado y descarga la última versión estable.
+
+También puedes usar el botón **Open in HACS** de arriba para abrir directamente el repositorio.
+
+**Alternativa:** si la tarjeta todavía no aparece mientras se actualiza tu catálogo de HACS, añade `https://github.com/sergey08/ve-builder-card` en HACS → Repositorios personalizados, con la categoría **Panel de control** (Dashboard).
 
 Recarga la interfaz de Home Assistant después de instalar o actualizar. Si HACS no ha registrado el recurso, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo JavaScript en Ajustes → Paneles de control → Recursos.
 
@@ -96,7 +104,7 @@ Descarga `ve-builder-card.js` de la [última versión](https://github.com/sergey
 
 ## Actualizaciones y ayuda
 
-Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados. La instalación como repositorio personalizado no implica que la tarjeta ya esté en el catálogo general de HACS.
+Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados. VE Builder Card está disponible directamente en el catálogo general de HACS; no necesitas añadir un repositorio personalizado.
 
 Para contribuir, `npm run check` comprueba la sintaxis JavaScript, ejecuta las pruebas automáticas y genera el archivo distribuible. La instalación mediante HACS y el funcionamiento en móvil se han confirmado en la instalación del mantenedor. Las pruebas automáticas no sustituyen la revisión visual en distintos dispositivos; consulta la [lista de validación](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.md).
 
