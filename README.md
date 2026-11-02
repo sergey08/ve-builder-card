@@ -28,7 +28,15 @@ Real screenshots from the maintainer’s installation, captured during developme
 
 ## Install with HACS
 
-Click the button above, confirm the custom repository and download the latest stable release. HACS must already be installed. Alternatively, add `https://github.com/sergey08/ve-builder-card` in HACS → Custom repositories, with category **Dashboard**.
+VE Builder Card is included in the default HACS catalogue. HACS must already be installed.
+
+1. Open **HACS** in Home Assistant.
+2. Search for **VE Builder Card**.
+3. Open the result and download the latest stable release.
+
+You can also use the **Open in HACS** button above to open the repository directly.
+
+**Fallback:** if the card does not appear while your HACS catalogue refreshes, add `https://github.com/sergey08/ve-builder-card` in HACS → Custom repositories, with category **Dashboard**.
 
 Reload the Home Assistant frontend after installing or updating. If HACS has not registered the resource, add `/hacsfiles/ve-builder-card/ve-builder-card.js` as a JavaScript module in Settings → Dashboards → Resources.
 
@@ -94,7 +102,7 @@ Download `ve-builder-card.js` from the [latest release](https://github.com/serge
 
 ## Updates and support
 
-See the [release notes](https://github.com/sergey08/ve-builder-card/releases) for changes and [report an issue](https://github.com/sergey08/ve-builder-card/issues) with your Home Assistant version, card version and a configuration with private details removed. Installing from a custom repository does not mean the card is already in the general HACS catalogue.
+See the [release notes](https://github.com/sergey08/ve-builder-card/releases) for changes and [report an issue](https://github.com/sergey08/ve-builder-card/issues) with your Home Assistant version, card version and a configuration with private details removed. VE Builder Card is available directly from the default HACS catalogue; a custom repository is not required.
 
 For contributors, `npm run check` checks JavaScript syntax, runs the automated tests and builds the distributable. Installation through HACS and mobile operation have been confirmed in the maintainer’s installation. Automated tests do not replace visual checks across devices; see the [validation checklist](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.en.md).
 
@@ -156,7 +164,15 @@ Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo
 
 ## Instalar con HACS
 
-Pulsa el botón anterior, confirma el repositorio personalizado y descarga la última versión estable. HACS debe estar instalado. También puedes añadir `https://github.com/sergey08/ve-builder-card` en HACS → Repositorios personalizados, con la categoría **Panel de control** (Dashboard).
+VE Builder Card está incluida en el catálogo general de HACS. HACS debe estar instalado.
+
+1. Abre **HACS** en Home Assistant.
+2. Busca **VE Builder Card**.
+3. Abre el resultado y descarga la última versión estable.
+
+También puedes usar el botón **Open in HACS** de arriba para abrir directamente el repositorio.
+
+**Alternativa:** si la tarjeta todavía no aparece mientras se actualiza tu catálogo de HACS, añade `https://github.com/sergey08/ve-builder-card` en HACS → Repositorios personalizados, con la categoría **Panel de control** (Dashboard).
 
 Recarga la interfaz de Home Assistant después de instalar o actualizar. Si HACS no ha registrado el recurso, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo JavaScript en Ajustes → Paneles de control → Recursos.
 
@@ -224,7 +240,7 @@ Descarga `ve-builder-card.js` de la [última versión](https://github.com/sergey
 
 ## Actualizaciones y ayuda
 
-Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados. La instalación como repositorio personalizado no implica que la tarjeta ya esté en el catálogo general de HACS.
+Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados. VE Builder Card está disponible directamente en el catálogo general de HACS; no necesitas añadir un repositorio personalizado.
 
 Para contribuir, `npm run check` comprueba la sintaxis JavaScript, ejecuta las pruebas automáticas y genera el archivo distribuible. La instalación mediante HACS y el funcionamiento en móvil se han confirmado en la instalación del mantenedor. Las pruebas automáticas no sustituyen la revisión visual en distintos dispositivos; consulta la [lista de validación](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.md).
 
