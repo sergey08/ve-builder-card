@@ -1,5 +1,8 @@
 name: Clean obsolete prereleases
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cleanup-prereleases.yml']
   release:
     types: [published]
   workflow_dispatch:
@@ -12,7 +15,7 @@ permissions:
   contents: write
 jobs:
   cleanup:
-    if: github.event_name == 'workflow_dispatch' || (github.event.release.prerelease == false && github.event.release.draft == false)
+    if: (github.event_name == 'push' && github.event.head_commit.message == 'maintenance: clean obsolete prereleases after stable validation') || github.event_name == 'workflow_dispatch' || (github.event.release.prerelease == false && github.event.release.draft == false)
     runs-on: ubuntu-latest
     steps:
       - name: Remove obsolete beta releases and tags
