@@ -1,4 +1,4 @@
-![VE Builder Card](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png?logo=1.0.3)
+<img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png?logo=1.0.3" alt="VE Builder Card" width="160">
 
 # VE Builder Card
 
@@ -22,7 +22,7 @@ A configurable vehicle dashboard with compact readings, a vehicle image and char
 
 | Vehicle overview and charging controls | Vehicle diagram, tyre pressures and alerts |
 | --- | --- |
-| ![Vehicle overview and charging controls](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png) | ![Vehicle diagram, tyre pressures and alerts](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png) |
+| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Vehicle overview and charging controls" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Vehicle diagram, tyre pressures and alerts" width="300"></a> |
 
 Real screenshots from the maintainer’s installation, captured during development. They illustrate the layout; readings, labels and features may differ from the current release. Entities, titles and images are configured by each user.
 
@@ -138,7 +138,7 @@ Select **Copy section** at the end of a block. In another card on the same page 
 
 <a id="espanol"></a>
 
-![VE Builder Card](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png?logo=1.0.3)
+<img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png?logo=1.0.3" alt="VE Builder Card" width="160">
 
 # VE Builder Card
 
@@ -158,7 +158,7 @@ Un panel configurable con lecturas compactas, imagen del vehículo y controles d
 
 | Resumen del vehículo y controles de carga | Mapa del vehículo, presiones y avisos |
 | --- | --- |
-| ![Resumen del vehículo y controles de carga](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png) | ![Mapa del vehículo, presiones y avisos](https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png) |
+| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Resumen del vehículo y controles de carga" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Mapa del vehículo, presiones y avisos" width="300"></a> |
 
 Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo. Ilustran el diseño; los valores, textos y funciones pueden diferir de la versión actual. Cada usuario configura sus entidades, títulos e imágenes.
 
