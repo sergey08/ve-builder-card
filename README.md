@@ -10,7 +10,7 @@ Create your own vehicle dashboard in Home Assistant. Combine vehicle information
 
 The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered.
 
-**Stable release: 1.7.1.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.1).
+**Stable release: 1.7.2.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.2).
 
 ## OTA firmware version in the vehicle header
 
@@ -150,7 +150,7 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.7.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.1).
+**Versión estable: 1.7.2.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.2).
 
 ## Así se ve la tarjeta
 
