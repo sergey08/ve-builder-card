@@ -1,5 +1,7 @@
 name: Build isolated VE Builder Card DEV
 on:
+  push:
+    branches: [fix/number-charge-limit-service]
   workflow_dispatch:
 jobs:
   build-dev:
