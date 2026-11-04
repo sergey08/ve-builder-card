@@ -8,7 +8,21 @@
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
+## Idiomas disponibles
+
+La tarjeta y el editor visual admiten **7 idiomas**:
+
+| Idioma | Código |
+| --- | --- |
+| Inglés · English | `en` |
+| Español | `es` |
+| Portugués · Português | `pt` |
+| Francés · Français | `fr` |
+| Alemán · Deutsch | `de` |
+| Italiano | `it` |
+| Neerlandés · Nederlands | `nl` |
+
+El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
 **Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
 
