@@ -242,3 +242,23 @@ test('vehicle indicators render below the image with escaped text and separate d
  let opened='',services=0;card.moreInfo=id=>opened=id;card._hass.callService=()=>services++;const buttons=items.map(item=>({dataset:{vehicleStatus:item.id},addEventListener(type,fn){this.click=fn;}}));
  card.shadowRoot.querySelectorAll=selector=>selector==='[data-vehicle-status]'?buttons:[];card._dirty=true;card.render();buttons[0].click();assert.equal(opened,'lock.car');assert.equal(services,0);
 });
+
+test('existing Spanish dashboard labels render in every selected language and remain stored literally',async()=>{
+ const {translate}=await import('../src/i18n.js');
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card');
+ const config={title:'Mi XPeng',blocks:[
+  {id:'start',type:'start',show_image:false,fields:[{id:'battery',name:'Batería',entity:'sensor.battery'},{id:'custom',name:'Gasóleo · Plenergy',entity:'sensor.battery'}]},
+  {id:'power',type:'power',title:'Potencia de carga',fields:[{id:'p',name:'Potencia de carga',entity:'sensor.battery'},{id:'today',name:'Cargado hoy',entity:'sensor.battery'}]},
+  {id:'limits',type:'limits',title:'Límites de carga',fields:[{id:'limit',name:'Fin de carga',entity:'sensor.battery'}]},
+  {id:'cost',type:'expenses',title:'Gastos y ahorro',groups:[{name:'Coste de carga',fields:[{id:'cost1',name:'Hoy',entity:'sensor.battery'}]}]}
+ ]};
+ for(const lang of ['en','es','pt','fr','de','it','nl']){
+  const card=new Card();card.setConfig({...config,language:lang});card.hass={language:'es',states:{'sensor.battery':{state:'50',attributes:{min:0,max:100,unit_of_measurement:'%'}}}};
+  for(const label of ['Batería','Potencia de carga','Cargado hoy','Límites de carga','Fin de carga','Coste de carga','Hoy'])assert.ok(card.shadowRoot.innerHTML.includes(translate(label,lang)),`${lang}: ${label}`);
+  assert.ok(card.shadowRoot.innerHTML.includes('Gasóleo · Plenergy'));
+  assert.equal(card.config.blocks[0].fields[0].name,'Batería');
+  card.setConfig({...config,language:lang,translate_standard_labels:false});assert.ok(card.shadowRoot.innerHTML.includes('Batería'));
+ }
+});

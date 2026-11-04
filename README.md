@@ -10,7 +10,12 @@ Create your own vehicle dashboard in Home Assistant. Combine vehicle information
 
 The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered.
 
-**Stable release: 1.7.2.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.2).
+**Stable release: 1.7.3.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+
+## Standard labels and card language
+
+Standard saved labels now follow the selected card language in English, Spanish, Portuguese, French, German, Italian and Dutch, including block headings, charging modes, actions, limits, costs and period labels. Matching is exact; custom labels and sensor friendly names are preserved. Disable **Translate standard labels** in the visual editor (`translate_standard_labels: false`) to display saved text literally. Language remains a per-card setting; **Automatic** follows Home Assistant. Existing configuration is not rewritten.
+
 
 ## OTA firmware version in the vehicle header
 
@@ -150,7 +155,13 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
 
-**Versión estable: 1.7.2.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.2).
+**Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+
+## Nombres estándar e idioma de la tarjeta
+
+Los nombres estándar guardados siguen ahora el idioma de la tarjeta en inglés, español, portugués, francés, alemán, italiano y neerlandés: títulos de bloques, modos de carga, acciones, límites, costes y periodos. Solo se reconocen coincidencias completas; se conservan los textos personalizados y los nombres propios de los sensores. Desactiva **Traducir nombres estándar** en el editor (`translate_standard_labels: false`) para mostrar literalmente el texto guardado. El idioma se configura por tarjeta; **Automático** sigue Home Assistant. No se reescribe la configuración existente.
+
+
 
 ## Así se ve la tarjeta
 

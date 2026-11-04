@@ -1,3 +1,59 @@
+# VE Builder Card 1.7.3
+
+## English
+
+- Standard saved labels now follow the card language in English, Spanish, Portuguese, French, German, Italian and Dutch: block headings, fields, charging modes, action buttons, limits, costs, periods and default notes.
+- Complete the vehicle-status heading and map footer translations; use “Cabin temperature” in English.
+- Preserve custom text and sensor friendly names. Existing configuration is not rewritten. Disable “Translate standard labels” to display saved labels literally.
+- Language remains independent for each card; Automatic follows Home Assistant.
+- Remove ambiguity in language-switching behaviour from the documentation.
+- Validated through two installed betas, user approval and 81 passing automated tests. No further functional changes from beta.2.
+
+## Español
+
+- Los nombres estándar guardados siguen el idioma de la tarjeta en inglés, español, portugués, francés, alemán, italiano y neerlandés: títulos de bloques, campos, modos de carga, botones de acciones, límites, costes, periodos y comentarios predeterminados.
+- Completar las traducciones de Estado del vehículo y del pie del mapa; usar «Cabin temperature» en inglés.
+- Conservar textos personalizados y nombres propios de sensores sin reescribir la configuración. Desactivar «Traducir nombres estándar» permite mostrar literalmente los nombres guardados.
+- El idioma sigue siendo independiente por tarjeta; Automático utiliza el de Home Assistant.
+- Aclarar este comportamiento en la documentación.
+- Validación con dos betas instaladas, aprobación del usuario y 81 pruebas automáticas superadas. Sin cambios funcionales adicionales respecto de beta.2.
+
+---
+
+# VE Builder Card 1.7.3-beta.2
+
+## English
+
+- Complete missing vehicle-status heading and map footer translations in all seven languages.
+- Use “Cabin temperature” for the English interior-temperature label.
+- Add regression checks with explicit expected translations to catch missing source dictionary entries.
+- Custom titles such as “Mapa del XPeng G6” remain as entered.
+
+## Español
+
+- Completar las traducciones del título Estado del vehículo y del pie del mapa en los siete idiomas.
+- Usar «Cabin temperature» para la temperatura interior en inglés.
+- Añadir comprobaciones con traducciones esperadas explícitas para detectar entradas ausentes del diccionario.
+- Se conservan los títulos personalizados como «Mapa del XPeng G6».
+
+---
+
+# VE Builder Card 1.7.3-beta.1
+
+## English
+
+Standard saved labels now follow the selected card language in English, Spanish, Portuguese, French, German, Italian and Dutch, including block headings, charging modes, actions, limits, costs and period labels. Matching is exact; custom labels and sensor friendly names are preserved. Disable **Translate standard labels** in the visual editor (`translate_standard_labels: false`) to display saved text literally. Language remains a per-card setting; **Automatic** follows Home Assistant. Existing configuration is not rewritten.
+
+Beta for validation before a stable release. Automated tests cover all seven languages, reverse translation of saved standard labels, literal-text mode and configuration preservation.
+
+## Español
+
+Los nombres estándar guardados siguen ahora el idioma de la tarjeta en inglés, español, portugués, francés, alemán, italiano y neerlandés: títulos de bloques, modos de carga, acciones, límites, costes y periodos. Solo se reconocen coincidencias completas; se conservan los textos personalizados y los nombres propios de los sensores. Desactiva **Traducir nombres estándar** en el editor (`translate_standard_labels: false`) para mostrar literalmente el texto guardado. El idioma se configura por tarjeta; **Automático** sigue Home Assistant. No se reescribe la configuración existente.
+
+Beta para validar antes de publicar la estable. Las pruebas automáticas cubren los siete idiomas, la traducción de nombres estándar guardados en otros idiomas, el modo literal y la conservación de la configuración.
+
+---
+
 # VE Builder Card 1.7.2
 
 ## English
