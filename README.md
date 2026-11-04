@@ -8,7 +8,21 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
-The visual editor offers a compact language dropdown: Automatic (Home Assistant), English, Spanish, Portuguese, French, German, Italian and Dutch. Custom titles and field names remain as entered.
+## Supported languages
+
+The card and visual editor support **7 languages**:
+
+| Language | Code |
+| --- | --- |
+| English | `en` |
+| Spanish · Español | `es` |
+| Portuguese · Português | `pt` |
+| French · Français | `fr` |
+| German · Deutsch | `de` |
+| Italian · Italiano | `it` |
+| Dutch · Nederlands | `nl` |
+
+Choose the language separately for each card using the visual editor dropdown. **Automatic** follows Home Assistant. Standard labels follow the selected language; custom titles, names and text remain as entered.
 
 **Stable release: 1.7.3.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
 
@@ -153,7 +167,21 @@ Select **Copy section** at the end of a block. In another card on the same page 
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-El editor visual incluye un desplegable compacto de idioma: Automático (Home Assistant), inglés, español, portugués, francés, alemán, italiano y neerlandés. Los títulos y nombres personalizados se conservan tal como los escribas.
+## Idiomas disponibles
+
+La tarjeta y el editor visual admiten **7 idiomas**:
+
+| Idioma | Código |
+| --- | --- |
+| Inglés · English | `en` |
+| Español | `es` |
+| Portugués · Português | `pt` |
+| Francés · Français | `fr` |
+| Alemán · Deutsch | `de` |
+| Italiano | `it` |
+| Neerlandés · Nederlands | `nl` |
+
+El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
 **Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
 
