@@ -12,6 +12,11 @@ The visual editor offers a compact language dropdown: Automatic (Home Assistant)
 
 **Stable release: 1.7.2.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.2).
 
+## Standard labels and card language
+
+Standard saved labels now follow the selected card language in English, Spanish, Portuguese, French, German, Italian and Dutch, including block headings, charging modes, actions, limits, costs and period labels. Matching is exact; custom labels and sensor friendly names are preserved. Disable **Translate standard labels** in the visual editor (`translate_standard_labels: false`) to display saved text literally. Language remains a per-card setting; **Automatic** follows Home Assistant. Existing configuration is not rewritten.
+
+
 ## OTA firmware version in the vehicle header
 
 In the **Overview with image** block, select an optional OTA version sensor (`ota_version_entity`) and update-status sensor (`ota_status_entity`). The card reads the `current_version` attribute (or a usable sensor state), displays the OS/version to the right of the vehicle title, and adds an amber alert icon only when an update is pending. Leave the version sensor blank to hide the indicator entirely. Example for XPeng Toolkit: `sensor.ota_update_xpeng_135818` and `sensor.ota_status_xpeng_135818`.

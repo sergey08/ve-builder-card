@@ -51,3 +51,15 @@ test('language selector explicitly requests a compact Home Assistant dropdown',a
  const editor=await readFile(new URL('../src/editor.js',import.meta.url),'utf8');
  assert.match(editor,/name:'language',selector:\{select:\{mode:'dropdown'/);
 });
+
+test('saved standard labels follow all seven languages without rewriting custom text',async()=>{
+ const {standardLabel}=await import('../src/i18n.js');
+ for(const lang of ['en','es','pt','fr','de','it','nl']){
+  for(const key of ['Batería','Límites de carga','Fin de carga','Frío máximo','Salud','Coste de carga']){
+   assert.equal(standardLabel(key,lang),translate(key,lang));
+   for(const source of ['en','es','pt','fr','de','it','nl'])assert.equal(standardLabel(translate(key,source),lang),translate(key,lang));
+   assert.equal(standardLabel(key,lang,false),key);
+  }
+  for(const custom of ['Ubicación del XPeng','Gasóleo · Plenergy','Mi batería favorita','<script>'])assert.equal(standardLabel(custom,lang),custom);
+ }
+});
