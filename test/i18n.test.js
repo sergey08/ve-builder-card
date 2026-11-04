@@ -63,3 +63,16 @@ test('saved standard labels follow all seven languages without rewriting custom 
   for(const custom of ['Ubicación del XPeng','Gasóleo · Plenergy','Mi batería favorita','<script>'])assert.equal(standardLabel(custom,lang),custom);
  }
 });
+
+test('vehicle map headings and help have actual translations, including English cabin temperature',async()=>{
+ const {standardLabel}=await import('../src/i18n.js');
+ const expected={en:'Vehicle status',es:'Estado del vehículo',pt:'Estado do veículo',fr:'État du véhicule',de:'Fahrzeugstatus',it:'Stato del veicolo',nl:'Voertuigstatus'};
+ const footer='Pulsa una rueda o un elemento para ver sus detalles. Estados según las últimas lecturas del vehículo.';
+ for(const [lang,label]of Object.entries(expected)){
+  assert.equal(standardLabel('Estado del vehículo',lang),label);
+  if(lang!=='es')assert.notEqual(standardLabel(footer,lang),footer);
+ }
+ assert.equal(standardLabel('Interior','en'),'Cabin temperature');
+ assert.equal(standardLabel('Cabin temperature','es'),'Interior');
+ assert.equal(standardLabel('Mapa del XPeng G6','en'),'Mapa del XPeng G6');
+});
