@@ -4,9 +4,23 @@
 
 **English** · [Español](https://github.com/sergey08/ve-builder-card/blob/main/README.es.md)
 
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+[![Open in Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
+
+## Install from the Marketplace
+
+VE Builder Card is in the default catalog of the Marketplace, built into Home Assistant 2026.11 and later.
+
+1. Open **Settings → Marketplace** and search for **VE Builder Card**, or use the **Open in Marketplace** badge above.
+2. Open the card’s page, select **Install** and confirm.
+3. Reload your browser, edit your dashboard and select **VE Builder Card** from the card picker.
+
+The preview uses example values. Choose your entities in the editor to display live data. If an older local copy adds a duplicate picker entry, remove the resource for that copy.
+
+If you manage dashboard resources in YAML, add the JavaScript module shown in the Marketplace install dialog.
+
+Home Assistant 2026.11 automatically migrates existing HACS installations of this card to the Marketplace.
 
 ## Supported languages
 
@@ -44,22 +58,6 @@ A configurable vehicle dashboard with compact readings, a vehicle image and char
 | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Vehicle overview and charging controls" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Vehicle diagram, tyre pressures and alerts" width="300"></a> |
 
 Real screenshots from the maintainer’s installation, captured during development. They illustrate the layout; readings, labels and features may differ from the current release. Entities, titles and images are configured by each user.
-
-## Install with HACS
-
-VE Builder Card is included in the default HACS catalogue. HACS must already be installed.
-
-1. Open **HACS** in Home Assistant.
-2. Search for **VE Builder Card**.
-3. Open the result and download the latest stable release.
-
-You can also use the **Open in HACS** button above to open the repository directly.
-
-**Fallback:** if the card does not appear while your HACS catalogue refreshes, add `https://github.com/sergey08/ve-builder-card` in HACS → Custom repositories, with category **Dashboard**.
-
-Reload the Home Assistant frontend after installing or updating. If HACS has not registered the resource, add `/hacsfiles/ve-builder-card/ve-builder-card.js` as a JavaScript module in Settings → Dashboards → Resources.
-
-Add **VE Builder Card** from the card picker. The preview uses example values to illustrate the design; choose your own entities in the editor to display live data. A single official picker entry is registered; older local copies may need their old resource registration removed.
 
 ## Build your card
 
@@ -121,9 +119,9 @@ Download `ve-builder-card.js` from the [latest release](https://github.com/serge
 
 ## Updates and support
 
-See the [release notes](https://github.com/sergey08/ve-builder-card/releases) for changes and [report an issue](https://github.com/sergey08/ve-builder-card/issues) with your Home Assistant version, card version and a configuration with private details removed. VE Builder Card is available directly from the default HACS catalogue; a custom repository is not required.
+See the [release notes](https://github.com/sergey08/ve-builder-card/releases) for changes and [report an issue](https://github.com/sergey08/ve-builder-card/issues) with your Home Assistant version, card version and a configuration with private details removed.
 
-For contributors, `npm run check` checks JavaScript syntax, runs the automated tests and builds the distributable. Installation through HACS and mobile operation have been confirmed in the maintainer’s installation. Automated tests do not replace visual checks across devices; see the [validation checklist](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.en.md).
+For contributors, `npm run check` checks JavaScript syntax, runs the automated tests and builds the distributable. Mobile operation has been confirmed in the maintainer’s installation. Automated tests do not replace visual checks across devices; see the [validation checklist](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.en.md).
 
 MIT license.
 
@@ -163,9 +161,23 @@ Select **Copy section** at the end of a block. In another card on the same page 
 
 [English](https://github.com/sergey08/ve-builder-card/blob/main/README.md) · **Español**
 
-[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
+[![Abrir en Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
+
+## Instalar desde el Marketplace
+
+VE Builder Card está en el catálogo predeterminado del Marketplace, integrado en Home Assistant desde la versión 2026.11.
+
+1. Abre **Ajustes → Marketplace** y busca **VE Builder Card**, o usa el botón **Abrir en Marketplace** de arriba.
+2. Abre la ficha de la tarjeta, pulsa **Instalar** y confirma.
+3. Recarga el navegador, edita tu panel y elige **VE Builder Card** en el selector de tarjetas.
+
+La vista previa usa valores de ejemplo. Selecciona tus entidades en el editor para ver datos reales. Si aparece una entrada duplicada de una copia local antigua, elimina el recurso de esa copia.
+
+Si gestionas los recursos del panel en YAML, añade el módulo JavaScript que indica el cuadro de instalación del Marketplace.
+
+Home Assistant 2026.11 migra automáticamente al Marketplace las instalaciones de esta tarjeta hechas con HACS.
 
 ## Idiomas disponibles
 
@@ -200,22 +212,6 @@ Un panel configurable con lecturas compactas, imagen del vehículo y controles d
 | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Resumen del vehículo y controles de carga" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Mapa del vehículo, presiones y avisos" width="300"></a> |
 
 Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo. Ilustran el diseño; los valores, textos y funciones pueden diferir de la versión actual. Cada usuario configura sus entidades, títulos e imágenes.
-
-## Instalar con HACS
-
-VE Builder Card está incluida en el catálogo general de HACS. HACS debe estar instalado.
-
-1. Abre **HACS** en Home Assistant.
-2. Busca **VE Builder Card**.
-3. Abre el resultado y descarga la última versión estable.
-
-También puedes usar el botón **Open in HACS** de arriba para abrir directamente el repositorio.
-
-**Alternativa:** si la tarjeta todavía no aparece mientras se actualiza tu catálogo de HACS, añade `https://github.com/sergey08/ve-builder-card` en HACS → Repositorios personalizados, con la categoría **Panel de control** (Dashboard).
-
-Recarga la interfaz de Home Assistant después de instalar o actualizar. Si HACS no ha registrado el recurso, añade `/hacsfiles/ve-builder-card/ve-builder-card.js` como módulo JavaScript en Ajustes → Paneles de control → Recursos.
-
-Añade **VE Builder Card** desde el selector de tarjetas. La vista previa utiliza valores de ejemplo para mostrar el diseño; elige tus entidades en el editor para ver datos reales. Solo se registra una entrada oficial; las copias locales antiguas pueden requerir eliminar el registro de su recurso anterior.
 
 ## Diseña tu tarjeta
 
@@ -279,9 +275,9 @@ Descarga `ve-builder-card.js` de la [última versión](https://github.com/sergey
 
 ## Actualizaciones y ayuda
 
-Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados. VE Builder Card está disponible directamente en el catálogo general de HACS; no necesitas añadir un repositorio personalizado.
+Consulta los cambios en las [notas de versión](https://github.com/sergey08/ve-builder-card/releases) o [comunica un problema](https://github.com/sergey08/ve-builder-card/issues) indicando la versión de Home Assistant, la versión de la tarjeta y una configuración sin datos privados.
 
-Para contribuir, `npm run check` comprueba la sintaxis JavaScript, ejecuta las pruebas automáticas y genera el archivo distribuible. La instalación mediante HACS y el funcionamiento en móvil se han confirmado en la instalación del mantenedor. Las pruebas automáticas no sustituyen la revisión visual en distintos dispositivos; consulta la [lista de validación](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.md).
+Para contribuir, `npm run check` comprueba la sintaxis JavaScript, ejecuta las pruebas automáticas y genera el archivo distribuible. El funcionamiento en móvil se ha confirmado en la instalación del mantenedor. Las pruebas automáticas no sustituyen la revisión visual en distintos dispositivos; consulta la [lista de validación](https://github.com/sergey08/ve-builder-card/blob/main/docs/QA.md).
 
 Licencia MIT.
 
