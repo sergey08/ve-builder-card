@@ -8,6 +8,10 @@
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
+## Beta 1.7.5-beta.3 — fuentes de carga en W o kWh
+
+Las barras de **Fuentes de carga** en Gastos y ahorro admiten dos modos: potencia de carga en directo (W/kW) y energía cargada durante el día (kWh/Wh). Elige **Automático**, **Potencia (W)** o **Energía diaria (kWh)** en el editor visual. Los selectores aceptan sensores y ayudantes (`input_number.*`). No se mezclan unidades incompatibles. Las barras de energía diaria permanecen visibles con el coche en reposo; la animación queda reservada a la potencia instantánea. Se mantiene la compatibilidad con configuraciones anteriores en W. Si la energía de red proviene de `input_number`, selecciona expresamente Energía diaria.
+
 ## Instalar desde el Marketplace
 
 VE Builder Card está en el catálogo predeterminado del Marketplace, integrado en Home Assistant desde la versión 2026.11.
