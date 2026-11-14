@@ -262,3 +262,23 @@ test('existing Spanish dashboard labels render in every selected language and re
   card.setConfig({...config,language:lang,translate_standard_labels:false});assert.ok(card.shadowRoot.innerHTML.includes('Batería'));
  }
 });
+
+test('expenses renders daily charging sources with two proportional energy bars',()=>{
+ const registry=new Map();
+ class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const Card=registry.get('ve-builder-card');
+ const card=new Card();
+ card.setConfig({blocks:[{id:'expenses',type:'expenses',prices:[],groups:[],charging_sources:{solar_entity:'sensor.solar',grid_entity:'input_number.grid',total_entity:'sensor.total'}}]});
+ card.hass={language:'es',states:{'sensor.solar':{state:'5.3681'},'input_number.grid':{state:'35.15'},'sensor.total':{state:'40.52'}}};
+ const html=card.shadowRoot.innerHTML;
+ assert.match(html,/Fuentes de carga/);
+ assert.match(html,/5,37 kWh/);
+ assert.match(html,/35,15 kWh/);
+ assert.match(html,/40,52 kWh/);
+ assert.match(html,/ev-source-fill solar" style="width:13\.247/);
+ assert.match(html,/ev-source-fill grid" style="width:86\.747/);
+ card.hass={language:'es',states:{'sensor.solar':{state:'unavailable'},'input_number.grid':{state:'0'},'sensor.total':{state:'0'}}};
+ assert.match(card.shadowRoot.innerHTML,/Sin datos/);
+ assert.doesNotMatch(card.shadowRoot.innerHTML,/NaN|Infinity/);
+});
