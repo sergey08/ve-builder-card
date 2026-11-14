@@ -8,6 +8,10 @@
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
+## 1.7.5 beta.1 — barras de energía de carga
+
+Esta beta incorpora barras horizontales compactas para el reparto de la energía diaria en **Gastos y ahorro**. Configura en el editor visual las **Fuentes de carga (kWh)**: `solar_entity` (energía solar diaria), `grid_entity` (energía diaria de red) y `total_entity` (energía total cargada). Se muestran kWh y porcentajes respecto al total diario; las lecturas no disponibles aparecen como tales. Se admiten entidades `sensor.*` e `input_number.*`. No deben utilizarse aquí sensores de potencia en W. Se conservan los paneles existentes y la función es opcional. Valida la beta antes de liberar la estable.
+
 ## Instalar desde el Marketplace
 
 VE Builder Card está en el catálogo predeterminado del Marketplace, integrado en Home Assistant desde la versión 2026.11.
