@@ -87,16 +87,6 @@ Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assi
 
 Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
-## Así se ve la tarjeta
-
-Un panel configurable con lecturas compactas, imagen del vehículo y controles de carga, más un mapa del coche con presiones, aperturas confirmadas, marcha y avisos desplegables.
-
-| Resumen del vehículo y controles de carga | Mapa del vehículo, presiones y avisos |
-| --- | --- |
-| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Resumen del vehículo y controles de carga" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Mapa del vehículo, presiones y avisos" width="300"></a> |
-
-Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo. Ilustran el diseño; los valores, textos y funciones pueden diferir de la versión actual. Cada usuario configura sus entidades, títulos e imágenes.
-
 ## Diseña tu tarjeta
 
 Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
