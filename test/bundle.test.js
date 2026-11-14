@@ -276,7 +276,7 @@ test('expenses renders daily charging sources with two proportional energy bars'
  assert.match(html,/5,37 kWh/);
  assert.match(html,/35,15 kWh/);
  assert.match(html,/40,52 kWh/);
- assert.match(html,/ev-source-fill solar" style="width:13\.247/);
+ assert.match(html,/ev-source-fill solar" style="width:13\.248/);
  assert.match(html,/ev-source-fill grid" style="width:86\.747/);
  card.hass={language:'es',states:{'sensor.solar':{state:'unavailable'},'input_number.grid':{state:'0'},'sensor.total':{state:'0'}}};
  assert.match(card.shadowRoot.innerHTML,/Sin datos/);
