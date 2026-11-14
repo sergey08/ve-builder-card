@@ -8,17 +8,13 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
-## Beta 1.7.5-beta.3 — charging sources in W or kWh
+## Stable 1.7.5 — charging sources in Costs and savings
 
-The **Charging sources** bars in Costs and savings now support two modes: live charging power (W/kW) and daily charging energy (kWh/Wh). Choose **Automatic**, **Power (W)** or **Daily energy (kWh)** in the visual editor. The entity selectors accept both sensors and helpers (`input_number.*`). Sources are never silently mixed across units. Daily energy bars remain visible when idle; animated bars are reserved for live charging power. Existing W configurations continue to work. If your grid energy comes from `input_number`, select Daily energy explicitly.
+The **Charging sources** panel supports both live charging power (W/kW) and today's accumulated energy (kWh/Wh). In the visual editor, choose **Automatic**, **Power (W)**, or **Daily energy (kWh)** and assign solar, grid, and total entities (`sensor.*` and `input_number.*` supported).
 
-## Beta 1.7.5-beta.4 — full charging energy bar
+In daily-energy mode, the **total charged appears above a full-width stacked bar** split by colour into solar and grid contributions, followed by a compact legend with kWh and percentages. Unknown source energy is left unfilled; small rounding discrepancies are normalised when all sources are known. The bar segments now fill the track vertically without the inherited spacing gap. Power mode retains its animated charging bars. Existing cards remain compatible and are not rewritten automatically.
 
-Daily charging energy now shows the **total charged above a full-width stacked bar**, divided into coloured solar and grid contributions. A compact legend below displays kWh and percentages. The full bar preserves unallocated space if source readings are incomplete; small rounding differences are normalized only when all sources are present. Live power (W) retains its existing animated bars. No changes to saved entities or Home Assistant dashboard configuration are required.
-
-## Beta 1.7.5-beta.5 — charging bar vertical alignment
-
-Fix the 6 px gap above the stacked charging-source bar: a generic `span` top margin shifted both colored segments downward. Reset margins and padding only on the stacked segments, preserving the full-width solar/grid split, the total above it, and all energy calculations. No dashboard changes required.
+For a worked example, see [the Spanish configuration guide](README.es.md). The final appearance was confirmed in Home Assistant on beta.5 before this stable release.
 
 ## Install from the Marketplace
 
@@ -50,7 +46,7 @@ The card and visual editor support **7 languages**:
 
 Choose the language separately for each card using the visual editor dropdown. **Automatic** follows Home Assistant. Standard labels follow the selected language; custom titles, names and text remain as entered.
 
-**Stable release: 1.7.3.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+**Stable release: 1.7.5.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
 
 ## Standard labels and card language
 
@@ -207,7 +203,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+**Versión estable: 1.7.5.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
 
 ## Nombres estándar e idioma de la tarjeta
 
