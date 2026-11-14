@@ -152,6 +152,24 @@ export class VEBuilderCard extends HTMLElement {
     const badge=battery!==null&&battery>=0&&battery<=100
       ? `<span class="source-battery" aria-label="${this.t('Batería')}"><ha-icon icon="mdi:battery"></ha-icon>${format(battery,0,this.lang)} %</span>`:'';
     const heading=energyMode?({es:'Fuentes de carga · hoy',en:'Charging sources · today',pt:'Fontes de carga · hoje',fr:'Sources de recharge · aujourd’hui',de:'Ladequellen · heute',it:'Fonti di ricarica · oggi',nl:'Laadbronnen · vandaag'}[this.lang]??'Charging sources · today'):this.t('Fuentes de carga');
+    if(energyMode){
+      const known=sources.filter(source=>source.value!==null);
+      const knownSum=known.reduce((sum,source)=>sum+source.value,0);
+      // Normalise rounding differences only when all sources are known and match the total.
+      const complete=sources.every(source=>source.value!==null);
+      const close=complete&&total!==null&&total>0&&Math.abs(knownSum-total)<=Math.max(.02,total*.001);
+      const denominator=close?knownSum:total;
+      const segments=known.map(source=>({...source,share:denominator>0?Math.max(0,source.value/denominator*100):0}));
+      const stacked=segments.map(source=>`<span class="source-stack-fill ${source.kind}" style="width:${source.share}%" aria-hidden="true"></span>`).join('');
+      const totalLabel=({es:'Total cargado',en:'Total charged',pt:'Total carregado',fr:'Total chargé',de:'Insgesamt geladen',it:'Totale caricato',nl:'Totaal geladen'}[this.lang]??'Total charged');
+      const totalReading=total===null?this.t('Sin datos'):`${format(total,2,this.lang)} kWh`;
+      const rows=sources.map(({label,kind,value})=>{
+        const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+        const reading=value===null?this.t('Sin datos'):`${format(value,2,this.lang)} kWh${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+        return `<div class="source-legend-row"><span class="source-legend-name"><span class="source-dot ${kind}"></span>${escape(this.t(label))}</span><strong>${escape(reading)}</strong></div>`;
+      }).join('');
+      return `<div class="charge-sources source-energy"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div><div class="source-energy-total"><span>${escape(totalLabel)}</span><strong>${escape(totalReading)}</strong></div><div class="source-stack-track" role="img" aria-label="${escape(heading)}">${stacked}</div><div class="source-legend">${rows}</div></div>`;
+    }
     return `<div class="charge-sources"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
       const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
       const moving=!energyMode&&total>0&&share>0?' source-flow':'';
