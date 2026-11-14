@@ -77,16 +77,6 @@ The following screenshots show a real XPeng G6 configuration in Home Assistant. 
 
 Four tyre-pressure readings, transmission state and context-aware advice.
 
-## See the card
-
-A configurable vehicle dashboard with compact readings, a vehicle image and charging controls, plus a vehicle diagram with tyre pressures, confirmed openings, gear and expandable alerts.
-
-| Vehicle overview and charging controls | Vehicle diagram, tyre pressures and alerts |
-| --- | --- |
-| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Vehicle overview and charging controls" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Vehicle diagram, tyre pressures and alerts" width="300"></a> |
-
-Real screenshots from the maintainer’s installation, captured during development. They illustrate the layout; readings, labels and features may differ from the current release. Entities, titles and images are configured by each user.
-
 ## Build your card
 
 Set a title, add blocks and select entities. Rename blocks and fields, add or remove items, and drag fields or blocks to reorder them. Use the visual editor to choose field size, width, icons, units, decimal places and presentation as information, buttons or bars. Undo and redo are available during an editing session.
@@ -250,16 +240,6 @@ Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assi
 <img src="assets/screenshots/vehicle-status-2026.png" alt="Mapa del vehículo con presiones de neumáticos y marcha" width="300">
 
 Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
-
-## Así se ve la tarjeta
-
-Un panel configurable con lecturas compactas, imagen del vehículo y controles de carga, más un mapa del coche con presiones, aperturas confirmadas, marcha y avisos desplegables.
-
-| Resumen del vehículo y controles de carga | Mapa del vehículo, presiones y avisos |
-| --- | --- |
-| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Resumen del vehículo y controles de carga" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Mapa del vehículo, presiones y avisos" width="300"></a> |
-
-Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo. Ilustran el diseño; los valores, textos y funciones pueden diferir de la versión actual. Cada usuario configura sus entidades, títulos e imágenes.
 
 ## Diseña tu tarjeta
 
