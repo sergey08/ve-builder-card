@@ -1,3 +1,73 @@
+# VE Builder Card 1.7.5
+
+## English
+
+- Add **Charging sources** to Costs and savings with live power (W/kW) and daily charged energy (kWh/Wh), including visual editor selectors for sensors and input_number helpers.
+- Daily energy displays **total charged above one full-width stacked bar** with colour-coded solar/grid contributions and a compact legend showing kWh and percentages. Unknown or unavailable contributions are not fabricated; small rounding differences are normalised only when the source readings are complete.
+- Preserve live-power animations while daily energy remains static and visible when idle.
+- Fix the inherited generic `span` top margin that left a 6 px grey gap above the coloured bar; stacked segments now fill the track vertically.
+- Preserve existing cards, settings, charging controls and calculated costs; no automatic Home Assistant dashboard edits.
+- All automated Check and HACS validations passed on the last beta.5; final bar design confirmed by the user in Home Assistant.
+
+## Español
+
+- Añadir **Fuentes de carga** a Gastos y ahorro con potencia instantánea (W/kW) y energía diaria (kWh/Wh), con selectores para sensores y ayudantes input_number en el editor visual.
+- Mostrar el **total cargado encima de una sola barra completa** dividida por colores entre solar y red eléctrica, más una leyenda con kWh y porcentajes. No se inventan las fuentes desconocidas; se ajustan las pequeñas diferencias de redondeo solo si todas las fuentes tienen datos.
+- Conservar las animaciones para potencia instantánea y mostrar la energía diaria sin animación incluso en reposo.
+- Corregir el margen genérico de `span` que dejaba una franja gris superior de 6 px: los segmentos ahora llenan toda la altura.
+- Mantener compatibles las tarjetas existentes, controles y cálculos de gasto sin modificar automáticamente los paneles de Home Assistant.
+- Pruebas Check y HACS superadas en beta.5; diseño final confirmado por el usuario en Home Assistant.
+
+---
+
+# VE Builder Card 1.7.5-beta.5
+
+## English
+
+## Beta 1.7.5-beta.5 — charging bar vertical alignment
+
+Fix the 6 px gap above the stacked charging-source bar: a generic `span` top margin shifted both colored segments downward. Reset margins and padding only on the stacked segments, preserving the full-width solar/grid split, the total above it, and all energy calculations. No dashboard changes required.
+
+## Español
+
+## Beta 1.7.5-beta.5 — alineación de la barra de carga
+
+Se corrige la franja gris de 6 px sobre la barra apilada de fuentes de carga: un margen superior genérico de `span` desplazaba los segmentos de colores hacia abajo. Se elimina el margen únicamente en los segmentos, manteniendo la barra completa, el total encima y todos los cálculos. No hay que modificar el panel.
+
+---
+
+# VE Builder Card 1.7.5-beta.4
+
+## English
+
+## Beta 1.7.5-beta.4 — full charging energy bar
+
+Daily charging energy now shows the **total charged above a full-width stacked bar**, divided into coloured solar and grid contributions. A compact legend below displays kWh and percentages. The full bar preserves unallocated space if source readings are incomplete; small rounding differences are normalized only when all sources are present. Live power (W) retains its existing animated bars. No changes to saved entities or Home Assistant dashboard configuration are required.
+
+## Español
+
+## Beta 1.7.5-beta.4 — barra completa de energía
+
+La energía diaria muestra ahora el **total cargado encima de una barra horizontal completa**, dividida por colores entre solar y red eléctrica. Debajo aparece una leyenda compacta con kWh y porcentajes. Si falta energía por identificar, el tramo correspondiente permanece sin rellenar; las pequeñas diferencias de redondeo se normalizan solo cuando todas las fuentes están disponibles. El modo de potencia en directo (W) conserva sus barras animadas. No es necesario modificar las entidades ni la configuración del panel Home Assistant.
+
+---
+
+# VE Builder Card 1.7.5-beta.3
+
+## English
+
+## Beta 1.7.5-beta.3 — charging sources in W or kWh
+
+The **Charging sources** bars in Costs and savings now support two modes: live charging power (W/kW) and daily charging energy (kWh/Wh). Choose **Automatic**, **Power (W)** or **Daily energy (kWh)** in the visual editor. The entity selectors accept both sensors and helpers (`input_number.*`). Sources are never silently mixed across units. Daily energy bars remain visible when idle; animated bars are reserved for live charging power. Existing W configurations continue to work. If your grid energy comes from `input_number`, select Daily energy explicitly.
+
+## Español
+
+## Beta 1.7.5-beta.3 — fuentes de carga en W o kWh
+
+Las barras de **Fuentes de carga** en Gastos y ahorro admiten dos modos: potencia de carga en directo (W/kW) y energía cargada durante el día (kWh/Wh). Elige **Automático**, **Potencia (W)** o **Energía diaria (kWh)** en el editor visual. Los selectores aceptan sensores y ayudantes (`input_number.*`). No se mezclan unidades incompatibles. Las barras de energía diaria permanecen visibles con el coche en reposo; la animación queda reservada a la potencia instantánea. Se mantiene la compatibilidad con configuraciones anteriores en W. Si la energía de red proviene de `input_number`, selecciona expresamente Energía diaria.
+
+---
+
 # VE Builder Card 1.7.3
 
 ## English

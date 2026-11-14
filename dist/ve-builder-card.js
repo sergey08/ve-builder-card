@@ -1909,13 +1909,29 @@ function standardLabel(value,lang="es",enabled=true){
  const key=standardLabelAliases.get(value);return key?translate(key,lang):value;
 }
 
-const VERSION = '1.7.4';
+for(const [key,labels] of Object.entries({
+  'Fuentes de carga':['Charging sources','Fontes de carregamento','Sources de recharge','Ladequellen','Fonti di ricarica','Laadbronnen'],
+  'Batería doméstica':['Home battery','Bateria doméstica','Batterie domestique','Hausspeicher','Batteria domestica','Thuisbatterij'],
+  'Red eléctrica':['Grid','Rede elétrica','Réseau électrique','Stromnetz','Rete elettrica','Elektriciteitsnet'],
+  'Batería del vehículo':['Vehicle battery','Bateria do veículo','Batterie du véhicule','Fahrzeugbatterie','Batteria del veicolo','Voertuigaccu']
+})){
+  EN[key]=labels[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=labels[index+1]);
+}
+
+const VERSION = '1.7.5';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `ve-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 const clone = value => structuredClone(value);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const CHARGING_SOURCES = {
+  home_battery_entity: ['Batería doméstica','battery'],
+  solar_entity: ['Solar','solar'],
+  grid_entity: ['Red eléctrica','grid']
+};
+
 function number(value) { return value !== null && value !== undefined && String(value).trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : null; }
 function decimals(value, fallback=0) { const n=number(value); return n === null ? fallback : Math.max(0,Math.min(6,Math.trunc(n))); }
 function format(value, precision=0,lang='es') { const n=number(value); return n===null?translate('Sin datos',lang):n.toLocaleString(lang,{minimumFractionDigits:decimals(precision),maximumFractionDigits:decimals(precision)}); }
@@ -2161,6 +2177,35 @@ const alertSummaryStyles = `
 
 const plainFieldStyles = `.configurable-field.style-plain{background:transparent!important;border:0!important;box-shadow:none!important}`;
 
+const chargingSourceStyles=`
+.charge-sources{margin:10px 16px;padding:12px;border:1px solid var(--divider-color);border-radius:12px}
+.source-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.source-battery{display:inline-flex;align-items:center;white-space:nowrap;color:var(--success-color,#50964d)}
+.source-battery ha-icon{--mdc-icon-size:16px}
+.source-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(32px,1.5fr) auto;align-items:center;gap:8px;margin-top:6px;font-size:.85rem}
+.source-row>span:first-child{overflow-wrap:anywhere}
+.source-track{display:block;height:9px;overflow:hidden;border-radius:5px;background:var(--divider-color)}
+.source-fill{display:block;height:100%;border-radius:inherit;background-color:var(--primary-color);transition:width .25s ease}
+.source-fill.battery{background-color:var(--success-color,#79b957)}
+.source-fill.solar{background-color:var(--warning-color,#f4b942)}
+.source-fill.grid{background-color:var(--info-color,#3399e6)}
+.source-energy-total{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;color:var(--secondary-text-color);font-size:12px}
+.source-energy-total strong{color:var(--primary-text-color);font-size:18px;font-variant-numeric:tabular-nums}
+.source-stack-track{display:flex;width:100%;height:14px;overflow:hidden;border-radius:8px;background:var(--divider-color)}
+.source-stack-fill{display:block;flex:0 0 auto;height:100%;min-width:0;margin:0;padding:0;align-self:stretch}
+.source-stack-fill.solar,.source-dot.solar{background:var(--warning-color,#f4b942)}
+.source-stack-fill.grid,.source-dot.grid{background:var(--info-color,#3399e6)}
+.source-stack-fill.battery,.source-dot.battery{background:var(--success-color,#79b957)}
+.source-legend{display:grid;gap:7px;margin-top:12px}
+.source-legend-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+.source-legend-row strong{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.source-legend-name{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.source-dot{display:inline-block;flex:0 0 9px;width:9px;height:9px;border-radius:50%}
+.source-flow{background-image:repeating-linear-gradient(110deg,transparent 0 7px,rgba(255,255,255,.38) 7px 12px,transparent 12px 18px);background-size:38px 100%;animation:ve-charge-source-flow .85s linear infinite}
+@keyframes ve-charge-source-flow{to{background-position:38px 0}}
+@media(prefers-reduced-motion:reduce){.source-fill{transition:none}.source-flow{animation:none;background-image:none}}
+`;
+
 
 const known=value=>value!==undefined&&value!==null&&!['unknown','unavailable','none','null',''].includes(String(value).toLowerCase());
 function vehicleRain(options={},states={},now=Date.now()){
@@ -2248,7 +2293,7 @@ function inspectCardImport(source,states={}) {
  for(const block of card.blocks){
   checkObject(block);checkTexts(block);if(!Object.hasOwn(TYPES,block.type))fail('El archivo contiene un tipo de apartado no compatible.');
   list(block.fields);list(block.prices);list(block.vehicle_status);list(block.groups,g=>list(g.fields));
-  for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
+  for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear','charging_sources'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
   if(block.positions!==undefined){checkObject(block.positions);if(Object.values(block.positions).some(v=>typeof v!=='string'))fail('La estructura de la tarjeta no es válida.');}
   if(block.body_parts!==undefined){checkObject(block.body_parts);Object.values(block.body_parts).forEach(part=>{checkObject(part);checkTexts(part);});}
  }
@@ -2553,6 +2598,14 @@ class VEBuilderEditor extends HTMLElement {
       this.form(gear,block,[entity('gear_entity'),text('gear_name')],patch=>{Object.assign(block,patch);this.emit();});
 
     }else if(block.type==='expenses'){
+      const sources=this.panel(panel,block.id+'-charging-sources','Fuentes de carga');
+      const sourceLabels={total_entity:'Total (W o kWh)',vehicle_battery_entity:'Batería del vehículo',...Object.fromEntries(Object.entries(CHARGING_SOURCES).map(([key,[label]])=>[key,label]))};
+      const sourceForm=this.form(sources,block.charging_sources??{},Object.keys(sourceLabels).map(key=>entity(key)),patch=>{
+        block.charging_sources={...block.charging_sources,...patch};
+        this.emit();
+      });
+      sourceForm.computeLabel=field=>this.t(sourceLabels[field.name]);
+      this.form(sources,block.charging_sources??{},[select('mode',{'auto':'Automático según unidad','power':'Potencia instantánea (W)','energy':'Energía diaria (kWh)'})],patch=>{block.charging_sources={...block.charging_sources,...patch};this.emit();});
       this.fieldList(this.panel(panel,block.id+'-prices','Precios de referencia'),block.prices??(block.prices=[]),block.id,'price');
       const groups=block.groups??(block.groups=[]);
       groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.reorderHandle(box,groups,index,block.id+'-groups');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=standardLabel(group.name,this.lang,this.config.translate_standard_labels!==false)||this.t('Grupo');this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});
@@ -2711,9 +2764,61 @@ class VEBuilderCard extends HTMLElement {
     const fullMissing=info.profile==='full'&&['front','rear'].some(axle=>recommendedPressure(block,axle)===null);
     return `<aside class="pressure-advice"><div class="pressure-context"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${temperature?`<span>${escape(temperature)}</span>`:''}</div>${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<details><summary>${this.t('Más información')}</summary>${temperatureEntity?`<p>${this.t('Sensor de temperatura')}: ${escape(temperatureName)}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'No se puede determinar si los neumáticos están fríos o calientes.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></details></aside>`;
   }
+  chargingSources(config){
+    if(!config)return '';
+    const sourceIds=Object.keys(CHARGING_SOURCES).filter(key=>config[key]);
+    if(!sourceIds.length)return '';
+    const unitOf=id=>this.state[id]?.attributes?.unit_of_measurement;
+    const energyMode=config.mode==='energy'||config.mode!=='power'&&
+      [config.total_entity,...sourceIds.map(key=>config[key])].some(id=>['kWh','Wh'].includes(unitOf(id)));
+    const displayUnit=energyMode?'kWh':'W';
+    const read=id=>{
+      const state=id?this.state[id]:null;
+      if(!state||['unknown','unavailable'].includes(state.state))return null;
+      const value=number(state.state);
+      if(value===null||value<0)return null;
+      const unit=unitOf(id);
+      if(energyMode)return unit==='Wh'?value/1000:unit==='kWh'||!unit?value:null;
+      return unit==='kW'?value*1000:unit==='W'||!unit?value:null;
+    };
+    const sources=sourceIds.map(key=>{
+      const [label,kind]=CHARGING_SOURCES[key];
+      return {label,kind,value:read(config[key])};
+    });
+    const sum=sources.reduce((total,source)=>total+(source.value??0),0);
+    const total=config.total_entity?read(config.total_entity):sources.every(source=>source.value!==null)?sum:null;
+    const battery=number(this.state[config.vehicle_battery_entity]?.state);
+    const badge=battery!==null&&battery>=0&&battery<=100
+      ? `<span class="source-battery" aria-label="${this.t('Batería')}"><ha-icon icon="mdi:battery"></ha-icon>${format(battery,0,this.lang)} %</span>`:'';
+    const heading=energyMode?({es:'Fuentes de carga · hoy',en:'Charging sources · today',pt:'Fontes de carga · hoje',fr:'Sources de recharge · aujourd’hui',de:'Ladequellen · heute',it:'Fonti di ricarica · oggi',nl:'Laadbronnen · vandaag'}[this.lang]??'Charging sources · today'):this.t('Fuentes de carga');
+    if(energyMode){
+      const known=sources.filter(source=>source.value!==null);
+      const knownSum=known.reduce((sum,source)=>sum+source.value,0);
+      // Normalise rounding differences only when all sources are known and match the total.
+      const complete=sources.every(source=>source.value!==null);
+      const close=complete&&total!==null&&total>0&&Math.abs(knownSum-total)<=Math.max(.02,total*.001);
+      const denominator=close?knownSum:total;
+      const segments=known.map(source=>({...source,share:denominator>0?Math.max(0,source.value/denominator*100):0}));
+      const stacked=segments.map(source=>`<span class="source-stack-fill ${source.kind}" style="width:${source.share}%" aria-hidden="true"></span>`).join('');
+      const totalLabel=({es:'Total cargado',en:'Total charged',pt:'Total carregado',fr:'Total chargé',de:'Insgesamt geladen',it:'Totale caricato',nl:'Totaal geladen'}[this.lang]??'Total charged');
+      const totalReading=total===null?this.t('Sin datos'):`${format(total,2,this.lang)} kWh`;
+      const rows=sources.map(({label,kind,value})=>{
+        const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+        const reading=value===null?this.t('Sin datos'):`${format(value,2,this.lang)} kWh${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+        return `<div class="source-legend-row"><span class="source-legend-name"><span class="source-dot ${kind}"></span>${escape(this.t(label))}</span><strong>${escape(reading)}</strong></div>`;
+      }).join('');
+      return `<div class="charge-sources source-energy"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div><div class="source-energy-total"><span>${escape(totalLabel)}</span><strong>${escape(totalReading)}</strong></div><div class="source-stack-track" role="img" aria-label="${escape(heading)}">${stacked}</div><div class="source-legend">${rows}</div></div>`;
+    }
+    return `<div class="charge-sources"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
+      const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+      const moving=!energyMode&&total>0&&share>0?' source-flow':'';
+      const reading=value===null?this.t('Sin datos'):`${format(value,energyMode?2:1,this.lang)} ${displayUnit}${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+      return `<div class="source-row"><span>${this.t(label)}</span><span class="source-track" aria-hidden="true"><span class="source-fill ${kind}${moving}" style="width:${share??0}%"></span></span><span>${escape(reading)}</span></div>`;
+    }).join('')}</div>`;
+  }
   expenses(block){
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(this.label(f.name)||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.t('Lectura')}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
-    return prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
+    return this.chargingSources(block.charging_sources)+prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
   }
   controls(block){
     const modes=block.type==='modes';
@@ -2757,7 +2862,7 @@ class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}

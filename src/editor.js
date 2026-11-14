@@ -1,7 +1,7 @@
 import {STATUS_TYPES,newVehicleStatus,vehicleStatusValues} from './vehicle-status.js';
 import {exportCard,inspectCardImport,TRANSFER_LIMIT} from './transfer.js';
 import {language,translate,translateSchema,LANGUAGES,standardLabel} from './i18n.js';
-import {TYPES,BLOCK_DESCRIPTIONS,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity} from './core.js';
+import {TYPES,BLOCK_DESCRIPTIONS,POSITIONS,clone,normalize,newBlock,newField,uid,validate,templateBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity,CHARGING_SOURCES} from './core.js';
 
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
@@ -293,6 +293,14 @@ export class VEBuilderEditor extends HTMLElement {
       this.form(gear,block,[entity('gear_entity'),text('gear_name')],patch=>{Object.assign(block,patch);this.emit();});
 
     }else if(block.type==='expenses'){
+      const sources=this.panel(panel,block.id+'-charging-sources','Fuentes de carga');
+      const sourceLabels={total_entity:'Total (W o kWh)',vehicle_battery_entity:'Batería del vehículo',...Object.fromEntries(Object.entries(CHARGING_SOURCES).map(([key,[label]])=>[key,label]))};
+      const sourceForm=this.form(sources,block.charging_sources??{},Object.keys(sourceLabels).map(key=>entity(key)),patch=>{
+        block.charging_sources={...block.charging_sources,...patch};
+        this.emit();
+      });
+      sourceForm.computeLabel=field=>this.t(sourceLabels[field.name]);
+      this.form(sources,block.charging_sources??{},[select('mode',{'auto':'Automático según unidad','power':'Potencia instantánea (W)','energy':'Energía diaria (kWh)'})],patch=>{block.charging_sources={...block.charging_sources,...patch};this.emit();});
       this.fieldList(this.panel(panel,block.id+'-prices','Precios de referencia'),block.prices??(block.prices=[]),block.id,'price');
       const groups=block.groups??(block.groups=[]);
       groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.reorderHandle(box,groups,index,block.id+'-groups');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=standardLabel(group.name,this.lang,this.config.translate_standard_labels!==false)||this.t('Grupo');this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});

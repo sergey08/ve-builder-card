@@ -8,6 +8,24 @@
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
+## Versión estable 1.7.5 — fuentes de carga en Gastos y ahorro
+
+El panel de **Fuentes de carga** admite potencia instantánea (W/kW) y energía diaria acumulada (kWh/Wh). En el editor visual, selecciona **Automático**, **Potencia (W)** o **Energía diaria (kWh)** y asigna las entidades solar, red y total (se admiten `sensor.*` e `input_number.*`).
+
+En modo energía diaria, aparece el **total cargado encima de una barra completa** dividida por colores entre energía solar y red eléctrica. Debajo figura una leyenda con kWh y porcentajes. La energía de origen desconocido se deja sin rellenar; las pequeñas diferencias de redondeo se normalizan si todas las fuentes están disponibles. Se ha corregido el margen superior de 6 píxeles que dejaba una franja gris sobre los segmentos. El modo de potencia mantiene las barras animadas. No se modifican automáticamente las tarjetas existentes.
+
+### Ejemplo de energía diaria para XPeng G6
+
+```yaml
+charging_sources:
+  mode: energy
+  solar_entity: sensor.xpeng_energia_carga_solar_diaria
+  grid_entity: input_number.xpeng_energia_carga_red_diaria
+  total_entity: sensor.energia_cargada_diaria
+```
+
+Aspecto visual confirmado por el usuario en Home Assistant con la beta.5 antes de liberar la versión estable.
+
 ## Instalar desde el Marketplace
 
 VE Builder Card está en el catálogo predeterminado del Marketplace, integrado en Home Assistant desde la versión 2026.11.
@@ -38,7 +56,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+**Versión estable: 1.7.5.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
 
 ## Nombres estándar e idioma de la tarjeta
 

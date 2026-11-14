@@ -2,8 +2,8 @@ import {plainFieldStyles} from './styles.js';
 import {vehicleStatus,vehicleStatusStyles} from './vehicle-status.js';
 import {vehicleRain,rainStyles} from './rain.js';
 import {language,translate,standardLabel} from './i18n.js';
-import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
-import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles} from './styles.js';
+import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles,chargingSourceStyles} from './styles.js';
 import './editor.js';
 
 export class VEBuilderCard extends HTMLElement {
@@ -125,9 +125,61 @@ export class VEBuilderCard extends HTMLElement {
     const fullMissing=info.profile==='full'&&['front','rear'].some(axle=>recommendedPressure(block,axle)===null);
     return `<aside class="pressure-advice"><div class="pressure-context"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${temperature?`<span>${escape(temperature)}</span>`:''}</div>${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<details><summary>${this.t('Más información')}</summary>${temperatureEntity?`<p>${this.t('Sensor de temperatura')}: ${escape(temperatureName)}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'No se puede determinar si los neumáticos están fríos o calientes.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></details></aside>`;
   }
+  chargingSources(config){
+    if(!config)return '';
+    const sourceIds=Object.keys(CHARGING_SOURCES).filter(key=>config[key]);
+    if(!sourceIds.length)return '';
+    const unitOf=id=>this.state[id]?.attributes?.unit_of_measurement;
+    const energyMode=config.mode==='energy'||config.mode!=='power'&&
+      [config.total_entity,...sourceIds.map(key=>config[key])].some(id=>['kWh','Wh'].includes(unitOf(id)));
+    const displayUnit=energyMode?'kWh':'W';
+    const read=id=>{
+      const state=id?this.state[id]:null;
+      if(!state||['unknown','unavailable'].includes(state.state))return null;
+      const value=number(state.state);
+      if(value===null||value<0)return null;
+      const unit=unitOf(id);
+      if(energyMode)return unit==='Wh'?value/1000:unit==='kWh'||!unit?value:null;
+      return unit==='kW'?value*1000:unit==='W'||!unit?value:null;
+    };
+    const sources=sourceIds.map(key=>{
+      const [label,kind]=CHARGING_SOURCES[key];
+      return {label,kind,value:read(config[key])};
+    });
+    const sum=sources.reduce((total,source)=>total+(source.value??0),0);
+    const total=config.total_entity?read(config.total_entity):sources.every(source=>source.value!==null)?sum:null;
+    const battery=number(this.state[config.vehicle_battery_entity]?.state);
+    const badge=battery!==null&&battery>=0&&battery<=100
+      ? `<span class="source-battery" aria-label="${this.t('Batería')}"><ha-icon icon="mdi:battery"></ha-icon>${format(battery,0,this.lang)} %</span>`:'';
+    const heading=energyMode?({es:'Fuentes de carga · hoy',en:'Charging sources · today',pt:'Fontes de carga · hoje',fr:'Sources de recharge · aujourd’hui',de:'Ladequellen · heute',it:'Fonti di ricarica · oggi',nl:'Laadbronnen · vandaag'}[this.lang]??'Charging sources · today'):this.t('Fuentes de carga');
+    if(energyMode){
+      const known=sources.filter(source=>source.value!==null);
+      const knownSum=known.reduce((sum,source)=>sum+source.value,0);
+      // Normalise rounding differences only when all sources are known and match the total.
+      const complete=sources.every(source=>source.value!==null);
+      const close=complete&&total!==null&&total>0&&Math.abs(knownSum-total)<=Math.max(.02,total*.001);
+      const denominator=close?knownSum:total;
+      const segments=known.map(source=>({...source,share:denominator>0?Math.max(0,source.value/denominator*100):0}));
+      const stacked=segments.map(source=>`<span class="source-stack-fill ${source.kind}" style="width:${source.share}%" aria-hidden="true"></span>`).join('');
+      const totalLabel=({es:'Total cargado',en:'Total charged',pt:'Total carregado',fr:'Total chargé',de:'Insgesamt geladen',it:'Totale caricato',nl:'Totaal geladen'}[this.lang]??'Total charged');
+      const totalReading=total===null?this.t('Sin datos'):`${format(total,2,this.lang)} kWh`;
+      const rows=sources.map(({label,kind,value})=>{
+        const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+        const reading=value===null?this.t('Sin datos'):`${format(value,2,this.lang)} kWh${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+        return `<div class="source-legend-row"><span class="source-legend-name"><span class="source-dot ${kind}"></span>${escape(this.t(label))}</span><strong>${escape(reading)}</strong></div>`;
+      }).join('');
+      return `<div class="charge-sources source-energy"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div><div class="source-energy-total"><span>${escape(totalLabel)}</span><strong>${escape(totalReading)}</strong></div><div class="source-stack-track" role="img" aria-label="${escape(heading)}">${stacked}</div><div class="source-legend">${rows}</div></div>`;
+    }
+    return `<div class="charge-sources"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
+      const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+      const moving=!energyMode&&total>0&&share>0?' source-flow':'';
+      const reading=value===null?this.t('Sin datos'):`${format(value,energyMode?2:1,this.lang)} ${displayUnit}${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+      return `<div class="source-row"><span>${this.t(label)}</span><span class="source-track" aria-hidden="true"><span class="source-fill ${kind}${moving}" style="width:${share??0}%"></span></span><span>${escape(reading)}</span></div>`;
+    }).join('')}</div>`;
+  }
   expenses(block){
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(this.label(f.name)||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.t('Lectura')}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
-    return prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
+    return this.chargingSources(block.charging_sources)+prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
   }
   controls(block){
     const modes=block.type==='modes';
@@ -171,7 +223,7 @@ export class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}

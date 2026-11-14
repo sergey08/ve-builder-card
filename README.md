@@ -8,6 +8,14 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
+## Stable 1.7.5 — charging sources in Costs and savings
+
+The **Charging sources** panel supports both live charging power (W/kW) and today's accumulated energy (kWh/Wh). In the visual editor, choose **Automatic**, **Power (W)**, or **Daily energy (kWh)** and assign solar, grid, and total entities (`sensor.*` and `input_number.*` supported).
+
+In daily-energy mode, the **total charged appears above a full-width stacked bar** split by colour into solar and grid contributions, followed by a compact legend with kWh and percentages. Unknown source energy is left unfilled; small rounding discrepancies are normalised when all sources are known. The bar segments now fill the track vertically without the inherited spacing gap. Power mode retains its animated charging bars. Existing cards remain compatible and are not rewritten automatically.
+
+For a worked example, see [the Spanish configuration guide](README.es.md). The final appearance was confirmed in Home Assistant on beta.5 before this stable release.
+
 ## Install from the Marketplace
 
 VE Builder Card is in the default catalog of the Marketplace, built into Home Assistant 2026.11 and later.
@@ -38,7 +46,7 @@ The card and visual editor support **7 languages**:
 
 Choose the language separately for each card using the visual editor dropdown. **Automatic** follows Home Assistant. Standard labels follow the selected language; custom titles, names and text remain as entered.
 
-**Stable release: 1.7.3.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+**Stable release: 1.7.5.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
 
 ## Standard labels and card language
 
@@ -195,7 +203,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+**Versión estable: 1.7.5.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
 
 ## Nombres estándar e idioma de la tarjeta
 
