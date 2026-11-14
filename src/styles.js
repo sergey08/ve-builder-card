@@ -76,3 +76,20 @@ export const alertSummaryStyles = `
 `;
 
 export const plainFieldStyles = `.configurable-field.style-plain{background:transparent!important;border:0!important;box-shadow:none!important}`;
+
+export const chargingSourceStyles=`
+.charge-sources{margin:10px 16px;padding:12px;border:1px solid var(--divider-color);border-radius:12px}
+.source-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.source-battery{display:inline-flex;align-items:center;white-space:nowrap;color:var(--success-color,#50964d)}
+.source-battery ha-icon{--mdc-icon-size:16px}
+.source-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(32px,1.5fr) auto;align-items:center;gap:8px;margin-top:6px;font-size:.85rem}
+.source-row>span:first-child{overflow-wrap:anywhere}
+.source-track{display:block;height:9px;overflow:hidden;border-radius:5px;background:var(--divider-color)}
+.source-fill{display:block;height:100%;border-radius:inherit;background-color:var(--primary-color);transition:width .25s ease}
+.source-fill.battery{background-color:var(--success-color,#79b957)}
+.source-fill.solar{background-color:var(--warning-color,#f4b942)}
+.source-fill.grid{background-color:var(--info-color,#3399e6)}
+.source-flow{background-image:repeating-linear-gradient(110deg,transparent 0 7px,rgba(255,255,255,.38) 7px 12px,transparent 12px 18px);background-size:38px 100%;animation:ve-charge-source-flow .85s linear infinite}
+@keyframes ve-charge-source-flow{to{background-position:38px 0}}
+@media(prefers-reduced-motion:reduce){.source-fill{transition:none}.source-flow{animation:none;background-image:none}}
+`;

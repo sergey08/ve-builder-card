@@ -262,3 +262,20 @@ test('existing Spanish dashboard labels render in every selected language and re
   card.setConfig({...config,language:lang,translate_standard_labels:false});assert.ok(card.shadowRoot.innerHTML.includes('Batería'));
  }
 });
+
+test('charging sources animate contributors, omit unconfigured rows and hide when idle',()=>{
+ const registry=new Map();
+ class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();
+ card.setConfig({language:'en',blocks:[{type:'expenses',charging_sources:{solar_entity:'sensor.solar',grid_entity:'sensor.grid',total_entity:'sensor.total'}}]});
+ const state=(value,unit='W')=>({state:String(value),attributes:{unit_of_measurement:unit}});
+ const states={'sensor.solar':state(.5,'kW'),'sensor.grid':state(0),'sensor.total':state(500)};
+ card.hass={states};
+ assert.match(card.shadowRoot.innerHTML,/class="source-fill solar source-flow" style="width:100%"/);
+ assert.match(card.shadowRoot.innerHTML,/class="source-fill grid" style="width:0%"/);
+ assert.doesNotMatch(card.shadowRoot.innerHTML,/Home battery/);
+ assert.match(card.shadowRoot.innerHTML,/500\.0 W \(100 %\)/);
+ card.hass={states:{...states,'sensor.total':state(0)}};
+ assert.doesNotMatch(card.shadowRoot.innerHTML,/class="charge-sources"/);
+});

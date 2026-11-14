@@ -1906,3 +1906,13 @@ export function standardLabel(value,lang="es",enabled=true){
  if(!standardLabelAliases){standardLabelAliases=new Map();for(const key of STANDARD_LABEL_KEYS)for(const code of ["es","en","pt","fr","de","it","nl"]){const alias=translate(key,code);if(!standardLabelAliases.has(alias))standardLabelAliases.set(alias,key);}}
  const key=standardLabelAliases.get(value);return key?translate(key,lang):value;
 }
+
+for(const [key,labels] of Object.entries({
+  'Fuentes de carga':['Charging sources','Fontes de carregamento','Sources de recharge','Ladequellen','Fonti di ricarica','Laadbronnen'],
+  'Batería doméstica':['Home battery','Bateria doméstica','Batterie domestique','Hausspeicher','Batteria domestica','Thuisbatterij'],
+  'Red eléctrica':['Grid','Rede elétrica','Réseau électrique','Stromnetz','Rete elettrica','Elektriciteitsnet'],
+  'Batería del vehículo':['Vehicle battery','Bateria do veículo','Batterie du véhicule','Fahrzeugbatterie','Batteria del veicolo','Voertuigaccu']
+})){
+  EN[key]=labels[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=labels[index+1]);
+}
