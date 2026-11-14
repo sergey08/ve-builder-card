@@ -67,6 +67,26 @@ Los nombres estándar guardados siguen ahora el idioma de la tarjeta en inglés,
 
 En **Inicio con imagen**, selecciona opcionalmente el sensor de versión OTA (`ota_version_entity`) y el sensor de estado de actualización (`ota_status_entity`). La tarjeta lee el atributo `current_version` (o un estado válido), muestra el nombre del sistema y su versión a la derecha del título y añade una exclamación ámbar solo cuando hay una actualización pendiente. Si dejas vacío el sensor de versión, no se muestra nada. Ejemplo para XPeng Toolkit: `sensor.ota_update_xpeng_135818` y `sensor.ota_status_xpeng_135818`.
 
+## Capturas — VE Builder Card 1.7.5
+
+Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assistant. Los valores y las acciones disponibles dependen de las integraciones instaladas por cada usuario.
+
+| Vista general | Editor visual |
+|:--:|:--:|
+| <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 con batería, autonomía, imagen y acciones" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Editor visual con configuración, visibilidad, diseño y vista previa" width="480"> |
+| Batería, autonomía, imagen del coche y controles | Configuración de campos y bloques con vista previa, sin escribir YAML |
+
+| Gastos y ahorro | Controles de carga |
+|:--:|:--:|
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Fuentes de carga solar y red, costes y ahorros" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Modos de carga, potencia y límites" width="300"> |
+| Barra de energía solar/red, total diario y ahorros | Modos, potencia y límites de finalización de carga |
+
+**Estado del vehículo**
+
+<img src="assets/screenshots/vehicle-status-2026.png" alt="Mapa del vehículo con presiones de neumáticos y marcha" width="300">
+
+Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
+
 ## Así se ve la tarjeta
 
 Un panel configurable con lecturas compactas, imagen del vehículo y controles de carga, más un mapa del coche con presiones, aperturas confirmadas, marcha y avisos desplegables.
