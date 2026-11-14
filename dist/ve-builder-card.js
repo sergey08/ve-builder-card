@@ -1919,7 +1919,7 @@ for(const [key,labels] of Object.entries({
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=labels[index+1]);
 }
 
-const VERSION = '1.7.5-beta.3';
+const VERSION = '1.7.5-beta.4';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2189,6 +2189,18 @@ const chargingSourceStyles=`
 .source-fill.battery{background-color:var(--success-color,#79b957)}
 .source-fill.solar{background-color:var(--warning-color,#f4b942)}
 .source-fill.grid{background-color:var(--info-color,#3399e6)}
+.source-energy-total{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;color:var(--secondary-text-color);font-size:12px}
+.source-energy-total strong{color:var(--primary-text-color);font-size:18px;font-variant-numeric:tabular-nums}
+.source-stack-track{display:flex;width:100%;height:14px;overflow:hidden;border-radius:8px;background:var(--divider-color)}
+.source-stack-fill{display:block;flex:0 0 auto;height:100%;min-width:0}
+.source-stack-fill.solar,.source-dot.solar{background:var(--warning-color,#f4b942)}
+.source-stack-fill.grid,.source-dot.grid{background:var(--info-color,#3399e6)}
+.source-stack-fill.battery,.source-dot.battery{background:var(--success-color,#79b957)}
+.source-legend{display:grid;gap:7px;margin-top:12px}
+.source-legend-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+.source-legend-row strong{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.source-legend-name{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.source-dot{display:inline-block;flex:0 0 9px;width:9px;height:9px;border-radius:50%}
 .source-flow{background-image:repeating-linear-gradient(110deg,transparent 0 7px,rgba(255,255,255,.38) 7px 12px,transparent 12px 18px);background-size:38px 100%;animation:ve-charge-source-flow .85s linear infinite}
 @keyframes ve-charge-source-flow{to{background-position:38px 0}}
 @media(prefers-reduced-motion:reduce){.source-fill{transition:none}.source-flow{animation:none;background-image:none}}
@@ -2779,6 +2791,24 @@ class VEBuilderCard extends HTMLElement {
     const badge=battery!==null&&battery>=0&&battery<=100
       ? `<span class="source-battery" aria-label="${this.t('Batería')}"><ha-icon icon="mdi:battery"></ha-icon>${format(battery,0,this.lang)} %</span>`:'';
     const heading=energyMode?({es:'Fuentes de carga · hoy',en:'Charging sources · today',pt:'Fontes de carga · hoje',fr:'Sources de recharge · aujourd’hui',de:'Ladequellen · heute',it:'Fonti di ricarica · oggi',nl:'Laadbronnen · vandaag'}[this.lang]??'Charging sources · today'):this.t('Fuentes de carga');
+    if(energyMode){
+      const known=sources.filter(source=>source.value!==null);
+      const knownSum=known.reduce((sum,source)=>sum+source.value,0);
+      // Normalise rounding differences only when all sources are known and match the total.
+      const complete=sources.every(source=>source.value!==null);
+      const close=complete&&total!==null&&total>0&&Math.abs(knownSum-total)<=Math.max(.02,total*.001);
+      const denominator=close?knownSum:total;
+      const segments=known.map(source=>({...source,share:denominator>0?Math.max(0,source.value/denominator*100):0}));
+      const stacked=segments.map(source=>`<span class="source-stack-fill ${source.kind}" style="width:${source.share}%" aria-hidden="true"></span>`).join('');
+      const totalLabel=({es:'Total cargado',en:'Total charged',pt:'Total carregado',fr:'Total chargé',de:'Insgesamt geladen',it:'Totale caricato',nl:'Totaal geladen'}[this.lang]??'Total charged');
+      const totalReading=total===null?this.t('Sin datos'):`${format(total,2,this.lang)} kWh`;
+      const rows=sources.map(({label,kind,value})=>{
+        const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+        const reading=value===null?this.t('Sin datos'):`${format(value,2,this.lang)} kWh${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+        return `<div class="source-legend-row"><span class="source-legend-name"><span class="source-dot ${kind}"></span>${escape(this.t(label))}</span><strong>${escape(reading)}</strong></div>`;
+      }).join('');
+      return `<div class="charge-sources source-energy"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div><div class="source-energy-total"><span>${escape(totalLabel)}</span><strong>${escape(totalReading)}</strong></div><div class="source-stack-track" role="img" aria-label="${escape(heading)}">${stacked}</div><div class="source-legend">${rows}</div></div>`;
+    }
     return `<div class="charge-sources"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
       const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
       const moving=!energyMode&&total>0&&share>0?' source-flow':'';
