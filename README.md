@@ -57,6 +57,26 @@ Standard saved labels now follow the selected card language in English, Spanish,
 
 In the **Overview with image** block, select an optional OTA version sensor (`ota_version_entity`) and update-status sensor (`ota_status_entity`). The card reads the `current_version` attribute (or a usable sensor state), displays the OS/version to the right of the vehicle title, and adds an amber alert icon only when an update is pending. Leave the version sensor blank to hide the indicator entirely. Example for XPeng Toolkit: `sensor.ota_update_xpeng_135818` and `sensor.ota_status_xpeng_135818`.
 
+## Screenshots — VE Builder Card 1.7.5
+
+The following screenshots show a real XPeng G6 configuration in Home Assistant. Values and available actions depend on the user's vehicle and integrations.
+
+| Vehicle overview | Visual editor |
+|:--:|:--:|
+| <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 battery, range, vehicle image and actions" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Visual editor with configuration, visibility, design and live preview" width="480"> |
+| Battery, range, vehicle image and controls | Edit fields and blocks with live preview, without writing YAML |
+
+| Costs and savings | Charging controls |
+|:--:|:--:|
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Solar and grid daily charging sources, electricity costs and savings" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Charging modes, power and charge limits" width="300"> |
+| Stacked solar/grid energy bar, daily total and savings | Modes, charge power, finish thresholds and charging limits |
+
+**Vehicle status**
+
+<img src="assets/screenshots/vehicle-status-2026.png" alt="Vehicle status diagram with tyre pressures and gear" width="300">
+
+Four tyre-pressure readings, transmission state and context-aware advice.
+
 ## See the card
 
 A configurable vehicle dashboard with compact readings, a vehicle image and charging controls, plus a vehicle diagram with tyre pressures, confirmed openings, gear and expandable alerts.
@@ -210,6 +230,26 @@ El idioma se elige por separado para cada tarjeta en el desplegable del editor v
 Los nombres estándar guardados siguen ahora el idioma de la tarjeta en inglés, español, portugués, francés, alemán, italiano y neerlandés: títulos de bloques, modos de carga, acciones, límites, costes y periodos. Solo se reconocen coincidencias completas; se conservan los textos personalizados y los nombres propios de los sensores. Desactiva **Traducir nombres estándar** en el editor (`translate_standard_labels: false`) para mostrar literalmente el texto guardado. El idioma se configura por tarjeta; **Automático** sigue Home Assistant. No se reescribe la configuración existente.
 
 
+
+## Capturas — VE Builder Card 1.7.5
+
+Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assistant. Los valores y las acciones disponibles dependen de las integraciones instaladas por cada usuario.
+
+| Vista general | Editor visual |
+|:--:|:--:|
+| <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 con batería, autonomía, imagen y acciones" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Editor visual con configuración, visibilidad, diseño y vista previa" width="480"> |
+| Batería, autonomía, imagen del coche y controles | Configuración de campos y bloques con vista previa, sin escribir YAML |
+
+| Gastos y ahorro | Controles de carga |
+|:--:|:--:|
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Fuentes de carga solar y red, costes y ahorros" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Modos de carga, potencia y límites" width="300"> |
+| Barra de energía solar/red, total diario y ahorros | Modos, potencia y límites de finalización de carga |
+
+**Estado del vehículo**
+
+<img src="assets/screenshots/vehicle-status-2026.png" alt="Mapa del vehículo con presiones de neumáticos y marcha" width="300">
+
+Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Así se ve la tarjeta
 
