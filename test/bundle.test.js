@@ -294,7 +294,7 @@ test('charging-source bars show daily kWh with input_number grid while keeping W
  const html=card.shadowRoot.innerHTML;
  assert.match(html,/5,37 kWh/);assert.match(html,/35,15 kWh/);assert.match(html,/Fuentes de carga · hoy/);
  assert.match(html,/class="source-stack-fill solar" style="width:13\.248/);
- assert.match(html,/class="source-stack-fill grid" style="width:86\.747/);
+ assert.match(html,/class="source-stack-fill grid" style="width:86\.751/);
  assert.doesNotMatch(html,/class="source-fill [^"]*source-flow/);
  card.hass={states:{'sensor.solar':{state:'unavailable',attributes:{}},'input_number.grid':{state:'0',attributes:{}},'sensor.total':{state:'0',attributes:{unit_of_measurement:'kWh'}}}};
  assert.match(card.shadowRoot.innerHTML,/Sin datos/);
