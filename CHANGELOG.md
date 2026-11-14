@@ -1,3 +1,19 @@
+# VE Builder Card 1.7.5-beta.1
+
+## English
+
+## 1.7.5 beta.1 — charging-source energy bars
+
+This beta adds compact horizontal bars for the daily charging energy split in **Costs and savings**. Configure the **Charging sources (kWh)** selectors in the visual editor: `solar_entity` (solar energy per day), `grid_entity` (grid energy per day), and `total_entity` (total charged per day). Each source displays kWh and its percentage of total daily charge; unavailable readings remain explicitly unavailable. `sensor.*` and `input_number.*` are supported. No power (W) sensors should be used here. Existing saved dashboards are preserved; the feature is optional. Test the beta before releasing a stable update.
+
+## Español
+
+## 1.7.5 beta.1 — barras de energía de carga
+
+Esta beta incorpora barras horizontales compactas para el reparto de la energía diaria en **Gastos y ahorro**. Configura en el editor visual las **Fuentes de carga (kWh)**: `solar_entity` (energía solar diaria), `grid_entity` (energía diaria de red) y `total_entity` (energía total cargada). Se muestran kWh y porcentajes respecto al total diario; las lecturas no disponibles aparecen como tales. Se admiten entidades `sensor.*` e `input_number.*`. No deben utilizarse aquí sensores de potencia en W. Se conservan los paneles existentes y la función es opcional. Valida la beta antes de liberar la estable.
+
+---
+
 # VE Builder Card 1.7.3
 
 ## English
