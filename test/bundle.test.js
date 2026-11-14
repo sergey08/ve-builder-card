@@ -263,7 +263,7 @@ test('existing Spanish dashboard labels render in every selected language and re
  }
 });
 
-test('charging sources animate contributors, omit unconfigured rows and hide when idle',()=>{
+test('charging sources animate contributors, omit unconfigured rows and stay visible when idle',()=>{
  const registry=new Map();
  class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
@@ -276,6 +276,10 @@ test('charging sources animate contributors, omit unconfigured rows and hide whe
  assert.match(card.shadowRoot.innerHTML,/class="source-fill grid" style="width:0%"/);
  assert.doesNotMatch(card.shadowRoot.innerHTML,/Home battery/);
  assert.match(card.shadowRoot.innerHTML,/500\.0 W \(100 %\)/);
- card.hass={states:{...states,'sensor.total':state(0)}};
+ card.hass={states:{...states,'sensor.solar':state(0),'sensor.total':state(0)}};
+ assert.match(card.shadowRoot.innerHTML,/class="charge-sources"/);
+ assert.match(card.shadowRoot.innerHTML,/0\.0 W/);
+ assert.doesNotMatch(card.shadowRoot.innerHTML,/class="source-fill [^"]*source-flow/);
+ card.setConfig({blocks:[{type:'expenses',charging_sources:{total_entity:'sensor.total'}}]});
  assert.doesNotMatch(card.shadowRoot.innerHTML,/class="charge-sources"/);
 });

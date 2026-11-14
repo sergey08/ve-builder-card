@@ -139,13 +139,13 @@ export class VEBuilderCard extends HTMLElement {
       .map(([key,[label,kind]])=>({label,kind,value:power(config[key])}));
     const sum=sources.reduce((total,source)=>total+(source.value??0),0);
     const total=config.total_entity?power(config.total_entity):sources.every(s=>s.value!==null)?sum:null;
-    if(!sources.length||total===0)return '';
+    if(!sources.length)return '';
     const battery=number(this.state[config.vehicle_battery_entity]?.state);
     const badge=battery!==null&&battery>=0&&battery<=100
       ? `<span class="source-battery" aria-label="${this.t('Batería')}"><ha-icon icon="mdi:battery"></ha-icon>${format(battery,0,this.lang)} %</span>`:'';
     return `<div class="charge-sources"><div class="source-heading"><strong>${this.t('Fuentes de carga')}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
       const share=value!==null&&total>0?Math.min(100,value/total*100):null;
-      const moving=share>0?' source-flow':'';
+      const moving=total>0&&share>0?' source-flow':'';
       const reading=value===null?this.t('Sin datos'):`${format(value,1,this.lang)} W${share===null?'':` (${format(share,0,this.lang)} %)`}`;
       return `<div class="source-row"><span>${this.t(label)}</span><span class="source-track" aria-hidden="true"><span class="source-fill ${kind}${moving}" style="width:${share??0}%"></span></span><span>${reading}</span></div>`;
     }).join('')}</div>`;
