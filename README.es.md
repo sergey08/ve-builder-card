@@ -16,6 +16,10 @@ Las barras de **Fuentes de carga** en Gastos y ahorro admiten dos modos: potenci
 
 La energía diaria muestra ahora el **total cargado encima de una barra horizontal completa**, dividida por colores entre solar y red eléctrica. Debajo aparece una leyenda compacta con kWh y porcentajes. Si falta energía por identificar, el tramo correspondiente permanece sin rellenar; las pequeñas diferencias de redondeo se normalizan solo cuando todas las fuentes están disponibles. El modo de potencia en directo (W) conserva sus barras animadas. No es necesario modificar las entidades ni la configuración del panel Home Assistant.
 
+## Beta 1.7.5-beta.5 — alineación de la barra de carga
+
+Se corrige la franja gris de 6 px sobre la barra apilada de fuentes de carga: un margen superior genérico de `span` desplazaba los segmentos de colores hacia abajo. Se elimina el margen únicamente en los segmentos, manteniendo la barra completa, el total encima y todos los cálculos. No hay que modificar el panel.
+
 ## Instalar desde el Marketplace
 
 VE Builder Card está en el catálogo predeterminado del Marketplace, integrado en Home Assistant desde la versión 2026.11.
