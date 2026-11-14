@@ -1,6 +1,6 @@
 {
   "name": "ve-builder-card",
-  "version": "1.7.5-beta.5",
+  "version": "1.7.5",
   "private": true,
   "type": "module",
   "scripts": {
