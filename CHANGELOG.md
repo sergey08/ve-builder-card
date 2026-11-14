@@ -1,3 +1,19 @@
+# VE Builder Card 1.7.5-beta.4
+
+## English
+
+## Beta 1.7.5-beta.4 — full charging energy bar
+
+Daily charging energy now shows the **total charged above a full-width stacked bar**, divided into coloured solar and grid contributions. A compact legend below displays kWh and percentages. The full bar preserves unallocated space if source readings are incomplete; small rounding differences are normalized only when all sources are present. Live power (W) retains its existing animated bars. No changes to saved entities or Home Assistant dashboard configuration are required.
+
+## Español
+
+## Beta 1.7.5-beta.4 — barra completa de energía
+
+La energía diaria muestra ahora el **total cargado encima de una barra horizontal completa**, dividida por colores entre solar y red eléctrica. Debajo aparece una leyenda compacta con kWh y porcentajes. Si falta energía por identificar, el tramo correspondiente permanece sin rellenar; las pequeñas diferencias de redondeo se normalizan solo cuando todas las fuentes están disponibles. El modo de potencia en directo (W) conserva sus barras animadas. No es necesario modificar las entidades ni la configuración del panel Home Assistant.
+
+---
+
 # VE Builder Card 1.7.5-beta.3
 
 ## English
