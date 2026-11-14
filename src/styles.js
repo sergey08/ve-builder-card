@@ -92,7 +92,7 @@ export const chargingSourceStyles=`
 .source-energy-total{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;color:var(--secondary-text-color);font-size:12px}
 .source-energy-total strong{color:var(--primary-text-color);font-size:18px;font-variant-numeric:tabular-nums}
 .source-stack-track{display:flex;width:100%;height:14px;overflow:hidden;border-radius:8px;background:var(--divider-color)}
-.source-stack-fill{display:block;flex:0 0 auto;height:100%;min-width:0}
+.source-stack-fill{display:block;flex:0 0 auto;height:100%;min-width:0;margin:0;padding:0;align-self:stretch}
 .source-stack-fill.solar,.source-dot.solar{background:var(--warning-color,#f4b942)}
 .source-stack-fill.grid,.source-dot.grid{background:var(--info-color,#3399e6)}
 .source-stack-fill.battery,.source-dot.battery{background:var(--success-color,#79b957)}
