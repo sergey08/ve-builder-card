@@ -1,3 +1,19 @@
+# VE Builder Card 1.7.5-beta.3
+
+## English
+
+## Beta 1.7.5-beta.3 — charging sources in W or kWh
+
+The **Charging sources** bars in Costs and savings now support two modes: live charging power (W/kW) and daily charging energy (kWh/Wh). Choose **Automatic**, **Power (W)** or **Daily energy (kWh)** in the visual editor. The entity selectors accept both sensors and helpers (`input_number.*`). Sources are never silently mixed across units. Daily energy bars remain visible when idle; animated bars are reserved for live charging power. Existing W configurations continue to work. If your grid energy comes from `input_number`, select Daily energy explicitly.
+
+## Español
+
+## Beta 1.7.5-beta.3 — fuentes de carga en W o kWh
+
+Las barras de **Fuentes de carga** en Gastos y ahorro admiten dos modos: potencia de carga en directo (W/kW) y energía cargada durante el día (kWh/Wh). Elige **Automático**, **Potencia (W)** o **Energía diaria (kWh)** en el editor visual. Los selectores aceptan sensores y ayudantes (`input_number.*`). No se mezclan unidades incompatibles. Las barras de energía diaria permanecen visibles con el coche en reposo; la animación queda reservada a la potencia instantánea. Se mantiene la compatibilidad con configuraciones anteriores en W. Si la energía de red proviene de `input_number`, selecciona expresamente Energía diaria.
+
+---
+
 # VE Builder Card 1.7.3
 
 ## English
