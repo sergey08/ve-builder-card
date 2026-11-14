@@ -1919,7 +1919,7 @@ for(const [key,labels] of Object.entries({
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=labels[index+1]);
 }
 
-const VERSION = '1.7.5-beta.4';
+const VERSION = '1.7.5-beta.5';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2192,7 +2192,7 @@ const chargingSourceStyles=`
 .source-energy-total{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;color:var(--secondary-text-color);font-size:12px}
 .source-energy-total strong{color:var(--primary-text-color);font-size:18px;font-variant-numeric:tabular-nums}
 .source-stack-track{display:flex;width:100%;height:14px;overflow:hidden;border-radius:8px;background:var(--divider-color)}
-.source-stack-fill{display:block;flex:0 0 auto;height:100%;min-width:0}
+.source-stack-fill{display:block;flex:0 0 auto;height:100%;min-width:0;margin:0;padding:0;align-self:stretch}
 .source-stack-fill.solar,.source-dot.solar{background:var(--warning-color,#f4b942)}
 .source-stack-fill.grid,.source-dot.grid{background:var(--info-color,#3399e6)}
 .source-stack-fill.battery,.source-dot.battery{background:var(--success-color,#79b957)}
