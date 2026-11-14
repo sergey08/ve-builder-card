@@ -1919,7 +1919,7 @@ for(const [key,labels] of Object.entries({
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=labels[index+1]);
 }
 
-const VERSION = '1.7.5-beta.2';
+const VERSION = '1.7.5-beta.3';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2587,12 +2587,13 @@ class VEBuilderEditor extends HTMLElement {
 
     }else if(block.type==='expenses'){
       const sources=this.panel(panel,block.id+'-charging-sources','Fuentes de carga');
-      const sourceLabels={total_entity:'Potencia de carga',vehicle_battery_entity:'Batería del vehículo',...Object.fromEntries(Object.entries(CHARGING_SOURCES).map(([key,[label]])=>[key,label]))};
-      const sourceForm=this.form(sources,block.charging_sources??{},Object.keys(sourceLabels).map(key=>entity(key,'sensor')),patch=>{
+      const sourceLabels={total_entity:'Total (W o kWh)',vehicle_battery_entity:'Batería del vehículo',...Object.fromEntries(Object.entries(CHARGING_SOURCES).map(([key,[label]])=>[key,label]))};
+      const sourceForm=this.form(sources,block.charging_sources??{},Object.keys(sourceLabels).map(key=>entity(key)),patch=>{
         block.charging_sources={...block.charging_sources,...patch};
         this.emit();
       });
       sourceForm.computeLabel=field=>this.t(sourceLabels[field.name]);
+      this.form(sources,block.charging_sources??{},[select('mode',{'auto':'Automático según unidad','power':'Potencia instantánea (W)','energy':'Energía diaria (kWh)'})],patch=>{block.charging_sources={...block.charging_sources,...patch};this.emit();});
       this.fieldList(this.panel(panel,block.id+'-prices','Precios de referencia'),block.prices??(block.prices=[]),block.id,'price');
       const groups=block.groups??(block.groups=[]);
       groups.forEach((group,index)=>{const box=this.panel(panel,group.id,group.name||'Grupo');this.reorderHandle(box,groups,index,block.id+'-groups');this.form(box,group,[text('name'),{name:'icon',selector:{icon:{}}},select('style',{cost:'Normal',solar:'Ahorro · verde',diesel:'Destacado'})],patch=>{Object.assign(group,patch);box.querySelector('summary').textContent=standardLabel(group.name,this.lang,this.config.translate_standard_labels!==false)||this.t('Grupo');this.emit();});this.fieldList(box,group.fields??(group.fields=[]),group.id,'expense');this.button(box,'Eliminar grupo',()=>{groups.splice(index,1);this.emit();this.render();},true);});
@@ -2753,27 +2754,36 @@ class VEBuilderCard extends HTMLElement {
   }
   chargingSources(config){
     if(!config)return '';
-    const power=entity=>{
-      const state=this.state[entity];
-      const value=number(state?.state);
+    const sourceIds=Object.keys(CHARGING_SOURCES).filter(key=>config[key]);
+    if(!sourceIds.length)return '';
+    const unitOf=id=>this.state[id]?.attributes?.unit_of_measurement;
+    const energyMode=config.mode==='energy'||config.mode!=='power'&&
+      [config.total_entity,...sourceIds.map(key=>config[key])].some(id=>['kWh','Wh'].includes(unitOf(id)));
+    const displayUnit=energyMode?'kWh':'W';
+    const read=id=>{
+      const state=id?this.state[id]:null;
+      if(!state||['unknown','unavailable'].includes(state.state))return null;
+      const value=number(state.state);
       if(value===null||value<0)return null;
-      const unit=state.attributes?.unit_of_measurement??'W';
-      return unit==='kW'?value*1000:unit==='W'?value:null;
+      const unit=unitOf(id);
+      if(energyMode)return unit==='Wh'?value/1000:unit==='kWh'||!unit?value:null;
+      return unit==='kW'?value*1000:unit==='W'||!unit?value:null;
     };
-    const sources=Object.entries(CHARGING_SOURCES)
-      .filter(([key])=>config[key])
-      .map(([key,[label,kind]])=>({label,kind,value:power(config[key])}));
+    const sources=sourceIds.map(key=>{
+      const [label,kind]=CHARGING_SOURCES[key];
+      return {label,kind,value:read(config[key])};
+    });
     const sum=sources.reduce((total,source)=>total+(source.value??0),0);
-    const total=config.total_entity?power(config.total_entity):sources.every(s=>s.value!==null)?sum:null;
-    if(!sources.length)return '';
+    const total=config.total_entity?read(config.total_entity):sources.every(source=>source.value!==null)?sum:null;
     const battery=number(this.state[config.vehicle_battery_entity]?.state);
     const badge=battery!==null&&battery>=0&&battery<=100
       ? `<span class="source-battery" aria-label="${this.t('Batería')}"><ha-icon icon="mdi:battery"></ha-icon>${format(battery,0,this.lang)} %</span>`:'';
-    return `<div class="charge-sources"><div class="source-heading"><strong>${this.t('Fuentes de carga')}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
-      const share=value!==null&&total>0?Math.min(100,value/total*100):null;
-      const moving=total>0&&share>0?' source-flow':'';
-      const reading=value===null?this.t('Sin datos'):`${format(value,1,this.lang)} W${share===null?'':` (${format(share,0,this.lang)} %)`}`;
-      return `<div class="source-row"><span>${this.t(label)}</span><span class="source-track" aria-hidden="true"><span class="source-fill ${kind}${moving}" style="width:${share??0}%"></span></span><span>${reading}</span></div>`;
+    const heading=energyMode?({es:'Fuentes de carga · hoy',en:'Charging sources · today',pt:'Fontes de carga · hoje',fr:'Sources de recharge · aujourd’hui',de:'Ladequellen · heute',it:'Fonti di ricarica · oggi',nl:'Laadbronnen · vandaag'}[this.lang]??'Charging sources · today'):this.t('Fuentes de carga');
+    return `<div class="charge-sources"><div class="source-heading"><strong>${escape(heading)}</strong>${badge}</div>${sources.map(({label,kind,value})=>{
+      const share=value!==null&&total!==null&&total>0?Math.max(0,Math.min(100,value/total*100)):null;
+      const moving=!energyMode&&total>0&&share>0?' source-flow':'';
+      const reading=value===null?this.t('Sin datos'):`${format(value,energyMode?2:1,this.lang)} ${displayUnit}${share===null?'':` (${format(share,0,this.lang)} %)`}`;
+      return `<div class="source-row"><span>${this.t(label)}</span><span class="source-track" aria-hidden="true"><span class="source-fill ${kind}${moving}" style="width:${share??0}%"></span></span><span>${escape(reading)}</span></div>`;
     }).join('')}</div>`;
   }
   expenses(block){
