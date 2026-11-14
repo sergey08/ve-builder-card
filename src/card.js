@@ -125,9 +125,34 @@ export class VEBuilderCard extends HTMLElement {
     const fullMissing=info.profile==='full'&&['front','rear'].some(axle=>recommendedPressure(block,axle)===null);
     return `<aside class="pressure-advice"><div class="pressure-context"><strong>${this.t(info.profile==='full'?'Plena carga · referencia en frío':'Carga normal · referencia en frío')}</strong>${temperature?`<span>${escape(temperature)}</span>`:''}</div>${fullMissing?`<p>${this.t('Faltan presiones de plena carga. Introduce los valores de la etiqueta del vehículo.')}</p>`:''}<details><summary>${this.t('Más información')}</summary>${temperatureEntity?`<p>${this.t('Sensor de temperatura')}: ${escape(temperatureName)}</p>`:''}<p>${this.t(info.recentTrip?'Circulación reciente según el sensor. Las ruedas podrían seguir calientes.':'No se puede determinar si los neumáticos están fríos o calientes.')}</p>${info.heat?`<p>${this.t('Temperatura exterior elevada. La presión puede aumentar al circular.')}</p>`:''}<p>${this.t('Comprueba y ajusta en frío según la etiqueta del vehículo. No desinfles neumáticos calientes. La estación del año no modifica la referencia automáticamente.')}</p></details></aside>`;
   }
+  chargingSources(block){
+    const source=block.charging_sources;
+    if(!source?.solar_entity&&!source?.grid_entity&&!source?.total_entity)return '';
+    const raw=id=>{const value=this.state[id]?.state;return !id||value===undefined||value===null||['unknown','unavailable'].includes(value)?null:number(value);};
+    const solar=raw(source.solar_entity),grid=raw(source.grid_entity),total=raw(source.total_entity);
+    const denominator=total!==null&&total>0?total:(solar!==null&&grid!==null&&solar+grid>0?solar+grid:0);
+    const labels={
+      es:['Fuentes de carga','Solar','Red eléctrica','Total'],
+      en:['Charging sources','Solar','Power grid','Total'],
+      pt:['Fontes de carregamento','Solar','Rede elétrica','Total'],
+      fr:['Sources de recharge','Solaire','Réseau électrique','Total'],
+      de:['Ladequellen','Solar','Stromnetz','Gesamt'],
+      it:['Fonti di ricarica','Solare','Rete elettrica','Totale'],
+      nl:['Laadbronnen','Zonne-energie','Elektriciteitsnet','Totaal']
+    };
+    const [heading,solarLabel,gridLabel,totalLabel]=labels[this.lang]??labels.en;
+    const row=(name,value,kind)=>{
+      const pct=denominator>0&&value!==null?Math.max(0,Math.min(100,value/denominator*100)):null;
+      const valueText=value===null?this.t('Sin datos'):`${escape(format(value,2,this.lang))} kWh`;
+      const pctText=pct===null?'':` · ${escape(format(pct,1,this.lang))}%`;
+      return `<div class="ev-source-row"><span class="ev-source-name">${escape(name)}</span><div class="ev-source-track" role="meter" aria-label="${escape(name)}" aria-valuemin="0" aria-valuemax="100" ${pct!==null?`aria-valuenow="${pct.toFixed(1)}"`:''}><span class="ev-source-fill ${kind}" style="width:${pct??0}%"></span></div><strong class="ev-source-value">${valueText}${pctText}</strong></div>`;
+    };
+    const totalText=total===null?this.t('Sin datos'):`${escape(format(total,2,this.lang))} kWh`;
+    return `<div class="ev-sources" aria-label="${escape(heading)}"><div class="ev-sources-heading"><span>${escape(heading)}</span><strong>${escape(totalLabel)}: ${totalText}</strong></div>${row(solarLabel,solar,'solar')}${row(gridLabel,grid,'grid')}</div>`;
+  }
   expenses(block){
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(this.label(f.name)||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.t('Lectura')}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
-    return prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
+    return this.chargingSources(block)+prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
   }
   controls(block){
     const modes=block.type==='modes';
