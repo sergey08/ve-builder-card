@@ -8,17 +8,23 @@
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-## Beta 1.7.5-beta.3 — fuentes de carga en W o kWh
+## Versión estable 1.7.5 — fuentes de carga en Gastos y ahorro
 
-Las barras de **Fuentes de carga** en Gastos y ahorro admiten dos modos: potencia de carga en directo (W/kW) y energía cargada durante el día (kWh/Wh). Elige **Automático**, **Potencia (W)** o **Energía diaria (kWh)** en el editor visual. Los selectores aceptan sensores y ayudantes (`input_number.*`). No se mezclan unidades incompatibles. Las barras de energía diaria permanecen visibles con el coche en reposo; la animación queda reservada a la potencia instantánea. Se mantiene la compatibilidad con configuraciones anteriores en W. Si la energía de red proviene de `input_number`, selecciona expresamente Energía diaria.
+El panel de **Fuentes de carga** admite potencia instantánea (W/kW) y energía diaria acumulada (kWh/Wh). En el editor visual, selecciona **Automático**, **Potencia (W)** o **Energía diaria (kWh)** y asigna las entidades solar, red y total (se admiten `sensor.*` e `input_number.*`).
 
-## Beta 1.7.5-beta.4 — barra completa de energía
+En modo energía diaria, aparece el **total cargado encima de una barra completa** dividida por colores entre energía solar y red eléctrica. Debajo figura una leyenda con kWh y porcentajes. La energía de origen desconocido se deja sin rellenar; las pequeñas diferencias de redondeo se normalizan si todas las fuentes están disponibles. Se ha corregido el margen superior de 6 píxeles que dejaba una franja gris sobre los segmentos. El modo de potencia mantiene las barras animadas. No se modifican automáticamente las tarjetas existentes.
 
-La energía diaria muestra ahora el **total cargado encima de una barra horizontal completa**, dividida por colores entre solar y red eléctrica. Debajo aparece una leyenda compacta con kWh y porcentajes. Si falta energía por identificar, el tramo correspondiente permanece sin rellenar; las pequeñas diferencias de redondeo se normalizan solo cuando todas las fuentes están disponibles. El modo de potencia en directo (W) conserva sus barras animadas. No es necesario modificar las entidades ni la configuración del panel Home Assistant.
+### Ejemplo de energía diaria para XPeng G6
 
-## Beta 1.7.5-beta.5 — alineación de la barra de carga
+```yaml
+charging_sources:
+  mode: energy
+  solar_entity: sensor.xpeng_energia_carga_solar_diaria
+  grid_entity: input_number.xpeng_energia_carga_red_diaria
+  total_entity: sensor.energia_cargada_diaria
+```
 
-Se corrige la franja gris de 6 px sobre la barra apilada de fuentes de carga: un margen superior genérico de `span` desplazaba los segmentos de colores hacia abajo. Se elimina el margen únicamente en los segmentos, manteniendo la barra completa, el total encima y todos los cálculos. No hay que modificar el panel.
+Aspecto visual confirmado por el usuario en Home Assistant con la beta.5 antes de liberar la versión estable.
 
 ## Instalar desde el Marketplace
 
@@ -50,7 +56,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.7.3.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.3).
+**Versión estable: 1.7.5.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
 
 ## Nombres estándar e idioma de la tarjeta
 
