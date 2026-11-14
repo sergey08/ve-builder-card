@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import vm from 'node:vm';
-import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles} from '../src/styles.js';
+import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles,chargingSourceStyles} from '../src/styles.js';
 test('distributed bundle renders configured cards with real state data',()=>{
  execFileSync(process.execPath,['scripts/build.mjs']);
  const registry=new Map();
@@ -317,4 +317,8 @@ test('daily energy renders a full stacked bar and total above the legend',()=>{
  assert.ok(html.indexOf('source-stack-track')<html.indexOf('source-legend'));
  assert.match(html,/5,37 kWh/);assert.match(html,/35,15 kWh/);
  assert.doesNotMatch(html,/class="source-fill solar source-flow"/);
+});
+
+test('stacked energy segments reset inherited span margin',()=>{
+ assert.match(chargingSourceStyles,/\.source-stack-fill\{[^}]*margin:0/);
 });
