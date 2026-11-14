@@ -300,3 +300,21 @@ test('charging-source bars show daily kWh with input_number grid while keeping W
  assert.match(card.shadowRoot.innerHTML,/Sin datos/);
  assert.doesNotMatch(card.shadowRoot.innerHTML,/NaN|Infinity/);
 });
+
+test('daily energy renders a full stacked bar and total above the legend',()=>{
+ const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();
+ card.setConfig({language:'es',blocks:[{type:'expenses',charging_sources:{mode:'energy',solar_entity:'sensor.solar',grid_entity:'input_number.grid',total_entity:'sensor.total'}}]});
+ card.hass={states:{'sensor.solar':{state:'5.3681',attributes:{unit_of_measurement:'kWh'}},'input_number.grid':{state:'35.15',attributes:{unit_of_measurement:'kWh'}},'sensor.total':{state:'40.52',attributes:{unit_of_measurement:'kWh'}}}};
+ const html=card.shadowRoot.innerHTML;
+ assert.match(html,/source-stack-track/);
+ assert.match(html,/source-stack-fill solar/);
+ assert.match(html,/source-stack-fill grid/);
+ assert.match(html,/Total cargado/);
+ assert.match(html,/40,52 kWh/);
+ assert.ok(html.indexOf('source-energy-total')<html.indexOf('source-stack-track'));
+ assert.ok(html.indexOf('source-stack-track')<html.indexOf('source-legend'));
+ assert.match(html,/5,37 kWh/);assert.match(html,/35,15 kWh/);
+ assert.doesNotMatch(html,/class="source-fill solar source-flow"/);
+});
