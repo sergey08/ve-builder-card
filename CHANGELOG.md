@@ -1,3 +1,19 @@
+# VE Builder Card 1.7.5-beta.5
+
+## English
+
+## Beta 1.7.5-beta.5 — charging bar vertical alignment
+
+Fix the 6 px gap above the stacked charging-source bar: a generic `span` top margin shifted both colored segments downward. Reset margins and padding only on the stacked segments, preserving the full-width solar/grid split, the total above it, and all energy calculations. No dashboard changes required.
+
+## Español
+
+## Beta 1.7.5-beta.5 — alineación de la barra de carga
+
+Se corrige la franja gris de 6 px sobre la barra apilada de fuentes de carga: un margen superior genérico de `span` desplazaba los segmentos de colores hacia abajo. Se elimina el margen únicamente en los segmentos, manteniendo la barra completa, el total encima y todos los cálculos. No hay que modificar el panel.
+
+---
+
 # VE Builder Card 1.7.5-beta.4
 
 ## English
