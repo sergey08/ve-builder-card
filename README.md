@@ -16,6 +16,10 @@ The **Charging sources** bars in Costs and savings now support two modes: live c
 
 Daily charging energy now shows the **total charged above a full-width stacked bar**, divided into coloured solar and grid contributions. A compact legend below displays kWh and percentages. The full bar preserves unallocated space if source readings are incomplete; small rounding differences are normalized only when all sources are present. Live power (W) retains its existing animated bars. No changes to saved entities or Home Assistant dashboard configuration are required.
 
+## Beta 1.7.5-beta.5 — charging bar vertical alignment
+
+Fix the 6 px gap above the stacked charging-source bar: a generic `span` top margin shifted both colored segments downward. Reset margins and padding only on the stacked segments, preserving the full-width solar/grid split, the total above it, and all energy calculations. No dashboard changes required.
+
 ## Install from the Marketplace
 
 VE Builder Card is in the default catalog of the Marketplace, built into Home Assistant 2026.11 and later.
