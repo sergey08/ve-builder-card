@@ -8,6 +8,10 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
+## 1.7.5 beta.1 — charging-source energy bars
+
+This beta adds compact horizontal bars for the daily charging energy split in **Costs and savings**. Configure the **Charging sources (kWh)** selectors in the visual editor: `solar_entity` (solar energy per day), `grid_entity` (grid energy per day), and `total_entity` (total charged per day). Each source displays kWh and its percentage of total daily charge; unavailable readings remain explicitly unavailable. `sensor.*` and `input_number.*` are supported. No power (W) sensors should be used here. Existing saved dashboards are preserved; the feature is optional. Test the beta before releasing a stable update.
+
 ## Install from the Marketplace
 
 VE Builder Card is in the default catalog of the Marketplace, built into Home Assistant 2026.11 and later.
