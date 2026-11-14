@@ -1,3 +1,25 @@
+# VE Builder Card 1.7.5
+
+## English
+
+- Add **Charging sources** to Costs and savings with live power (W/kW) and daily charged energy (kWh/Wh), including visual editor selectors for sensors and input_number helpers.
+- Daily energy displays **total charged above one full-width stacked bar** with colour-coded solar/grid contributions and a compact legend showing kWh and percentages. Unknown or unavailable contributions are not fabricated; small rounding differences are normalised only when the source readings are complete.
+- Preserve live-power animations while daily energy remains static and visible when idle.
+- Fix the inherited generic `span` top margin that left a 6 px grey gap above the coloured bar; stacked segments now fill the track vertically.
+- Preserve existing cards, settings, charging controls and calculated costs; no automatic Home Assistant dashboard edits.
+- All automated Check and HACS validations passed on the last beta.5; final bar design confirmed by the user in Home Assistant.
+
+## Español
+
+- Añadir **Fuentes de carga** a Gastos y ahorro con potencia instantánea (W/kW) y energía diaria (kWh/Wh), con selectores para sensores y ayudantes input_number en el editor visual.
+- Mostrar el **total cargado encima de una sola barra completa** dividida por colores entre solar y red eléctrica, más una leyenda con kWh y porcentajes. No se inventan las fuentes desconocidas; se ajustan las pequeñas diferencias de redondeo solo si todas las fuentes tienen datos.
+- Conservar las animaciones para potencia instantánea y mostrar la energía diaria sin animación incluso en reposo.
+- Corregir el margen genérico de `span` que dejaba una franja gris superior de 6 px: los segmentos ahora llenan toda la altura.
+- Mantener compatibles las tarjetas existentes, controles y cálculos de gasto sin modificar automáticamente los paneles de Home Assistant.
+- Pruebas Check y HACS superadas en beta.5; diseño final confirmado por el usuario en Home Assistant.
+
+---
+
 # VE Builder Card 1.7.5-beta.5
 
 ## English
