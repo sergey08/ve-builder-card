@@ -283,3 +283,20 @@ test('charging sources animate contributors, omit unconfigured rows and stay vis
  card.setConfig({blocks:[{type:'expenses',charging_sources:{total_entity:'sensor.total'}}]});
  assert.doesNotMatch(card.shadowRoot.innerHTML,/class="charge-sources"/);
 });
+
+test('charging-source bars show daily kWh with input_number grid while keeping W mode',()=>{
+ const registry=new Map();
+ class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
+ vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
+ const card=new (registry.get('ve-builder-card'))();
+ card.setConfig({language:'es',blocks:[{type:'expenses',charging_sources:{solar_entity:'sensor.solar',grid_entity:'input_number.grid',total_entity:'sensor.total',mode:'energy'}}]});
+ card.hass={states:{'sensor.solar':{state:'5.3681',attributes:{unit_of_measurement:'kWh'}},'input_number.grid':{state:'35.15',attributes:{}},'sensor.total':{state:'40.52',attributes:{unit_of_measurement:'kWh'}}}};
+ const html=card.shadowRoot.innerHTML;
+ assert.match(html,/5,37 kWh/);assert.match(html,/35,15 kWh/);assert.match(html,/Fuentes de carga · hoy/);
+ assert.match(html,/class="source-fill solar" style="width:13\.248/);
+ assert.match(html,/class="source-fill grid" style="width:86\.747/);
+ assert.doesNotMatch(html,/source-flow/);
+ card.hass={states:{'sensor.solar':{state:'unavailable',attributes:{}},'input_number.grid':{state:'0',attributes:{}},'sensor.total':{state:'0',attributes:{unit_of_measurement:'kWh'}}}};
+ assert.match(card.shadowRoot.innerHTML,/Sin datos/);
+ assert.doesNotMatch(card.shadowRoot.innerHTML,/NaN|Infinity/);
+});
