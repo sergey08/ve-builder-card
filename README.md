@@ -57,15 +57,25 @@ Standard saved labels now follow the selected card language in English, Spanish,
 
 In the **Overview with image** block, select an optional OTA version sensor (`ota_version_entity`) and update-status sensor (`ota_status_entity`). The card reads the `current_version` attribute (or a usable sensor state), displays the OS/version to the right of the vehicle title, and adds an amber alert icon only when an update is pending. Leave the version sensor blank to hide the indicator entirely. Example for XPeng Toolkit: `sensor.ota_update_xpeng_135818` and `sensor.ota_status_xpeng_135818`.
 
-## See the card
+## Screenshots — VE Builder Card 1.7.5
 
-A configurable vehicle dashboard with compact readings, a vehicle image and charging controls, plus a vehicle diagram with tyre pressures, confirmed openings, gear and expandable alerts.
+The following screenshots show a real XPeng G6 configuration in Home Assistant. Values and available actions depend on the user's vehicle and integrations.
 
-| Vehicle overview and charging controls | Vehicle diagram, tyre pressures and alerts |
-| --- | --- |
-| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Vehicle overview and charging controls" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Vehicle diagram, tyre pressures and alerts" width="300"></a> |
+| Vehicle overview | Visual editor |
+|:--:|:--:|
+| <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 battery, range, vehicle image and actions" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Visual editor with configuration, visibility, design and live preview" width="480"> |
+| Battery, range, vehicle image and controls | Edit fields and blocks with live preview, without writing YAML |
 
-Real screenshots from the maintainer’s installation, captured during development. They illustrate the layout; readings, labels and features may differ from the current release. Entities, titles and images are configured by each user.
+| Costs and savings | Charging controls |
+|:--:|:--:|
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Solar and grid daily charging sources, electricity costs and savings" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Charging modes, power and charge limits" width="300"> |
+| Stacked solar/grid energy bar, daily total and savings | Modes, charge power, finish thresholds and charging limits |
+
+**Vehicle status**
+
+<img src="assets/screenshots/vehicle-status-2026.png" alt="Vehicle status diagram with tyre pressures and gear" width="300">
+
+Four tyre-pressure readings, transmission state and context-aware advice.
 
 ## Build your card
 
@@ -211,15 +221,25 @@ Los nombres estándar guardados siguen ahora el idioma de la tarjeta en inglés,
 
 
 
-## Así se ve la tarjeta
+## Capturas — VE Builder Card 1.7.5
 
-Un panel configurable con lecturas compactas, imagen del vehículo y controles de carga, más un mapa del coche con presiones, aperturas confirmadas, marcha y avisos desplegables.
+Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assistant. Los valores y las acciones disponibles dependen de las integraciones instaladas por cada usuario.
 
-| Resumen del vehículo y controles de carga | Mapa del vehículo, presiones y avisos |
-| --- | --- |
-| <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-overview.png" alt="Resumen del vehículo y controles de carga" width="300"></a> | <a href="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png"><img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/vehicle-map.png" alt="Mapa del vehículo, presiones y avisos" width="300"></a> |
+| Vista general | Editor visual |
+|:--:|:--:|
+| <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 con batería, autonomía, imagen y acciones" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Editor visual con configuración, visibilidad, diseño y vista previa" width="480"> |
+| Batería, autonomía, imagen del coche y controles | Configuración de campos y bloques con vista previa, sin escribir YAML |
 
-Capturas reales de la instalación del mantenedor, tomadas durante el desarrollo. Ilustran el diseño; los valores, textos y funciones pueden diferir de la versión actual. Cada usuario configura sus entidades, títulos e imágenes.
+| Gastos y ahorro | Controles de carga |
+|:--:|:--:|
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Fuentes de carga solar y red, costes y ahorros" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Modos de carga, potencia y límites" width="300"> |
+| Barra de energía solar/red, total diario y ahorros | Modos, potencia y límites de finalización de carga |
+
+**Estado del vehículo**
+
+<img src="assets/screenshots/vehicle-status-2026.png" alt="Mapa del vehículo con presiones de neumáticos y marcha" width="300">
+
+Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Diseña tu tarjeta
 
