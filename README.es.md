@@ -12,6 +12,10 @@ Crea tu propio panel del vehículo en Home Assistant. Combina información del c
 
 Las barras de **Fuentes de carga** en Gastos y ahorro admiten dos modos: potencia de carga en directo (W/kW) y energía cargada durante el día (kWh/Wh). Elige **Automático**, **Potencia (W)** o **Energía diaria (kWh)** en el editor visual. Los selectores aceptan sensores y ayudantes (`input_number.*`). No se mezclan unidades incompatibles. Las barras de energía diaria permanecen visibles con el coche en reposo; la animación queda reservada a la potencia instantánea. Se mantiene la compatibilidad con configuraciones anteriores en W. Si la energía de red proviene de `input_number`, selecciona expresamente Energía diaria.
 
+## Beta 1.7.5-beta.4 — barra completa de energía
+
+La energía diaria muestra ahora el **total cargado encima de una barra horizontal completa**, dividida por colores entre solar y red eléctrica. Debajo aparece una leyenda compacta con kWh y porcentajes. Si falta energía por identificar, el tramo correspondiente permanece sin rellenar; las pequeñas diferencias de redondeo se normalizan solo cuando todas las fuentes están disponibles. El modo de potencia en directo (W) conserva sus barras animadas. No es necesario modificar las entidades ni la configuración del panel Home Assistant.
+
 ## Instalar desde el Marketplace
 
 VE Builder Card está en el catálogo predeterminado del Marketplace, integrado en Home Assistant desde la versión 2026.11.
