@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {exportCard,inspectCardImport} from '../src/transfer.js';
 import {normalize} from '../src/core.js';
-import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,renderBattery} from '../src/battery.js';
+import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,batteryVehicleLimitField,renderBattery} from '../src/battery.js';
 
 test('legacy mode IDs and YAML survive while a single power and limits block can be reused',()=>{
   const config=normalize({blocks:[
@@ -75,12 +75,17 @@ test('whole-card import preserves explicitly linked charging controls with fresh
   assert.equal(batterySources(config.blocks[0],config.blocks,{}).powerBlock,config.blocks[2]);
 });
 
-test('vehicle charge limit is separate from the charger controls and is read-only',()=>{
-  const block={type:'battery',battery:{vehicle_limit_entity:'number.vehicle_limit'}};
-  const state={'number.vehicle_limit':{state:'85',attributes:{unit_of_measurement:'%'}}};
-  const sources=batterySources(block,[block],state);
-  const card={state,_hass:{states:state},lang:'es',t:value=>value};
-  const markup=renderBattery(card,block,sources);
-  assert.match(markup,/Máximo en el coche<\/span><strong>85 %/);
-  assert.doesNotMatch(markup,/data-limit=/);
+test('vehicle charge limit shares the slider group with the charger limits',()=>{
+  const block={id:'battery',type:'battery',battery:{vehicle_limit_entity:'number.vehicle_limit'}};
+  const vehicleLimit=batteryVehicleLimitField(block);
+  const chargerLimit={id:'charger-limit',entity:'input_number.charger_limit'};
+  const limits={id:'limits',type:'limits',fields:[chargerLimit]};
+  const card={state:{},_hass:{states:{}},lang:'es',t:value=>value};
+  let displayed;
+  renderBattery(card,block,{limitsBlock:limits},section=>{displayed=section;return '';});
+  assert.deepEqual(displayed.fields,[chargerLimit,vehicleLimit]);
+  assert.equal(vehicleLimit.read_only,false);
+  assert.equal(vehicleLimit.unit,'%');
+  assert.deepEqual(limits.fields,[chargerLimit]);
+  assert.equal(batteryVehicleLimitField({...block,battery:{vehicle_limit_entity:'sensor.limit'}}).read_only,true);
 });

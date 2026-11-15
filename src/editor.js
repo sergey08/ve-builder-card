@@ -265,7 +265,7 @@ export class VEBuilderEditor extends HTMLElement {
       entity('level_entity','sensor'),entity('range_entity','sensor'),
       entity('connector_entity',['binary_sensor','input_boolean']),entity('charging_entity'),text('charging_value'),
       entity('power_entity','sensor'),entity('intensity_entity',['number','input_number','sensor']),
-      entity('vehicle_limit_entity',['number','sensor','input_number']),
+      entity('vehicle_limit_entity',['number','input_number']),
       choice('limits'),choice('power'),bool('show_preheating'),
       entity('preheat_state_entity',['binary_sensor','input_boolean']),
       entity('preheat_target_entity'),text('start_service'),text('stop_service')

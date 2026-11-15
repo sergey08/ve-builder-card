@@ -24,7 +24,7 @@ export function batterySources(block,blocks,states){
   const byLabel=label=>fields.find(field=>standardLabel(field.name,'es')===label)?.entity;
   const primary=powerBlock?.fields?.find(field=>field.display==='bar')??powerBlock?.fields?.[0];
   return {
-    powerBlock,limitsBlock,vehicleLimit:options.vehicle_limit_entity,
+    powerBlock,limitsBlock,
     level:options.level_entity||byLabel('Batería')||byUnit(fields,'%'),
     range:options.range_entity||byLabel('Autonomía')||byUnit(fields,'km')||byUnit(fields,'mi'),
     connector:options.connector_entity||start?.connector_entity,
@@ -59,10 +59,22 @@ export function batteryIntensityAction(entity,state,direction){
   return {domain:entity.split('.')[0],service:'set_value',data:{entity_id:entity,value:next}};
 }
 
+export function batteryVehicleLimitField(block){
+  const entity=block.battery?.vehicle_limit_entity;
+  if(typeof entity!=='string'||!entity)return;
+  return {id:block.id+':vehicle-limit',name:'Máximo en el coche',entity,unit:'%',decimals:0,
+    read_only:!['number','input_number'].includes(entity.split('.')[0])};
+}
+
 export function renderBattery(card,block,sources,renderSection){
   const t=label=>escape(card.t(label)),state=card.state;
   const reading=(id,decimals)=>escape(stateText(state[id],{decimals},card.lang));
   const options=block.battery??{};
+  const vehicleLimit=batteryVehicleLimitField(block);
+  const limits=sources.limitsBlock;
+  const limitControls=vehicleLimit
+    ? {...(limits??{id:block.id+':limits',title:t('Límites de carga'),type:'limits'}),fields:[...(limits?.fields??[]),vehicleLimit]}
+    : limits;
   const level=percentage(state[sources.level]?.state);
   const power=number(state[sources.power]?.state);
   const connector=state[sources.connector]?.state;
@@ -89,11 +101,8 @@ export function renderBattery(card,block,sources,renderSection){
       ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div class="battery-preheat-buttons">${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
     </div>
     ${block.fields?.length?card.controls(block,true):''}
-    ${sources.intensity||sources.limitsBlock||sources.vehicleLimit?`<div class="battery-adjustments">
-      ${sources.limitsBlock||sources.vehicleLimit?`<div class="battery-limits">
-        ${sources.limitsBlock?renderSection(sources.limitsBlock):''}
-        ${sources.vehicleLimit?`<div class="battery-vehicle-limit"><span>${t('Máximo en el coche')}</span><strong>${reading(sources.vehicleLimit,0)}</strong></div>`:''}
-      </div>`:''}
+    ${sources.intensity||limitControls?`<div class="battery-adjustments">
+      ${limitControls?`<div class="battery-limits">${renderSection(limitControls)}</div>`:''}
       ${sources.intensity?`<div class="battery-current"><span>${t('Intensidad configurada')} <strong>${reading(sources.intensity,1)}</strong></span><div>${intensityButton(-1,'minus','Reducir intensidad')}${intensityButton(1,'plus','Aumentar intensidad')}</div></div>`:''}
     </div>`:''}
     ${sources.powerBlock?`<details data-battery-details><summary>${t('Potencia de carga')}</summary>${renderSection(sources.powerBlock)}</details>`:''}
@@ -123,8 +132,6 @@ export const batteryStyles=`
 .battery-preheat{display:grid;gap:5px;border:1px solid var(--divider-color);border-radius:10px;padding:7px}
 .battery-preheat>div{flex-wrap:wrap}
 .battery-preheat>.battery-preheat-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
-.battery-vehicle-limit{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 0}
-.battery-vehicle-limit span{color:var(--secondary-text-color)}
 .battery-preheat [role=status]{font-size:12px}
 .battery-heat-active{border-color:var(--warning-color,#f79e21)}
 .battery-heat-active [role=status]{background:var(--warning-color,#f79e21);color:#231605;border-color:transparent}

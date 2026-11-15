@@ -2064,7 +2064,7 @@ for(const [key,labels] of Object.entries({
 EN['Máximo en el coche']='Vehicle charge limit';
 for(const [code,label] of Object.entries({pt:'Limite de carga do veículo',fr:'Limite de charge du véhicule',de:'Ladelimit des Fahrzeugs',it:'Limite di carica del veicolo',nl:'Laadlimiet van voertuig'}))EXTRA[code]['Máximo en el coche']=label;
 
-const VERSION = '1.8.0-beta.3';
+const VERSION = '1.8.0-beta.4';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2726,7 +2726,7 @@ class VEBuilderEditor extends HTMLElement {
       entity('level_entity','sensor'),entity('range_entity','sensor'),
       entity('connector_entity',['binary_sensor','input_boolean']),entity('charging_entity'),text('charging_value'),
       entity('power_entity','sensor'),entity('intensity_entity',['number','input_number','sensor']),
-      entity('vehicle_limit_entity',['number','sensor','input_number']),
+      entity('vehicle_limit_entity',['number','input_number']),
       choice('limits'),choice('power'),bool('show_preheating'),
       entity('preheat_state_entity',['binary_sensor','input_boolean']),
       entity('preheat_target_entity'),text('start_service'),text('stop_service')
@@ -2870,7 +2870,7 @@ function batterySources(block,blocks,states){
   const byLabel=label=>fields.find(field=>standardLabel(field.name,'es')===label)?.entity;
   const primary=powerBlock?.fields?.find(field=>field.display==='bar')??powerBlock?.fields?.[0];
   return {
-    powerBlock,limitsBlock,vehicleLimit:options.vehicle_limit_entity,
+    powerBlock,limitsBlock,
     level:options.level_entity||byLabel('Batería')||byUnit(fields,'%'),
     range:options.range_entity||byLabel('Autonomía')||byUnit(fields,'km')||byUnit(fields,'mi'),
     connector:options.connector_entity||start?.connector_entity,
@@ -2905,10 +2905,22 @@ function batteryIntensityAction(entity,state,direction){
   return {domain:entity.split('.')[0],service:'set_value',data:{entity_id:entity,value:next}};
 }
 
+function batteryVehicleLimitField(block){
+  const entity=block.battery?.vehicle_limit_entity;
+  if(typeof entity!=='string'||!entity)return;
+  return {id:block.id+':vehicle-limit',name:'Máximo en el coche',entity,unit:'%',decimals:0,
+    read_only:!['number','input_number'].includes(entity.split('.')[0])};
+}
+
 function renderBattery(card,block,sources,renderSection){
   const t=label=>escape(card.t(label)),state=card.state;
   const reading=(id,decimals)=>escape(stateText(state[id],{decimals},card.lang));
   const options=block.battery??{};
+  const vehicleLimit=batteryVehicleLimitField(block);
+  const limits=sources.limitsBlock;
+  const limitControls=vehicleLimit
+    ? {...(limits??{id:block.id+':limits',title:t('Límites de carga'),type:'limits'}),fields:[...(limits?.fields??[]),vehicleLimit]}
+    : limits;
   const level=percentage(state[sources.level]?.state);
   const power=number(state[sources.power]?.state);
   const connector=state[sources.connector]?.state;
@@ -2935,11 +2947,8 @@ function renderBattery(card,block,sources,renderSection){
       ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div class="battery-preheat-buttons">${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
     </div>
     ${block.fields?.length?card.controls(block,true):''}
-    ${sources.intensity||sources.limitsBlock||sources.vehicleLimit?`<div class="battery-adjustments">
-      ${sources.limitsBlock||sources.vehicleLimit?`<div class="battery-limits">
-        ${sources.limitsBlock?renderSection(sources.limitsBlock):''}
-        ${sources.vehicleLimit?`<div class="battery-vehicle-limit"><span>${t('Máximo en el coche')}</span><strong>${reading(sources.vehicleLimit,0)}</strong></div>`:''}
-      </div>`:''}
+    ${sources.intensity||limitControls?`<div class="battery-adjustments">
+      ${limitControls?`<div class="battery-limits">${renderSection(limitControls)}</div>`:''}
       ${sources.intensity?`<div class="battery-current"><span>${t('Intensidad configurada')} <strong>${reading(sources.intensity,1)}</strong></span><div>${intensityButton(-1,'minus','Reducir intensidad')}${intensityButton(1,'plus','Aumentar intensidad')}</div></div>`:''}
     </div>`:''}
     ${sources.powerBlock?`<details data-battery-details><summary>${t('Potencia de carga')}</summary>${renderSection(sources.powerBlock)}</details>`:''}
@@ -2969,8 +2978,6 @@ const batteryStyles=`
 .battery-preheat{display:grid;gap:5px;border:1px solid var(--divider-color);border-radius:10px;padding:7px}
 .battery-preheat>div{flex-wrap:wrap}
 .battery-preheat>.battery-preheat-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
-.battery-vehicle-limit{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 0}
-.battery-vehicle-limit span{color:var(--secondary-text-color)}
 .battery-preheat [role=status]{font-size:12px}
 .battery-heat-active{border-color:var(--warning-color,#f79e21)}
 .battery-heat-active [role=status]{background:var(--warning-color,#f79e21);color:#231605;border-color:transparent}
@@ -3184,8 +3191,8 @@ class VEBuilderCard extends HTMLElement {
     const unit=primary.unit??state?.attributes?.unit_of_measurement??'';
     return `<div class="power-panel${this.severity(primary)?' '+this.severity(primary):''}"><button class="power-primary" data-field="${escape(primary.id)}"><div class="power-heading"><span>${escape(this.label(primary.name)||this.t('Potencia de carga'))}</span><strong>${value(primary)}</strong></div></button>${details.slice(0,2).map(row).join('')}${primary.display==='bar'?`<div class="power-track" role="progressbar" aria-label="${escape(this.label(primary.name))}" aria-valuemin="${escape(primary.min??0)}" aria-valuemax="${escape(primary.max??100)}" ${number(state?.state)!==null?`aria-valuenow="${escape(Math.max(primary.min??0,Math.min(primary.max??100,Number(state.state))))}"`:''}><div class="power-fill" style="width:${pct??0}%"></div></div><div class="power-labels"><span>${escape(format(primary.min??0,0,this.lang))} ${escape(unit)}</span><span>${escape(format(primary.max??100,0,this.lang))} ${escape(unit)}</span></div>`:''}${details.slice(2).map((f,i)=>row(f,i+2)).join('')}</div>`;
   }
-  limits(block){return `<div class="charge-limits">${(block.fields??[]).map(f=>{const state=this.state[f.entity],a=state?.attributes??{},value=number(state?.state),valid=value!==null&&number(a.min)!==null&&number(a.max)!==null&&a.max>a.min;return `<label class="limit-row ${this.severity(f)}"><div class="limit-heading"><span>${escape(this.label(f.name)||a.friendly_name||this.t('Límite'))}</span><strong data-limit-label="${escape(f.id)}">${escape(stateText(state,f,this.lang))}</strong></div><input type="range" data-limit="${escape(f.id)}" aria-label="${escape(this.label(f.name)||this.t('Límite'))}" min="${escape(a.min??0)}" max="${escape(a.max??100)}" step="${escape(a.step??1)}" value="${escape(value??0)}" ${!valid?'disabled':''}/></label>`;}).join('')}</div>`;}
-  allFields(){return (this.config.blocks??[]).flatMap(b=>[...(b.fields??[]),...(b.prices??[]),...(b.groups??[]).flatMap(g=>g.fields??[])]);}
+  limits(block){return `<div class="charge-limits">${(block.fields??[]).map(f=>{const state=this.state[f.entity],a=state?.attributes??{},value=number(state?.state),valid=!f.read_only&&value!==null&&number(a.min)!==null&&number(a.max)!==null&&a.max>a.min;return `<label class="limit-row ${this.severity(f)}"><div class="limit-heading"><span>${escape(this.label(f.name)||a.friendly_name||this.t('Límite'))}</span><strong data-limit-label="${escape(f.id)}">${escape(stateText(state,f,this.lang))}</strong></div><input type="range" data-limit="${escape(f.id)}" aria-label="${escape(this.label(f.name)||this.t('Límite'))}" min="${escape(a.min??0)}" max="${escape(a.max??100)}" step="${escape(a.step??1)}" value="${escape(value??0)}" ${!valid?'disabled':''}/></label>`;}).join('')}</div>`;}
+  allFields(){return (this.config.blocks??[]).flatMap(b=>[...(b.fields??[]),...(b.prices??[]),...(b.groups??[]).flatMap(g=>g.fields??[]),...(isBatteryBlock(b)?[batteryVehicleLimitField(b)].filter(Boolean):[])]);}
   showcase(){
     return `<style>${styles}
     .showcase{padding:18px;background:linear-gradient(145deg,var(--ha-card-background,var(--card-background-color)),var(--secondary-background-color));border-radius:16px}.showcase-tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-color);font-weight:700}.showcase h3{margin:8px 0 12px;font-size:21px}.showcase-metrics{display:flex;gap:6px;flex-wrap:wrap}.showcase-metrics span{padding:6px 10px;border-radius:20px;background:var(--ha-card-background,var(--card-background-color));font-size:11px;margin:0}.showcase svg{display:block;width:100%;height:150px}.showcase-power{padding:12px;background:var(--ha-card-background,var(--card-background-color));border-radius:12px}.showcase-power>div:first-child{display:flex;justify-content:space-between;font-size:12px}.showcase-bar{height:7px;border-radius:8px;margin-top:10px;background:var(--divider-color)}.showcase-bar:after{content:"";display:block;width:62%;height:100%;border-radius:8px;background:var(--primary-color)}.showcase-features{display:flex;justify-content:space-around;gap:6px;margin-top:14px;font-size:11px;color:var(--secondary-text-color)}.showcase p{font-size:11px;line-height:1.5;margin:12px 0 0;color:var(--secondary-text-color)}

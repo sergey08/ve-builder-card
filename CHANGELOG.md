@@ -1,5 +1,10 @@
 # VE Builder Card 1.7.5
 
+## 1.8.0-beta.4
+
+- EN: **Vehicle charge limit** uses the same slider as the other limits. It reads the allowed range and step from the configured vehicle number entity.
+- ES: **Máximo en el coche** usa el mismo deslizador que los otros límites, con el rango y el paso que indica la entidad numérica del vehículo.
+
 ## 1.8.0-beta.3
 
 - EN: Preheating controls use the full width, charging modes use two columns, and the optional **Vehicle charge limit** entity shows the car’s configured maximum as a read-only value.
