@@ -1,5 +1,10 @@
 # VE Builder Card 1.7.5
 
+## 1.8.0-beta.2
+
+- EN: Preserve Battery links to power and limits when importing a whole card.
+- ES: Conserva los vínculos de Batería con potencia y límites al importar una tarjeta completa.
+
 ## 1.8.0-beta.1
 
 - EN: Battery section with dynamic 3D chassis, live charging data and compact controls. Compatible charging-mode sections retain their configured entities. Optional confirmed XPengTK battery preheating.

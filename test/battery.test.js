@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {exportCard,inspectCardImport} from '../src/transfer.js';
 import {normalize} from '../src/core.js';
 import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,renderBattery} from '../src/battery.js';
 
@@ -59,4 +60,17 @@ test('illustration embeds its asset, clips the level and signals live charging a
   const unknown=renderBattery(card,block,{level:'sensor.soc',power:'sensor.power'});
   assert.match(unknown,/width:0%/);
   assert.doesNotMatch(unknown,/46 %/);
+});
+
+test('whole-card import preserves explicitly linked charging controls with fresh IDs',()=>{
+  const original=normalize({blocks:[
+    {id:'battery',type:'battery',battery:{power_block:'selected',limits_block:'none'}},
+    {id:'other',type:'power'},
+    {id:'selected',type:'power'}
+  ]});
+  const {config}=inspectCardImport(exportCard(original));
+  assert.notEqual(config.blocks[2].id,'selected');
+  assert.equal(config.blocks[0].battery.power_block,config.blocks[2].id);
+  assert.equal(config.blocks[0].battery.limits_block,'none');
+  assert.equal(batterySources(config.blocks[0],config.blocks,{}).powerBlock,config.blocks[2]);
 });

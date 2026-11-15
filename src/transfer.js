@@ -32,13 +32,24 @@ export function inspectCardImport(source,states={}) {
  for(const block of card.blocks){
   checkObject(block);checkTexts(block);if(!Object.hasOwn(TYPES,block.type))fail('El archivo contiene un tipo de apartado no compatible.');
   list(block.fields);list(block.prices);list(block.vehicle_status);list(block.groups,g=>list(g.fields));
-  for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear','charging_sources'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
+  for(const key of ['rain','freshness','pressure_advice','pressure_colors','pressure_colors_front','pressure_colors_rear','charging_sources','battery'])if(block[key]!==undefined){checkObject(block[key]);checkTexts(block[key]);}
   if(block.positions!==undefined){checkObject(block.positions);if(Object.values(block.positions).some(v=>typeof v!=='string'))fail('La estructura de la tarjeta no es válida.');}
   if(block.body_parts!==undefined){checkObject(block.body_parts);Object.values(block.body_parts).forEach(part=>{checkObject(part);checkTexts(part);});}
  }
  // New IDs make every imported section independent, including repeated imports.
  card=clone(card);const fresh=item=>{item.id=uid();};
- for(const block of card.blocks){fresh(block);block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.vehicle_status?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
+ const blockIds=new Map();
+ for(const block of card.blocks){
+  const old=block.id;
+  fresh(block);
+  if(old&&!blockIds.has(old))blockIds.set(old,block.id);
+ }
+ for(const block of card.blocks){
+  for(const key of ['power_block','limits_block']){
+   const id=block.battery?.[key];
+   if(id&&id!=='none')block.battery[key]=blockIds.get(id)??'none';
+  }
+  block.fields?.forEach(fresh);block.prices?.forEach(fresh);block.vehicle_status?.forEach(fresh);block.groups?.forEach(group=>{fresh(group);group.fields?.forEach(fresh);});}
  const config=normalize(card),entities=new Set();
  const collect=(value,key='')=>{if(!value||typeof value!=='object')return;for(const [name,item]of Object.entries(value)){if(typeof item==='string'&&(name==='entity'||name.endsWith('_entity')||key==='positions')&&item)entities.add(item);else collect(item,name);}};collect(config);
  const missing=[...entities].filter(id=>!states[id]);
