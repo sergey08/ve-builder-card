@@ -265,6 +265,7 @@ export class VEBuilderEditor extends HTMLElement {
       entity('level_entity','sensor'),entity('range_entity','sensor'),
       entity('connector_entity',['binary_sensor','input_boolean']),entity('charging_entity'),text('charging_value'),
       entity('power_entity','sensor'),entity('intensity_entity',['number','input_number','sensor']),
+      entity('vehicle_limit_entity',['number','sensor','input_number']),
       choice('limits'),choice('power'),bool('show_preheating'),
       entity('preheat_state_entity',['binary_sensor','input_boolean']),
       entity('preheat_target_entity'),text('start_service'),text('stop_service')
@@ -272,7 +273,7 @@ export class VEBuilderEditor extends HTMLElement {
     const labels={
       enabled:'Mostrar como Batería',level_entity:'Batería del vehículo',range_entity:'Autonomía',
       connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',
-      power_entity:'Potencia de carga',intensity_entity:'Intensidad configurada',limits_block:'Límites de carga',power_block:'Bloque de potencia',
+      power_entity:'Potencia de carga',intensity_entity:'Intensidad configurada',vehicle_limit_entity:'Máximo en el coche',limits_block:'Límites de carga',power_block:'Bloque de potencia',
       show_preheating:'Mostrar precalentamiento',preheat_state_entity:'Sensor de precalentamiento',
       preheat_target_entity:'Entidad objetivo del vehículo',start_service:'Servicio de inicio',stop_service:'Servicio de parada'
     };

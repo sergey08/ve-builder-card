@@ -74,3 +74,13 @@ test('whole-card import preserves explicitly linked charging controls with fresh
   assert.equal(config.blocks[0].battery.limits_block,'none');
   assert.equal(batterySources(config.blocks[0],config.blocks,{}).powerBlock,config.blocks[2]);
 });
+
+test('vehicle charge limit is separate from the charger controls and is read-only',()=>{
+  const block={type:'battery',battery:{vehicle_limit_entity:'number.vehicle_limit'}};
+  const state={'number.vehicle_limit':{state:'85',attributes:{unit_of_measurement:'%'}}};
+  const sources=batterySources(block,[block],state);
+  const card={state,_hass:{states:state},lang:'es',t:value=>value};
+  const markup=renderBattery(card,block,sources);
+  assert.match(markup,/Máximo en el coche<\/span><strong>85 %/);
+  assert.doesNotMatch(markup,/data-limit=/);
+});

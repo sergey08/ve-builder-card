@@ -24,7 +24,7 @@ export function batterySources(block,blocks,states){
   const byLabel=label=>fields.find(field=>standardLabel(field.name,'es')===label)?.entity;
   const primary=powerBlock?.fields?.find(field=>field.display==='bar')??powerBlock?.fields?.[0];
   return {
-    powerBlock,limitsBlock,
+    powerBlock,limitsBlock,vehicleLimit:options.vehicle_limit_entity,
     level:options.level_entity||byLabel('Batería')||byUnit(fields,'%'),
     range:options.range_entity||byLabel('Autonomía')||byUnit(fields,'km')||byUnit(fields,'mi'),
     connector:options.connector_entity||start?.connector_entity,
@@ -86,11 +86,14 @@ export function renderBattery(card,block,sources,renderSection){
         <div class="battery-pack"><div class="battery-glow" style="width:${level??0}%"></div></div>
         <strong class="battery-soc" aria-hidden="true">${escape(pct)}</strong>
       </div>
-      ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div>${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
+      ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div class="battery-preheat-buttons">${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
     </div>
     ${block.fields?.length?card.controls(block,true):''}
-    ${sources.intensity||sources.limitsBlock?`<div class="battery-adjustments">
-      ${sources.limitsBlock?renderSection(sources.limitsBlock):''}
+    ${sources.intensity||sources.limitsBlock||sources.vehicleLimit?`<div class="battery-adjustments">
+      ${sources.limitsBlock||sources.vehicleLimit?`<div class="battery-limits">
+        ${sources.limitsBlock?renderSection(sources.limitsBlock):''}
+        ${sources.vehicleLimit?`<div class="battery-vehicle-limit"><span>${t('Máximo en el coche')}</span><strong>${reading(sources.vehicleLimit,0)}</strong></div>`:''}
+      </div>`:''}
       ${sources.intensity?`<div class="battery-current"><span>${t('Intensidad configurada')} <strong>${reading(sources.intensity,1)}</strong></span><div>${intensityButton(-1,'minus','Reducir intensidad')}${intensityButton(1,'plus','Aumentar intensidad')}</div></div>`:''}
     </div>`:''}
     ${sources.powerBlock?`<details data-battery-details><summary>${t('Potencia de carga')}</summary>${renderSection(sources.powerBlock)}</details>`:''}
@@ -119,12 +122,15 @@ export const batteryStyles=`
 @media(prefers-reduced-motion:reduce){.battery-glow{transition:none}.battery-charging .battery-glow{animation:none}}
 .battery-preheat{display:grid;gap:5px;border:1px solid var(--divider-color);border-radius:10px;padding:7px}
 .battery-preheat>div{flex-wrap:wrap}
+.battery-preheat>.battery-preheat-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.battery-vehicle-limit{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 0}
+.battery-vehicle-limit span{color:var(--secondary-text-color)}
 .battery-preheat [role=status]{font-size:12px}
 .battery-heat-active{border-color:var(--warning-color,#f79e21)}
 .battery-heat-active [role=status]{background:var(--warning-color,#f79e21);color:#231605;border-color:transparent}
 .battery-panel button[data-battery-heat],.battery-panel button[data-battery-intensity]{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:44px;border:1px solid var(--divider-color);border-radius:8px;background:var(--secondary-background-color);color:var(--primary-text-color)}
 .battery-panel button:disabled{opacity:.48}
-.battery-panel .mode-grid{margin:0;padding:0;gap:6px;grid-template-columns:repeat(auto-fit,minmax(min(100%,98px),1fr))}
+.battery-panel .mode-grid{margin:0;padding:0;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
 .battery-panel .mode-button{margin:0}
 .battery-panel .mode-button small{display:none}
 .battery-panel .mode-button:disabled small{display:block}
@@ -134,7 +140,7 @@ export const batteryStyles=`
 .battery-adjustments .charge-limits{margin:0;padding:0;display:grid;gap:6px}
 .battery-adjustments .limit-row{margin:0;min-width:0}
 @container (min-width:440px){.battery-adjustments .charge-limits{grid-template-columns:repeat(auto-fit,minmax(min(100%,110px),1fr))}}
-@container (min-width:580px){.battery-adjustments:has(section):has(.battery-current){grid-template-columns:2fr 1fr}.battery-current{border-left:1px solid var(--divider-color);padding-inline-start:8px}}
+@container (min-width:580px){.battery-adjustments:has(.battery-limits):has(.battery-current){grid-template-columns:2fr 1fr}.battery-current{border-left:1px solid var(--divider-color);padding-inline-start:8px}}
 .battery-panel summary{cursor:pointer;padding-block:6px;font-weight:600}
 @container (min-width:540px){.battery-top:has(.battery-preheat){grid-template-columns:minmax(0,2.6fr) minmax(0,1fr)}}
 `;

@@ -2058,3 +2058,6 @@ for(const [key,labels] of Object.entries({
   EN[key]??=labels[0];
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]??=labels[index+1]);
 }
+
+EN['Máximo en el coche']='Vehicle charge limit';
+for(const [code,label] of Object.entries({pt:'Limite de carga do veículo',fr:'Limite de charge du véhicule',de:'Ladelimit des Fahrzeugs',it:'Limite di carica del veicolo',nl:'Laadlimiet van voertuig'}))EXTRA[code]['Máximo en el coche']=label;
