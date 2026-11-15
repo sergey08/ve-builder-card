@@ -69,7 +69,12 @@ export function batteryVehicleLimitField(block){
 export function renderBattery(card,block,sources,renderSection){
   const t=label=>escape(card.t(label)),state=card.state;
   const reading=(id,decimals)=>escape(stateText(state[id],{decimals},card.lang));
+  const infoTarget=id=>state[id]?` data-entity="${escape(id)}"`:' disabled';
+  const metric=(id,icon,label)=>`<button type="button" class="battery-metric"${infoTarget(id)}><ha-icon icon="mdi:${icon}"></ha-icon><span><strong>${reading(id,0)}</strong><small>${t(label)}</small></span></button>`;
   const options=block.battery??{};
+  const powerBlock=sources.powerBlock;
+  const powerFields=powerBlock?.fields??[];
+  const primaryPower=powerFields.find(field=>field.display==='bar')??powerFields[0];
   const vehicleLimit=batteryVehicleLimitField(block);
   const limits=sources.limitsBlock;
   const limitControls=vehicleLimit
@@ -88,16 +93,16 @@ export function renderBattery(card,block,sources,renderSection){
   const heatButton=(op,icon,label)=>`<button type="button" data-battery-heat="${op}" ${batteryPreheatAction(block,card._hass,op)?'':'disabled'}><ha-icon icon="mdi:${icon}"></ha-icon>${t(label)}</button>`;
   return `<div class="battery-panel">
     <div class="battery-metrics">
-      <span><ha-icon icon="mdi:road-variant"></ha-icon><span><strong>${reading(sources.range,1)}</strong><small>${t('Autonomía')}</small></span></span>
-      <span><ha-icon icon="mdi:lightning-bolt-outline"></ha-icon><span><strong>${reading(sources.power,1)}</strong><small>${t('Potencia de carga')}</small></span></span>
+      ${metric(sources.range,'road-variant','Autonomía')}
+      ${metric(sources.power,'lightning-bolt-outline','Potencia de carga')}
       <span class="battery-connector ${connected||charging?'battery-connected':''}"><ha-icon icon="mdi:power-plug-outline"></ha-icon>${t(liveLabel)}</span>
     </div>
     <div class="battery-top">
-      <div class="battery-illustration ${charging?'battery-charging':''} ${status==='on'?'battery-heating':''}" role="img" aria-label="${t('Batería')} · ${level===null?t('Sin datos'):escape(pct)}">
+      <button type="button" class="battery-illustration ${charging?'battery-charging':''} ${status==='on'?'battery-heating':''}" aria-label="${t('Batería')} · ${level===null?t('Sin datos'):escape(pct)}"${infoTarget(sources.level)}>
         <img src="${batteryChassis}" alt="" width="1040" height="472">
-        <div class="battery-pack"><div class="battery-glow" style="width:${level??0}%"></div></div>
+        <span class="battery-pack"><span class="battery-glow" style="width:${level??0}%"></span>${charging?`<span class="battery-flow" style="animation-delay:-${Date.now()%1800}ms"></span>`:''}</span>
         <strong class="battery-soc" aria-hidden="true">${escape(pct)}</strong>
-      </div>
+      </button>
       ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div class="battery-preheat-buttons">${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
     </div>
     ${block.fields?.length?card.controls(block,true):''}
@@ -105,30 +110,35 @@ export function renderBattery(card,block,sources,renderSection){
       ${limitControls?`<div class="battery-limits">${renderSection(limitControls)}</div>`:''}
       ${sources.intensity?`<div class="battery-current"><span>${t('Intensidad configurada')} <strong>${reading(sources.intensity,1)}</strong></span><div>${intensityButton(-1,'minus','Reducir intensidad')}${intensityButton(1,'plus','Aumentar intensidad')}</div></div>`:''}
     </div>`:''}
-    ${sources.powerBlock?`<details data-battery-details><summary>${t('Potencia de carga')}</summary>${renderSection(sources.powerBlock)}</details>`:''}
+    ${powerBlock?`<div class="battery-power">${renderSection({...powerBlock,fields:powerFields.map(field=>field===primaryPower?{...field,decimals:0}:field)})}</div>`:''}
   </div>`;
 }
 
 export const batteryStyles=`
 .battery-panel{display:grid;gap:8px;padding:4px 12px 10px;container-type:inline-size}
 .battery-metrics,.battery-current{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
-.battery-metrics>span,.battery-current>div,.battery-preheat>div{display:flex;align-items:center;gap:6px}
+.battery-metrics>span,.battery-metric,.battery-current>div,.battery-preheat>div{display:flex;align-items:center;gap:6px}
+.battery-panel .battery-metric,.battery-panel .battery-illustration{padding:0;border:0;font:inherit}
+.battery-metric{background:transparent;color:inherit;text-align:start}
+.battery-panel :is(.battery-metric,.battery-illustration):disabled{opacity:1;cursor:default}
+.battery-panel :is(.battery-metric,.battery-illustration):focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
 .battery-metrics ha-icon,.battery-preheat ha-icon{--mdc-icon-size:19px}
 .battery-metrics small{display:block;color:var(--secondary-text-color)}
 .battery-connector,.battery-preheat [role=status]{border:1px solid var(--divider-color);border-radius:20px;padding:3px 8px}
 .battery-connected{color:var(--success-color,#258640)}
 .battery-top{display:grid;align-items:center;gap:8px}
-.battery-illustration{position:relative;isolation:isolate;overflow:hidden;border-radius:10px;background:#0e1e2a}
+.battery-illustration{display:block;width:100%;position:relative;isolation:isolate;overflow:hidden;border-radius:10px;background:#0e1e2a}
 .battery-illustration img{display:block;width:100%;height:auto}
 .battery-pack{position:absolute;inset:28.5% 22.5% 25% 25.1%;clip-path:polygon(7% 0,93% 0,97% 11%,100% 84%,98% 100%,2% 100%,0% 87%,4% 12%);mix-blend-mode:screen}
-.battery-glow{height:100%;background:linear-gradient(90deg,#13de22a6,#09f32ba6 94%,#7dff8d);box-shadow:0 0 12px #56ff60;transition:width .28s}
+.battery-glow{display:block;height:100%;background:linear-gradient(90deg,#13de22a6,#09f32ba6 94%,#7dff8d);box-shadow:0 0 12px #56ff60;transition:width .28s}
 .battery-glow[style="width:0%"]{box-shadow:none}
-.battery-charging .battery-glow{animation:battery-charge 1.8s ease-in-out infinite alternate}
+.battery-flow{position:absolute;inset:0;pointer-events:none;--flow-color:#6bff7fc9;background:linear-gradient(103deg,transparent 22%,var(--flow-color) 52%,transparent 78%) repeat-x;background-size:33.333% 100%;animation:battery-charge-flow 1800ms linear infinite}
+.battery-heating .battery-flow{--flow-color:#ffbd68cb}
 .battery-heating .battery-glow{background:linear-gradient(90deg,#ff830066,#ffa126a8 95%,#ffd375);box-shadow:0 0 12px #ffa126}
 .battery-heating .battery-soc{color:#ffe1ac}
 .battery-soc{position:absolute;inset:0;display:grid;place-items:center;color:white;font-size:clamp(26px,10cqw,52px);text-shadow:0 2px 8px black}
-@keyframes battery-charge{from{opacity:.68}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.battery-glow{transition:none}.battery-charging .battery-glow{animation:none}}
+@keyframes battery-charge-flow{from{background-position:0 0}to{background-position:100% 0}}
+@media(prefers-reduced-motion:reduce){.battery-glow{transition:none}.battery-flow{display:none}}
 .battery-preheat{display:grid;gap:5px;border:1px solid var(--divider-color);border-radius:10px;padding:7px}
 .battery-preheat>div{flex-wrap:wrap}
 .battery-preheat>.battery-preheat-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
@@ -141,13 +151,12 @@ export const batteryStyles=`
 .battery-panel .mode-button{margin:0}
 .battery-panel .mode-button small{display:none}
 .battery-panel .mode-button:disabled small{display:block}
-.battery-adjustments,.battery-panel details{border-top:1px solid var(--divider-color);padding-top:6px}
+.battery-adjustments,.battery-power{border-top:1px solid var(--divider-color);padding-top:6px}
 .battery-adjustments{display:grid;align-items:center;gap:8px}
 .battery-adjustments section>header{padding:3px 0}
 .battery-adjustments .charge-limits{margin:0;padding:0;display:grid;gap:6px}
 .battery-adjustments .limit-row{margin:0;min-width:0}
 @container (min-width:440px){.battery-adjustments .charge-limits{grid-template-columns:repeat(auto-fit,minmax(min(100%,110px),1fr))}}
 @container (min-width:580px){.battery-adjustments:has(.battery-limits):has(.battery-current){grid-template-columns:2fr 1fr}.battery-current{border-left:1px solid var(--divider-color);padding-inline-start:8px}}
-.battery-panel summary{cursor:pointer;padding-block:6px;font-weight:600}
 @container (min-width:540px){.battery-top:has(.battery-preheat){grid-template-columns:minmax(0,2.6fr) minmax(0,1fr)}}
 `;

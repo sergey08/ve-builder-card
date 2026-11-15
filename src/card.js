@@ -232,7 +232,6 @@ export class VEBuilderCard extends HTMLElement {
       const title=sources.has(block)&&(!block.title||block.type==='modes'&&standardLabel(block.title,'es')==='Modos de carga')?this.t('Batería'):this.label(block.title);
       const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${title?`<header>${escape(title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${this.label(block.note)?`<footer>${escape(this.label(block.note))}</footer>`:''}</section>`;};
     const body=blocks.filter(block=>!embedded.has(block)).map(renderSection).join('');
-    const batteryOpen=new Set([...this.shadowRoot.querySelectorAll('[data-battery-details][open]')].map(el=>el.closest('[data-block]').dataset.block));
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
@@ -240,7 +239,6 @@ export class VEBuilderCard extends HTMLElement {
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
-    for(const el of this.shadowRoot.querySelectorAll('[data-battery-details]'))el.open=batteryOpen.has(el.closest('[data-block]').dataset.block);
     for(const el of this.shadowRoot.querySelectorAll('[data-battery-heat],[data-battery-intensity]')){
       const block=blocks.find(item=>item.id===el.closest('[data-block]').dataset.block);
       el.onclick=()=>this.runBatteryControl(block,el.dataset,sources.get(block));
@@ -249,7 +247,7 @@ export class VEBuilderCard extends HTMLElement {
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
     const statuses=this.config.blocks.flatMap(b=>b.vehicle_status??[]);
     this.shadowRoot.querySelectorAll('[data-vehicle-status]').forEach(el=>el.addEventListener('click',()=>{const item=statuses.find(item=>item.id===el.dataset.vehicleStatus);if(item?.entity&&this.state[item.entity])this.moreInfo(item.entity);}));
-    this.shadowRoot.querySelectorAll('[data-entity]').forEach(el=>{const open=()=>this.moreInfo(el.dataset.entity);el.addEventListener('click',open);el.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();open();}});});
+    this.shadowRoot.querySelectorAll('[data-entity]').forEach(el=>{const open=()=>this.moreInfo(el.dataset.entity);el.addEventListener('click',open);if(el.localName!=='button')el.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();open();}});});
     this.shadowRoot.querySelectorAll('[data-limit]').forEach(el=>{el.addEventListener('input',()=>{this._editingSlider=true;const f=fields.find(f=>f.id===el.dataset.limit);[...this.shadowRoot.querySelectorAll('[data-limit-label]')].find(label=>label.dataset.limitLabel===el.dataset.limit).textContent=`${format(el.value,f.decimals,this.lang)} ${f.unit??this.state[f.entity]?.attributes.unit_of_measurement??''}`;});el.addEventListener('change',async()=>{const f=fields.find(f=>f.id===el.dataset.limit);try{await this._hass.callService(f.entity.startsWith('number.')?'number':'input_number','set_value',{entity_id:f.entity,value:Number(el.value)});this.feedback=this.t('Límite enviado.');}catch{this.feedback=this.t('No se pudo guardar el límite.');}finally{this._editingSlider=false;this._dirty=true;this.render();}});el.addEventListener('blur',()=>{if(this._editingSlider){this._editingSlider=false;this.render();}});});
     this._mapHosts=[...this.shadowRoot.querySelectorAll('[data-map]')];
     if(this._mapHosts.length)this.syncMaps();

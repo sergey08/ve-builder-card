@@ -89,3 +89,28 @@ test('vehicle charge limit shares the slider group with the charger limits',()=>
   assert.deepEqual(limits.fields,[chargerLimit]);
   assert.equal(batteryVehicleLimitField({...block,battery:{vehicle_limit_entity:'sensor.limit'}}).read_only,true);
 });
+
+test('battery figures link to their entities, round to integers and keep power expanded',()=>{
+  const state={
+    'sensor.level':{state:'46'},
+    'sensor.range':{state:'229.6',attributes:{unit_of_measurement:'km'}},
+    'sensor.power':{state:'1234.4',attributes:{unit_of_measurement:'W'}}
+  };
+  const field={id:'power',entity:'sensor.power',display:'bar',decimals:2};
+  const powerBlock={id:'power-details',type:'power',fields:[field]};
+  const card={state,_hass:{states:state},lang:'en',t:value=>value};
+  let shown;
+  const markup=renderBattery(card,{id:'battery'},
+    {level:'sensor.level',range:'sensor.range',power:'sensor.power',powerBlock},
+    section=>{shown=section;return 'shown';});
+  for(const id of Object.keys(state))assert.ok(markup.includes('data-entity="'+id+'"'));
+  assert.match(markup,/>230 km</);
+  assert.match(markup,/>1,234 W</);
+  assert.match(markup,/class="battery-flow"/);
+  assert.match(markup,/class="battery-power">shown/);
+  assert.doesNotMatch(markup,/<details/);
+  assert.equal(shown.fields[0].decimals,0);
+  assert.equal(field.decimals,2);
+  state['sensor.power'].state='0';
+  assert.doesNotMatch(renderBattery(card,{id:'battery'},{power:'sensor.power'}),/class="battery-flow"/);
+});
