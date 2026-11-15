@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.8.0-beta.6';
+export const VERSION = '1.8.0-beta.7';
 export const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 export const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -35,6 +35,14 @@ export function newBlock(type) {
   if(type==='tyres')Object.assign(block,{positions:{},unit:'bar',decimals:2,show_dates:true,note:'Últimas lecturas recibidas · Pulsa una rueda para ver su historial.'});
   if(type==='expenses')Object.assign(block,{prices:[],groups:[],note:'Ahorros mostrados por separado, sin sumarlos. Importes según los sensores configurados.'});
   return block;
+}
+export function isStandaloneBattery(blocks){
+  return Array.isArray(blocks)&&blocks.some(block=>block?.type==='battery')&&blocks.every(block=>['battery','power','limits'].includes(block?.type));
+}
+export function chargingModeTap(entity){
+  const domain=String(entity??'').split('.')[0];
+  if(['switch','input_boolean','lock'].includes(domain))return 'toggle';
+  return domain==='button'?'press':'more-info';
 }
 export function normalize(config) {
   if(!config||typeof config!=='object')throw Error('La configuración debe ser un objeto.');

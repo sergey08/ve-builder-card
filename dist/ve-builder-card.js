@@ -2064,7 +2064,12 @@ for(const [key,labels] of Object.entries({
 EN['Máximo en el coche']='Vehicle charge limit';
 for(const [code,label] of Object.entries({pt:'Limite de carga do veículo',fr:'Limite de charge du véhicule',de:'Ladelimit des Fahrzeugs',it:'Limite di carica del veicolo',nl:'Laadlimiet van voertuig'}))EXTRA[code]['Máximo en el coche']=label;
 
-const VERSION = '1.8.0-beta.6';
+for(const [key,values] of Object.entries({"Objetivo de carga":["Charge target","Objetivo de carga","Objectif de recharge","Ladeziel","Obiettivo di ricarica","Laaddoel"],"Límite del coche":["Vehicle limit","Limite do veículo","Limite du véhicule","Fahrzeuglimit","Limite del veicolo","Voertuiglimiet"],"Límite del cargador":["Charger limit","Limite do carregador","Limite du chargeur","Ladegerätlimit","Limite del caricatore","Laderlimiet"],"Límite del coche y del cargador":["Vehicle and charger limit","Limite do veículo e do carregador","Limite du véhicule et du chargeur","Fahrzeug- und Ladegerätlimit","Limite del veicolo e del caricatore","Voertuig- en laderlimiet"],"Tope de energía":["Energy cap","Limite de energia","Limite d’énergie","Energiegrenze","Limite di energia","Energielimiet"],"En espera":["Waiting","Em espera","En attente","Wartet","In attesa","Wachten"],"Entidad con el motivo de espera":["Waiting reason entity","Entidade com motivo de espera","Entité du motif d’attente","Entität für Wartegrund","Entità del motivo di attesa","Entiteit voor wachtre­den"],"＋ Añadir modo de carga":["＋ Add charging mode","＋ Adicionar modo de carga","＋ Ajouter un mode de recharge","＋ Lademodus hinzufügen","＋ Aggiungi modalità di ricarica","＋ Laadmodus toevoegen"],"Estado activo (opcional)":["Active state (optional)","Estado ativo (opcional)","État actif (facultatif)","Aktiver Zustand (optional)","Stato attivo (facoltativo)","Actieve status (optioneel)"]})){
+  EN[key]=values[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
+}
+
+const VERSION = '1.8.0-beta.7';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2100,6 +2105,14 @@ function newBlock(type) {
   if(type==='tyres')Object.assign(block,{positions:{},unit:'bar',decimals:2,show_dates:true,note:'Últimas lecturas recibidas · Pulsa una rueda para ver su historial.'});
   if(type==='expenses')Object.assign(block,{prices:[],groups:[],note:'Ahorros mostrados por separado, sin sumarlos. Importes según los sensores configurados.'});
   return block;
+}
+function isStandaloneBattery(blocks){
+  return Array.isArray(blocks)&&blocks.some(block=>block?.type==='battery')&&blocks.every(block=>['battery','power','limits'].includes(block?.type));
+}
+function chargingModeTap(entity){
+  const domain=String(entity??'').split('.')[0];
+  if(['switch','input_boolean','lock'].includes(domain))return 'toggle';
+  return domain==='button'?'press':'more-info';
 }
 function normalize(config) {
   if(!config||typeof config!=='object')throw Error('La configuración debe ser un objeto.');
@@ -2469,7 +2482,7 @@ const select=(name,options)=>({name,selector:{select:{options:Object.entries(opt
 const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:'box'}}});
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
-const LABELS={translate_standard_labels:'Traducir nombres estándar',max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',ota_version_entity:'Sensor de versión OTA (opcional)',ota_status_entity:'Sensor de actualización disponible (opcional)',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
+const LABELS={active_value:'Estado activo (opcional)',translate_standard_labels:'Traducir nombres estándar',max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',ota_version_entity:'Sensor de versión OTA (opcional)',ota_status_entity:'Sensor de actualización disponible (opcional)',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
 const CSS=`textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;padding:10px;margin:8px 0;border:1px solid var(--divider-color);border-radius:8px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;resize:vertical}.transfer-file{display:block;margin:14px 0}.transfer-file input{display:block;max-width:100%;margin:8px 0}.transfer-preview{padding:12px;margin-top:12px;border:1px solid var(--primary-color);border-radius:10px}.transfer-preview p{overflow-wrap:anywhere}.transfer-preview details p{font-size:12px}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 let copiedSection=null;
@@ -2645,12 +2658,13 @@ class VEBuilderEditor extends HTMLElement {
       const row=this.panel(parent,field.id,field.name||this._hass?.states[field.entity]?.attributes?.friendly_name||'Nuevo campo',!field.entity);
       this.reorderHandle(row,fields,index,key);
       const data=this.panel(row,field.id+'-data','Datos',true);
-      const domain=kind==='limit'?'input_number':kind==='action'?['switch','input_boolean','lock','button']:kind==='mode'?['switch','input_boolean']:undefined;
+      const domain=kind==='limit'?'input_number':kind==='action'?['switch','input_boolean','lock','button']:undefined;
       this.form(data,{device:this.deviceFilters?.[field.id]??''},[{name:'device',selector:{device:{}}}],patch=>this.filterDevice(field.id,patch.device));
       const schema=[this.entitySchema('entity',domain,this.deviceFilters?.[field.id]),text('name')];if(kind!=='limit')schema.push({name:'icon',selector:{icon:{}}});
+      if(kind==='mode')schema.push(text('active_value'));
       if(['info','expense','price','power'].includes(kind))schema.push(...(['expense','price'].includes(kind)?[numeric('decimals',0,6)]:[]),text('unit'));
       if(kind==='info')schema.push(select('format',{auto:'Automático',connection:'Conectado / desconectado',presence:'Presencia'}));
-      this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);row.querySelector('summary').textContent=standardLabel(field.name,this.lang,this.config.translate_standard_labels!==false)||this._hass?.states[field.entity]?.attributes?.friendly_name||this.t('Nuevo campo');this.emit();if(domainChanged)this.render();});
+      this.form(data,field,schema,patch=>{const domainChanged=patch.entity!==undefined&&patch.entity.split('.')[0]!==field.entity?.split('.')[0];Object.assign(field,patch);if(domainChanged&&kind==='mode')field.tap=chargingModeTap(field.entity);row.querySelector('summary').textContent=standardLabel(field.name,this.lang,this.config.translate_standard_labels!==false)||this._hass?.states[field.entity]?.attributes?.friendly_name||this.t('Nuevo campo');this.emit();if(domainChanged)this.render();});
       if(['info','power','expense','price','limit'].includes(kind))this.colorEditor(row,field,'colors',field.id);
       if(!['limit','expense','price'].includes(kind)){
         if(['info','power'].includes(kind)){const advanced=this.panel(row,field.id+'-advanced','Opciones avanzadas');this.form(advanced,field,[numeric('decimals',0,6)],patch=>{Object.assign(field,patch);this.emit();});}
@@ -2664,13 +2678,13 @@ class VEBuilderEditor extends HTMLElement {
         const behavior=this.panel(row,field.id+'-behavior','Comportamiento');
         const domain=field.entity?.split('.')[0];const options={'more-info':'Ver detalles'};
         if(['switch','input_boolean','lock'].includes(domain))options.toggle='Activar / desactivar';if(domain==='button')options.press='Pulsar botón';
-        this.form(behavior,{tap:['action','mode'].includes(kind)?'toggle':'more-info',confirm:domain==='lock',...field},[select('tap',options),bool('confirm')],patch=>{Object.assign(field,patch);this.emit();});
+        this.form(behavior,{tap:kind==='mode'?chargingModeTap(field.entity):kind==='action'?'toggle':'more-info',confirm:domain==='lock',...field},[select('tap',options),bool('confirm')],patch=>{Object.assign(field,patch);this.emit();});
       }
       const toolbar=document.createElement('div');toolbar.className='toolbar';row.append(toolbar);
       this.button(toolbar,'Duplicar',()=>{fields.splice(index+1,0,{...clone(field),id:uid()});this.emit();this.render();});
       this.button(toolbar,'Eliminar',()=>{fields.splice(index,1);this.emit();this.render();},true);
     });
-    this.button(parent,'＋ Añadir campo',()=>{const f=newField();if(['action','mode'].includes(kind))f.tap='toggle';if(kind==='expense')Object.assign(f,{decimals:2,unit:'€'});fields.push(f);this.emit();this.openKey=f.id;this.render();});
+    this.button(parent,kind==='mode'?'＋ Añadir modo de carga':'＋ Añadir campo',()=>{const f=newField();if(['action','mode'].includes(kind))f.tap='toggle';if(kind==='expense')Object.assign(f,{decimals:2,unit:'€'});fields.push(f);this.emit();this.openKey=f.id;this.render();});
   }
   freshnessEditor(parent,block){
     const panel=this.panel(parent,block.id+'-freshness','Antigüedad de las lecturas');
@@ -2726,7 +2740,8 @@ class VEBuilderEditor extends HTMLElement {
       entity('level_entity','sensor'),entity('range_entity','sensor'),
       entity('connector_entity',['binary_sensor','input_boolean']),entity('charging_entity'),text('charging_value'),
       entity('power_entity','sensor'),entity('intensity_entity',['number','input_number','sensor']),
-      entity('vehicle_limit_entity',['number','input_number']),
+      entity('vehicle_limit_entity',['number','input_number']),entity('charger_limit_entity'),entity('energy_limit_entity'),
+      entity('wait_reason_entity',['sensor','input_text']),
       choice('limits'),choice('power'),bool('show_preheating'),
       entity('preheat_state_entity',['binary_sensor','input_boolean']),
       entity('preheat_target_entity'),text('start_service'),text('stop_service')
@@ -2735,6 +2750,7 @@ class VEBuilderEditor extends HTMLElement {
       enabled:'Mostrar como Batería',level_entity:'Batería del vehículo',range_entity:'Autonomía',
       connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',
       power_entity:'Potencia de carga',intensity_entity:'Intensidad configurada',vehicle_limit_entity:'Máximo en el coche',limits_block:'Límites de carga',power_block:'Bloque de potencia',
+      charger_limit_entity:'Límite del cargador',energy_limit_entity:'Tope de energía',wait_reason_entity:'Entidad con el motivo de espera',
       show_preheating:'Mostrar precalentamiento',preheat_state_entity:'Sensor de precalentamiento',
       preheat_target_entity:'Entidad objetivo del vehículo',start_service:'Servicio de inicio',stop_service:'Servicio de parada'
     };
@@ -2818,7 +2834,7 @@ class VEBuilderEditor extends HTMLElement {
     const state=new Map([...root.querySelectorAll('details[data-key]')].map(el=>[el.dataset.key,el.open]));
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
-    this.form(root,{language:'auto',translate_standard_labels:true,...this.config},[text('title'),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
+    this.form(root,{language:'auto',translate_standard_labels:true,...this.config},[...(isStandaloneBattery(this.config.blocks)?[]:[text('title')]),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
     const labelHelp=document.createElement('p');labelHelp.className='muted';labelHelp.textContent=this.t('Los nombres estándar siguen el idioma de la tarjeta. Los textos personalizados se conservan.');root.append(labelHelp);
     this.historyToolbar(root);
     this.alertsEditor(root);
@@ -2871,6 +2887,8 @@ function batterySources(block,blocks,states){
   const primary=powerBlock?.fields?.find(field=>field.display==='bar')??powerBlock?.fields?.[0];
   return {
     powerBlock,limitsBlock,
+    chargerLimit:options.charger_limit_entity||byUnit(limitsBlock?.fields,'%'),
+    energyLimit:options.energy_limit_entity||byUnit(limitsBlock?.fields,'kWh'),
     level:options.level_entity||byLabel('Batería')||byUnit(fields,'%'),
     range:options.range_entity||byLabel('Autonomía')||byUnit(fields,'km')||byUnit(fields,'mi'),
     connector:options.connector_entity||start?.connector_entity,
@@ -2912,6 +2930,21 @@ function batteryVehicleLimitField(block){
     read_only:!['number','input_number'].includes(entity.split('.')[0])};
 }
 
+function batteryChargeSummary(sources,vehicleEntity,states){
+  const activeLimits=[
+    [vehicleEntity,'Límite del coche'],
+    [sources.chargerLimit,'Límite del cargador']
+  ].filter(([entity])=>entity).map(([entity,label])=>[number(states[entity]?.state),label]);
+  let target,source;
+  if(activeLimits.length&&activeLimits.every(([value])=>value!==null&&value>=0&&value<=100)){
+    target=Math.min(...activeLimits.map(([value])=>value));
+    const matching=activeLimits.filter(([value])=>value===target);
+    source=matching.length>1?'Límite del coche y del cargador':matching[0][1];
+  }
+  const amount=number(states[sources.energyLimit]?.state);
+  return {target,source,energy:amount!==null&&amount>=0?amount:undefined};
+}
+
 function renderBattery(card,block,sources,renderSection){
   const t=label=>escape(card.t(label)),state=card.state;
   const reading=(id,decimals)=>escape(stateText(state[id],{decimals},card.lang));
@@ -2933,6 +2966,11 @@ function renderBattery(card,block,sources,renderSection){
   const charging=power!==null?power>0:state[sources.charging]?.state===sources.chargingValue;
   const status=options.show_preheating===true?state[options.preheat_state_entity]?.state:undefined;
   const heatLabel=({on:'Activo',off:'Apagado',unknown:'Desconocido',unavailable:'No disponible'})[status]??'Sin datos';
+  const summary=batteryChargeSummary(sources,vehicleLimit?.entity,state);
+  const reason=connected&&power===0&&!charging?state[options.wait_reason_entity]?.state?.trim():undefined;
+  const wait=connected&&power===0&&!charging
+    ? reason&&!['unknown','unavailable'].includes(reason)?reason:card.t('En espera')
+    : undefined;
   const liveLabel=charging?'Cargando':connected?'Conectado':connector==='off'?'Desconectado':'Sin datos';
   const pct=level===null?'—':format(level,0,card.lang)+' %';
   const intensityButton=(dir,icon,label)=>`<button type="button" data-battery-intensity="${dir}" aria-label="${t(label)}" ${batteryIntensityAction(sources.intensity,state[sources.intensity],dir)?'':'disabled'}><ha-icon icon="mdi:${icon}"></ha-icon></button>`;
@@ -2951,6 +2989,11 @@ function renderBattery(card,block,sources,renderSection){
       </button>
       ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div class="battery-preheat-buttons">${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
     </div>
+    ${summary.target!==undefined||summary.energy!==undefined||wait?`<div class="battery-summary">
+      ${summary.target!==undefined?`<span>${t('Objetivo de carga')} <strong>${format(summary.target,Number.isInteger(summary.target)?0:1,card.lang)} %</strong> · ${t(summary.source)}</span>`:''}
+      ${summary.energy!==undefined?`<span>${t('Tope de energía')} <strong>${format(summary.energy,Number.isInteger(summary.energy)?0:2,card.lang)} kWh</strong></span>`:''}
+      ${wait?`<span><ha-icon icon="mdi:timer-outline"></ha-icon>${escape(wait)}</span>`:''}
+    </div>`:''}
     ${block.fields?.length?card.controls(block,true):''}
     ${sources.intensity||limitControls?`<div class="battery-adjustments">
       ${limitControls?`<div class="battery-limits">${renderSection(limitControls)}</div>`:''}
@@ -2972,6 +3015,10 @@ const batteryStyles=`
 .battery-metrics small{display:block;color:var(--secondary-text-color)}
 .battery-connector,.battery-preheat [role=status]{border:1px solid var(--divider-color);border-radius:20px;padding:3px 8px}
 .battery-connected{color:var(--success-color,#258640)}
+.battery-summary{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--secondary-text-color);font-size:12px}
+.battery-summary>span{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px}
+.battery-summary strong{color:var(--primary-text-color)}
+.battery-summary ha-icon{--mdc-icon-size:16px}
 .battery-top{display:grid;align-items:center;gap:8px}
 .battery-illustration{display:block;width:100%;position:relative;isolation:isolate;overflow:hidden;border-radius:10px;background:#0e1e2a}
 .battery-illustration img{display:block;width:100%;height:auto}
@@ -3185,7 +3232,9 @@ class VEBuilderCard extends HTMLElement {
   }
   controls(block,modes=block.type==='modes'){
     return `<div class="${modes?'mode-grid compact-modes':'action-grid compact-actions'}">${(block.fields??[]).map(f=>{
-      const state=this.state[f.entity],value=state?.state,lock=f.entity?.startsWith('lock.'),active=lock?value==='locked':value==='on',tap=f.tap??'toggle',disabled=!actionFor(f.entity,state,tap);
+      const state=this.state[f.entity],value=state?.state,lock=f.entity?.startsWith('lock.'),active=modes&&f.active_value?value===f.active_value:lock?value==='locked':value==='on';
+      const tap=modes?(f.tap==='more-info'?f.tap:chargingModeTap(f.entity)):f.tap??'toggle';
+      const disabled=tap==='more-info'?modes?!state:true:!actionFor(f.entity,state,tap);
       const label=this.label(f.name)||state?.attributes?.friendly_name||f.entity;
       const status=!state||['unknown','unavailable'].includes(value)?this.t('Sin datos'):lock?this.t(active?'Bloqueado':'Desbloqueado'):this.t(active?'Activo':modes?'Inactivo':'Apagado');
       return `<button class="${modes?'mode-button':'action-button'} ${active?(modes?'mode-active':'selected'):''} size-${escape(f.size??'small')}" data-field="${escape(f.id)}" aria-pressed="${active}" ${disabled?'disabled':''}><ha-icon icon="${escape(f.icon||state?.attributes?.icon||'mdi:flash')}"></ha-icon><span>${escape(label)}</span><small>${escape(status)}</small></button>`;
@@ -3236,7 +3285,7 @@ class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.feedback:empty{display:none}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.feedback:empty{display:none}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${!isStandaloneBattery(blocks)&&this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
@@ -3282,7 +3331,8 @@ class VEBuilderCard extends HTMLElement {
   async activate(field){
     if(!field||this.pending)return;
     const block=this.config.blocks.find(b=>b.fields?.some(f=>f.id===field.id));
-    const tap=field.tap??(['actions','modes','battery'].includes(block?.type)?'toggle':'more-info');
+    const modes=block?.type==='modes'||block?.type==='battery';
+    const tap=modes?(field.tap==='more-info'?field.tap:chargingModeTap(field.entity)):field.tap??(block?.type==='actions'?'toggle':'more-info');
     if(tap==='more-info'){this.moreInfo(field.entity);return;}
     const action=actionFor(field.entity,this.state[field.entity],tap);if(!action)return;
     if((field.confirm??field.entity.startsWith('lock.'))&&!(await this.confirmAction(this.label(field.name)||field.entity)))return;

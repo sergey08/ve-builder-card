@@ -16,7 +16,9 @@ In daily-energy mode, the **total charged appears above a full-width stacked bar
 
 For a worked example, see [the Spanish configuration guide](README.es.md). The final appearance was confirmed in Home Assistant on beta.5 before this stable release.
 
-### Battery beta (v1.8.0-beta.6)
+### Battery beta (v1.8.0-beta.7)
+
+Battery displays the lower configured percentage limit and its source, with the energy cap shown separately. A text entity can supply the reason for waiting. Add, remove or reorder charging modes and link their entities in the editor. The standalone Battery card omits the extra title.
 
 Battery range and charging power use whole numbers. Tap range, power or the chassis to open the corresponding entity. The pack shows moving light bands during charging, and the power block stays visible.
 
@@ -28,7 +30,7 @@ In the Battery settings, choose the sensors manually or reuse the overview readi
 
 For XPengTK 0.6.49, enable **Show preheating** and select the status sensor and the vehicle target entity. The configurable services default to `xpeng.start_battery_preheating` and `xpeng.stop_battery_preheating`. Each action requires confirmation. If the state is unknown or unavailable, the controls are disabled. Leave preheating disabled on unsupported vehicles.
 
-In HACS or Marketplace, open the card’s menu, choose **Redownload**, enable beta versions if needed and select `v1.8.0-beta.6`. Reload the dashboard after downloading.
+In HACS or Marketplace, open the card’s menu, choose **Redownload**, enable beta versions if needed and select `v1.8.0-beta.7`. Reload the dashboard after downloading.
 
 ## Install from the Marketplace
 
@@ -197,7 +199,9 @@ Select **Copy section** at the end of a block. In another card on the same page 
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-### Beta de Batería (v1.8.0-beta.6)
+### Beta de Batería (v1.8.0-beta.7)
+
+Batería muestra el menor límite porcentual configurado y su origen, con el tope de energía aparte. Una entidad de texto puede indicar el motivo de espera. El editor permite añadir, eliminar y ordenar modos y vincular sus entidades. La tarjeta independiente Batería omite el título superior.
 
 Autonomía y potencia de carga se muestran sin decimales. Pulsa sobre la autonomía, la potencia o el chasis para abrir su entidad. La batería muestra bandas de luz en movimiento durante la carga y el bloque de potencia queda visible.
 
@@ -209,7 +213,7 @@ En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar l
 
 Para XPengTK 0.6.49, activa **Mostrar precalentamiento** y selecciona el sensor de estado y la entidad objetivo del vehículo. Los servicios configurables son `xpeng.start_battery_preheating` y `xpeng.stop_battery_preheating` de forma predeterminada. Cada acción requiere confirmación. Los botones se desactivan si el estado es desconocido o no está disponible. Deja el precalentamiento desactivado si el vehículo no lo admite.
 
-En HACS o Marketplace, abre el menú de la tarjeta, elige **Volver a descargar**, muestra las versiones beta si hace falta y selecciona `v1.8.0-beta.6`. Recarga el panel tras descargarla.
+En HACS o Marketplace, abre el menú de la tarjeta, elige **Volver a descargar**, muestra las versiones beta si hace falta y selecciona `v1.8.0-beta.7`. Recarga el panel tras descargarla.
 
 ## Instalar desde el Marketplace
 

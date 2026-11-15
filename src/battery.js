@@ -25,6 +25,8 @@ export function batterySources(block,blocks,states){
   const primary=powerBlock?.fields?.find(field=>field.display==='bar')??powerBlock?.fields?.[0];
   return {
     powerBlock,limitsBlock,
+    chargerLimit:options.charger_limit_entity||byUnit(limitsBlock?.fields,'%'),
+    energyLimit:options.energy_limit_entity||byUnit(limitsBlock?.fields,'kWh'),
     level:options.level_entity||byLabel('Batería')||byUnit(fields,'%'),
     range:options.range_entity||byLabel('Autonomía')||byUnit(fields,'km')||byUnit(fields,'mi'),
     connector:options.connector_entity||start?.connector_entity,
@@ -66,6 +68,21 @@ export function batteryVehicleLimitField(block){
     read_only:!['number','input_number'].includes(entity.split('.')[0])};
 }
 
+export function batteryChargeSummary(sources,vehicleEntity,states){
+  const activeLimits=[
+    [vehicleEntity,'Límite del coche'],
+    [sources.chargerLimit,'Límite del cargador']
+  ].filter(([entity])=>entity).map(([entity,label])=>[number(states[entity]?.state),label]);
+  let target,source;
+  if(activeLimits.length&&activeLimits.every(([value])=>value!==null&&value>=0&&value<=100)){
+    target=Math.min(...activeLimits.map(([value])=>value));
+    const matching=activeLimits.filter(([value])=>value===target);
+    source=matching.length>1?'Límite del coche y del cargador':matching[0][1];
+  }
+  const amount=number(states[sources.energyLimit]?.state);
+  return {target,source,energy:amount!==null&&amount>=0?amount:undefined};
+}
+
 export function renderBattery(card,block,sources,renderSection){
   const t=label=>escape(card.t(label)),state=card.state;
   const reading=(id,decimals)=>escape(stateText(state[id],{decimals},card.lang));
@@ -87,6 +104,11 @@ export function renderBattery(card,block,sources,renderSection){
   const charging=power!==null?power>0:state[sources.charging]?.state===sources.chargingValue;
   const status=options.show_preheating===true?state[options.preheat_state_entity]?.state:undefined;
   const heatLabel=({on:'Activo',off:'Apagado',unknown:'Desconocido',unavailable:'No disponible'})[status]??'Sin datos';
+  const summary=batteryChargeSummary(sources,vehicleLimit?.entity,state);
+  const reason=connected&&power===0&&!charging?state[options.wait_reason_entity]?.state?.trim():undefined;
+  const wait=connected&&power===0&&!charging
+    ? reason&&!['unknown','unavailable'].includes(reason)?reason:card.t('En espera')
+    : undefined;
   const liveLabel=charging?'Cargando':connected?'Conectado':connector==='off'?'Desconectado':'Sin datos';
   const pct=level===null?'—':format(level,0,card.lang)+' %';
   const intensityButton=(dir,icon,label)=>`<button type="button" data-battery-intensity="${dir}" aria-label="${t(label)}" ${batteryIntensityAction(sources.intensity,state[sources.intensity],dir)?'':'disabled'}><ha-icon icon="mdi:${icon}"></ha-icon></button>`;
@@ -105,6 +127,11 @@ export function renderBattery(card,block,sources,renderSection){
       </button>
       ${options.show_preheating===true?`<div class="battery-preheat ${status==='on'?'battery-heat-active':''}"><div><ha-icon icon="mdi:thermometer"></ha-icon><strong>${t('Precalentamiento')}</strong><span role="status">${t(heatLabel)}</span></div><div class="battery-preheat-buttons">${heatButton('start','heat-wave','Iniciar')}${heatButton('stop','stop-circle-outline','Detener')}</div></div>`:''}
     </div>
+    ${summary.target!==undefined||summary.energy!==undefined||wait?`<div class="battery-summary">
+      ${summary.target!==undefined?`<span>${t('Objetivo de carga')} <strong>${format(summary.target,Number.isInteger(summary.target)?0:1,card.lang)} %</strong> · ${t(summary.source)}</span>`:''}
+      ${summary.energy!==undefined?`<span>${t('Tope de energía')} <strong>${format(summary.energy,Number.isInteger(summary.energy)?0:2,card.lang)} kWh</strong></span>`:''}
+      ${wait?`<span><ha-icon icon="mdi:timer-outline"></ha-icon>${escape(wait)}</span>`:''}
+    </div>`:''}
     ${block.fields?.length?card.controls(block,true):''}
     ${sources.intensity||limitControls?`<div class="battery-adjustments">
       ${limitControls?`<div class="battery-limits">${renderSection(limitControls)}</div>`:''}
@@ -126,6 +153,10 @@ export const batteryStyles=`
 .battery-metrics small{display:block;color:var(--secondary-text-color)}
 .battery-connector,.battery-preheat [role=status]{border:1px solid var(--divider-color);border-radius:20px;padding:3px 8px}
 .battery-connected{color:var(--success-color,#258640)}
+.battery-summary{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--secondary-text-color);font-size:12px}
+.battery-summary>span{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px}
+.battery-summary strong{color:var(--primary-text-color)}
+.battery-summary ha-icon{--mdc-icon-size:16px}
 .battery-top{display:grid;align-items:center;gap:8px}
 .battery-illustration{display:block;width:100%;position:relative;isolation:isolate;overflow:hidden;border-radius:10px;background:#0e1e2a}
 .battery-illustration img{display:block;width:100%;height:auto}

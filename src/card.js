@@ -2,7 +2,7 @@ import {plainFieldStyles} from './styles.js';
 import {vehicleStatus,vehicleStatusStyles} from './vehicle-status.js';
 import {vehicleRain,rainStyles} from './rain.js';
 import {language,translate,standardLabel} from './i18n.js';
-import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
+import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,isStandaloneBattery,chargingModeTap,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
 import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles,chargingSourceStyles} from './styles.js';
 import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,batteryVehicleLimitField,renderBattery,batteryStyles} from './battery.js';
 import './editor.js';
@@ -184,7 +184,9 @@ export class VEBuilderCard extends HTMLElement {
   }
   controls(block,modes=block.type==='modes'){
     return `<div class="${modes?'mode-grid compact-modes':'action-grid compact-actions'}">${(block.fields??[]).map(f=>{
-      const state=this.state[f.entity],value=state?.state,lock=f.entity?.startsWith('lock.'),active=lock?value==='locked':value==='on',tap=f.tap??'toggle',disabled=!actionFor(f.entity,state,tap);
+      const state=this.state[f.entity],value=state?.state,lock=f.entity?.startsWith('lock.'),active=modes&&f.active_value?value===f.active_value:lock?value==='locked':value==='on';
+      const tap=modes?(f.tap==='more-info'?f.tap:chargingModeTap(f.entity)):f.tap??'toggle';
+      const disabled=tap==='more-info'?modes?!state:true:!actionFor(f.entity,state,tap);
       const label=this.label(f.name)||state?.attributes?.friendly_name||f.entity;
       const status=!state||['unknown','unavailable'].includes(value)?this.t('Sin datos'):lock?this.t(active?'Bloqueado':'Desbloqueado'):this.t(active?'Activo':modes?'Inactivo':'Apagado');
       return `<button class="${modes?'mode-button':'action-button'} ${active?(modes?'mode-active':'selected'):''} size-${escape(f.size??'small')}" data-field="${escape(f.id)}" aria-pressed="${active}" ${disabled?'disabled':''}><ha-icon icon="${escape(f.icon||state?.attributes?.icon||'mdi:flash')}"></ha-icon><span>${escape(label)}</span><small>${escape(status)}</small></button>`;
@@ -235,7 +237,7 @@ export class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.feedback:empty{display:none}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.feedback:empty{display:none}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${!isStandaloneBattery(blocks)&&this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
@@ -281,7 +283,8 @@ export class VEBuilderCard extends HTMLElement {
   async activate(field){
     if(!field||this.pending)return;
     const block=this.config.blocks.find(b=>b.fields?.some(f=>f.id===field.id));
-    const tap=field.tap??(['actions','modes','battery'].includes(block?.type)?'toggle':'more-info');
+    const modes=block?.type==='modes'||block?.type==='battery';
+    const tap=modes?(field.tap==='more-info'?field.tap:chargingModeTap(field.entity)):field.tap??(block?.type==='actions'?'toggle':'more-info');
     if(tap==='more-info'){this.moreInfo(field.entity);return;}
     const action=actionFor(field.entity,this.state[field.entity],tap);if(!action)return;
     if((field.confirm??field.entity.startsWith('lock.'))&&!(await this.confirmAction(this.label(field.name)||field.entity)))return;

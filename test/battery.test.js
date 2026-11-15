@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {exportCard,inspectCardImport} from '../src/transfer.js';
-import {normalize} from '../src/core.js';
-import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,batteryVehicleLimitField,renderBattery} from '../src/battery.js';
+import {normalize,chargingModeTap,isStandaloneBattery} from '../src/core.js';
+import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,batteryVehicleLimitField,batteryChargeSummary,renderBattery} from '../src/battery.js';
 
 test('legacy mode IDs and YAML survive while a single power and limits block can be reused',()=>{
   const config=normalize({blocks:[
@@ -113,4 +113,21 @@ test('battery figures link to their entities, round to integers and keep power e
   assert.equal(field.decimals,2);
   state['sensor.power'].state='0';
   assert.doesNotMatch(renderBattery(card,{id:'battery'},{power:'sensor.power'}),/class="battery-flow"/);
+});
+
+test('charge target uses valid percentage limits and keeps the energy cap separate',()=>{
+  const sources={chargerLimit:'number.charger',energyLimit:'number.energy'};
+  const states={'number.charger':{state:'80'},'number.vehicle':{state:'100'},'number.energy':{state:'12.5'}};
+  assert.deepEqual(batteryChargeSummary(sources,'number.vehicle',states),{target:80,source:'Límite del cargador',energy:12.5});
+  states['number.vehicle'].state='70';
+  assert.equal(batteryChargeSummary(sources,'number.vehicle',states).source,'Límite del coche');
+  states['number.vehicle'].state='unknown';
+  assert.equal(batteryChargeSummary(sources,'number.vehicle',states).target,undefined);
+});
+test('configurable mode entities and standalone Battery layouts',()=>{
+  assert.equal(chargingModeTap('input_boolean.solar'),'toggle');
+  assert.equal(chargingModeTap('button.custom'),'press');
+  assert.equal(chargingModeTap('sensor.status'),'more-info');
+  assert.equal(isStandaloneBattery([{type:'battery'},{type:'power'},{type:'limits'}]),true);
+  assert.equal(isStandaloneBattery([{type:'start'},{type:'battery'}]),false);
 });
