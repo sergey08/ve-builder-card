@@ -1,5 +1,10 @@
 # VE Builder Card 1.7.5
 
+## 1.8.0-beta.6
+
+- EN: Removed the persistent order-sent message. Failed commands still display an error.
+- ES: Se eliminó el aviso persistente «Orden enviada». Los fallos de envío siguen mostrando un error.
+
 ## 1.8.0-beta.5
 
 - EN: Battery range and charging power use whole numbers. Tap range, power or the chassis to open the corresponding entity. The pack shows moving light bands during charging, and the power block stays visible.

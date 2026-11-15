@@ -2064,7 +2064,7 @@ for(const [key,labels] of Object.entries({
 EN['Máximo en el coche']='Vehicle charge limit';
 for(const [code,label] of Object.entries({pt:'Limite de carga do veículo',fr:'Limite de charge du véhicule',de:'Ladelimit des Fahrzeugs',it:'Limite di carica del veicolo',nl:'Laadlimiet van voertuig'}))EXTRA[code]['Máximo en el coche']=label;
 
-const VERSION = '1.8.0-beta.5';
+const VERSION = '1.8.0-beta.6';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -3236,7 +3236,7 @@ class VEBuilderCard extends HTMLElement {
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.feedback:empty{display:none}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
@@ -3272,7 +3272,7 @@ class VEBuilderCard extends HTMLElement {
       if(!action)return;
       if(action.target)await this._hass.callService(action.domain,action.service,{},action.target);
       else await this._hass.callService(action.domain,action.service,action.data);
-      this.feedback=this.t('Orden enviada. El estado se actualizará al recibir la respuesta.');
+      this.feedback='';
     }catch{
       this.feedback=this.t('No se pudo enviar la orden.');
     }finally{
@@ -3286,7 +3286,7 @@ class VEBuilderCard extends HTMLElement {
     if(tap==='more-info'){this.moreInfo(field.entity);return;}
     const action=actionFor(field.entity,this.state[field.entity],tap);if(!action)return;
     if((field.confirm??field.entity.startsWith('lock.'))&&!(await this.confirmAction(this.label(field.name)||field.entity)))return;
-    this.pending=true;try{await this._hass.callService(action.domain,action.service,action.data);this.feedback=this.t('Orden enviada. El estado se actualizará al recibir la respuesta.');}catch{this.feedback=this.t('No se pudo enviar la orden.');}finally{this.pending=false;this._dirty=true;this.render();}
+    this.pending=true;try{await this._hass.callService(action.domain,action.service,action.data);this.feedback='';}catch{this.feedback=this.t('No se pudo enviar la orden.');}finally{this.pending=false;this._dirty=true;this.render();}
   }
   confirmAction(name){return new Promise(resolve=>{const dialog=document.createElement('dialog');dialog.innerHTML=`<p>${this.t('¿Ejecutar')} ${escape(name)}?</p><button data-yes>${this.t('Confirmar')}</button><button data-no>${this.t('Cancelar')}</button>`;this.shadowRoot.append(dialog);let done=false;const finish=value=>{if(done)return;done=true;dialog.remove();resolve(value);};dialog.querySelector('[data-yes]').onclick=()=>finish(true);dialog.querySelector('[data-no]').onclick=()=>finish(false);dialog.oncancel=()=>finish(false);dialog.showModal();});}
   async syncMaps(){
