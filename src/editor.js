@@ -249,6 +249,46 @@ export class VEBuilderEditor extends HTMLElement {
     const form=this.form(panel,options,schema,update);form.computeLabel=f=>this.t(labels[f.name]);
     for(const message of ['Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.','Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.','La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.']){const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t(message);panel.append(hint);}
   }
+  batteryEditor(panel,block){
+    const group=this.panel(panel,block.id+'-battery','Batería');
+    const options=block.battery??{};
+    const links=kind=>[
+      {value:'',label:'Automático'},
+      {value:'none',label:'Mantener separado'},
+      ...this.config.blocks.filter(item=>item.type===kind).map(item=>({value:item.id,label:item.title||TYPES[item.type]}))
+    ];
+    const choice=kind=>({name:kind+'_block',selector:{select:{options:links(kind)}}});
+    const schema=[
+      ...(block.type==='modes'?[{name:'enabled',selector:{select:{options:[
+        {value:'auto',label:'Automático'},{value:'yes',label:'Activado'},{value:'no',label:'Desactivado'}
+      ]}}}]:[]),
+      entity('level_entity','sensor'),entity('range_entity','sensor'),
+      entity('connector_entity',['binary_sensor','input_boolean']),entity('charging_entity'),text('charging_value'),
+      entity('power_entity','sensor'),entity('intensity_entity',['number','input_number','sensor']),
+      choice('limits'),choice('power'),bool('show_preheating'),
+      entity('preheat_state_entity',['binary_sensor','input_boolean']),
+      entity('preheat_target_entity'),text('start_service'),text('stop_service')
+    ];
+    const labels={
+      enabled:'Mostrar como Batería',level_entity:'Batería del vehículo',range_entity:'Autonomía',
+      connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',
+      power_entity:'Potencia de carga',intensity_entity:'Intensidad configurada',limits_block:'Límites de carga',power_block:'Bloque de potencia',
+      show_preheating:'Mostrar precalentamiento',preheat_state_entity:'Sensor de precalentamiento',
+      preheat_target_entity:'Entidad objetivo del vehículo',start_service:'Servicio de inicio',stop_service:'Servicio de parada'
+    };
+    const form=this.form(group,{
+      start_service:'xpeng.start_battery_preheating',stop_service:'xpeng.stop_battery_preheating',
+      ...options,enabled:options.enabled===true?'yes':options.enabled===false?'no':'auto'
+    },schema,patch=>{
+      if('enabled' in patch){
+        patch.enabled=patch.enabled==='yes'?true:patch.enabled==='no'?false:undefined;
+      }
+      block.battery={...block.battery,...patch};
+      if(block.battery.enabled===undefined)delete block.battery.enabled;
+      this.emit();
+    });
+    form.computeLabel=field=>this.t(labels[field.name]);
+  }
   blockEditor(panel,block){
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=standardLabel(block.title,this.lang,this.config.translate_standard_labels!==false)||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
@@ -263,7 +303,10 @@ export class VEBuilderEditor extends HTMLElement {
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);
       const fields=this.panel(panel,block.id+'-fields','Información sobre el vehículo',true);this.fieldList(fields,block.fields??(block.fields=[]),block.id);
-    }else if(['fields','power','modes','actions','limits'].includes(block.type)){
+    }else if(['modes','battery'].includes(block.type)){
+      this.fieldList(panel,block.fields??(block.fields=[]),block.id,'mode');
+      this.batteryEditor(panel,block);
+    }else if(['fields','power','actions','limits'].includes(block.type)){
       this.fieldList(panel,block.fields??(block.fields=[]),block.id,({power:'power',modes:'mode',actions:'action',limits:'limit'})[block.type]??'info');
     }else if(block.type==='map'){
       this.form(panel,block,[entity('entity',['person','device_tracker']),numeric('zoom',1,20),numeric('hours',0,168)],patch=>{Object.assign(block,patch);this.emit();});

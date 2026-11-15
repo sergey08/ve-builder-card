@@ -1,0 +1,62 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {normalize} from '../src/core.js';
+import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,renderBattery} from '../src/battery.js';
+
+test('legacy mode IDs and YAML survive while a single power and limits block can be reused',()=>{
+  const config=normalize({blocks:[
+    {id:'start',type:'start',connector_entity:'binary_sensor.plug',fields:[{id:'soc',name:'Battery',entity:'sensor.soc'}]},
+    {id:'modes',type:'modes',title:'Charging modes',fields:[{id:'solar',entity:'input_boolean.solar'}]},
+    {id:'power',type:'power',fields:[{id:'watts',entity:'sensor.watts',unit:'W'},{id:'amps',entity:'number.amps',unit:'A'}]},
+    {id:'limits',type:'limits'}
+  ]});
+  const block=config.blocks[1];
+  assert.equal(isBatteryBlock(block),true);
+  assert.equal(isBatteryBlock({type:'modes',title:'Lights'}),false);
+  assert.equal(isBatteryBlock({...block,battery:{enabled:false}}),false);
+  assert.deepEqual(block.fields,[{id:'solar',entity:'input_boolean.solar'}]);
+  const sources=batterySources(block,config.blocks,{});
+  assert.deepEqual([sources.level,sources.power,sources.connector,sources.intensity,sources.limitsBlock.id],
+    ['sensor.soc','sensor.watts','binary_sensor.plug','number.amps','limits']);
+  block.battery={limits_block:'none'};
+  assert.equal(batterySources(block,config.blocks,{}).limitsBlock,undefined);
+});
+
+test('XPengTK only enables the appropriate available command and sends vehicle_entity_id',()=>{
+  const block={battery:{show_preheating:true,preheat_state_entity:'binary_sensor.heat',preheat_target_entity:'sensor.range'}};
+  const hass={states:{'binary_sensor.heat':{state:'off'}},services:{xpeng:{start_battery_preheating:{},stop_battery_preheating:{}}}};
+  assert.deepEqual(batteryPreheatAction(block,hass,'start'),
+    {domain:'xpeng',service:'start_battery_preheating',data:{vehicle_entity_id:'sensor.range'}});
+  assert.equal(batteryPreheatAction(block,hass,'stop'),undefined);
+  hass.states['binary_sensor.heat'].state='on';
+  assert.equal(batteryPreheatAction(block,hass,'stop').service,'stop_battery_preheating');
+  for(const state of ['unknown','unavailable']){
+    hass.states['binary_sensor.heat'].state=state;
+    assert.equal(batteryPreheatAction(block,hass,'start'),undefined);
+    assert.equal(batteryPreheatAction(block,hass,'stop'),undefined);
+  }
+  block.battery.show_preheating=false;
+  assert.equal(batteryPreheatAction(block,hass,'start'),undefined);
+});
+
+test('intensity respects the number helper step and limits',()=>{
+  const state={state:'6',attributes:{min:6,max:32,step:0.1}};
+  assert.equal(batteryIntensityAction('number.amps',state,-1),undefined);
+  assert.equal(batteryIntensityAction('number.amps',state,1).data.value,6.1);
+  assert.equal(batteryIntensityAction('sensor.amps',state,1),undefined);
+});
+
+test('illustration embeds its asset, clips the level and signals live charging and heat',()=>{
+  const state={'sensor.soc':{state:'46'},'sensor.power':{state:'1000'},'binary_sensor.heat':{state:'on'}};
+  const card={state,_hass:{states:state},lang:'es',t:value=>value};
+  const block={battery:{show_preheating:true,preheat_state_entity:'binary_sensor.heat'}};
+  const markup=renderBattery(card,block,{level:'sensor.soc',power:'sensor.power'});
+  assert.match(markup,/src="data:image\/jpeg;base64,/);
+  assert.match(markup,/width:46%/);
+  assert.match(markup,/battery-charging battery-heating/);
+  assert.match(markup,/46 %/);
+  state['sensor.soc'].state='unknown';
+  const unknown=renderBattery(card,block,{level:'sensor.soc',power:'sensor.power'});
+  assert.match(unknown,/width:0%/);
+  assert.doesNotMatch(unknown,/46 %/);
+});

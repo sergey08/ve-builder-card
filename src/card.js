@@ -4,6 +4,7 @@ import {vehicleRain,rainStyles} from './rain.js';
 import {language,translate,standardLabel} from './i18n.js';
 import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
 import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles,chargingSourceStyles} from './styles.js';
+import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,renderBattery,batteryStyles} from './battery.js';
 import './editor.js';
 
 export class VEBuilderCard extends HTMLElement {
@@ -181,8 +182,7 @@ export class VEBuilderCard extends HTMLElement {
     const prices=`<div class="expense-prices">${(block.prices??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong><span>${escape(this.label(f.name)||this.t('Precio'))}</span>${f.show_date===false?'':`<em>${this.t('Lectura')}: ${escape(this.date(f.entity))}</em>`}</button>`).join('')}</div>`;
     return this.chargingSources(block.charging_sources)+prices+(block.groups??[]).map(g=>`<div class="expense-group ${['solar','diesel'].includes(g.style)?g.style:'cost'}" style="margin:10px 16px"><div class="expense-label"><ha-icon icon="${escape(g.icon||'mdi:cash')}"></ha-icon>${escape(this.label(g.name)||'Grupo')}</div><div class="expense-values" style="grid-template-columns:repeat(${Math.max(1,Math.min(4,g.fields?.length??0))},minmax(0,1fr))">${(g.fields??[]).map(f=>`<button class="${this.severity(f)}" data-field="${escape(f.id)}"><span>${escape(this.label(f.name)||this.t('Importe'))}</span><strong>${escape(stateText(this.state[f.entity],f,this.lang))}</strong></button>`).join('')}</div></div>`).join('');
   }
-  controls(block){
-    const modes=block.type==='modes';
+  controls(block,modes=block.type==='modes'){
     return `<div class="${modes?'mode-grid compact-modes':'action-grid compact-actions'}">${(block.fields??[]).map(f=>{
       const state=this.state[f.entity],value=state?.state,lock=f.entity?.startsWith('lock.'),active=lock?value==='locked':value==='on',tap=f.tap??'toggle',disabled=!actionFor(f.entity,state,tap);
       const label=this.label(f.name)||state?.attributes?.friendly_name||f.entity;
@@ -212,21 +212,39 @@ export class VEBuilderCard extends HTMLElement {
     if(!this._hass||!this.config)return;
     // HA state objects are immutable: compare only entities used by this card.
     // Avoid serialising every attribute and repainting the sample on unrelated updates.
-    if(this._editingSlider)return;
+    if(this._editingSlider||this._batteryConfirm)return;
     const states=[...this._entities].map(id=>this.state[id]);
+    if(this.config.blocks.some(isBatteryBlock))states.push(this._hass.services);
     const unchanged=!this._dirty&&this._renderLanguage===this.lang&&this._renderUser===this._hass.user&&this._renderStates?.length===states.length&&states.every((state,i)=>state===this._renderStates[i]);
     if(unchanged){if(this._mapHosts?.length)this.syncMaps();return;}
     this._dirty=false;this._renderStates=states;this._renderLanguage=this.lang;this._renderUser=this._hass.user;
     const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].vehicle_status?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
-    const body=(this.config.blocks??[]).map(block=>{let content='';switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
-      const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${this.label(block.title)?`<header>${escape(this.label(block.title))}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${this.label(block.note)?`<footer>${escape(this.label(block.note))}</footer>`:''}</section>`;}).join('');
+        const sources=new Map(blocks.filter(isBatteryBlock).map(block=>[block,batterySources(block,blocks,this.state)]));
+    const embedded=new Set();
+    for(const source of sources.values()){
+      for(const kind of ['powerBlock','limitsBlock']){
+        if(!source[kind])continue;
+        if(embedded.has(source[kind]))delete source[kind];
+        else embedded.add(source[kind]);
+      }
+    }
+    const renderSection=block=>{let content='';if(sources.has(block)){content=renderBattery(this,block,sources.get(block),renderSection);}else switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
+      const title=sources.has(block)&&(!block.title||block.type==='modes'&&standardLabel(block.title,'es')==='Modos de carga')?this.t('Batería'):this.label(block.title);
+      const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${title?`<header>${escape(title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${this.label(block.note)?`<footer>${escape(this.label(block.note))}</footer>`:''}</section>`;};
+    const body=blocks.filter(block=>!embedded.has(block)).map(renderSection).join('');
+    const batteryOpen=new Set([...this.shadowRoot.querySelectorAll('[data-battery-details][open]')].map(el=>el.closest('[data-block]').dataset.block));
     const adviceOpen=new Set([...this.shadowRoot.querySelectorAll('[data-tyre-advice] details[open]')].map(el=>el.closest('[data-tyre-advice]').dataset.tyreAdvice));
     const alertsOpen=this.shadowRoot.querySelector?.('[data-alert-summary] details')?.open;
     const maps=new Map([...this.shadowRoot.querySelectorAll('[data-map]')].filter(h=>h.card).map(h=>[h.dataset.map,h]));
-    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
+    this.shadowRoot.innerHTML=`<style>${styles}${plainFieldStyles}${rainStyles}${vehicleStatusStyles}${compactStyles}${powerLayoutStyles}${vehicleMapStyles}${valueColorStyles}${recommendationStyles}${freshnessStyles}${alertSummaryStyles}${chargingSourceStyles}${batteryStyles}.empty{padding:8px 16px;color:var(--secondary-text-color)}.feedback{padding:8px 16px;font-size:12px}.vehicle-badge:disabled{opacity:.5;cursor:default}section+section{margin-top:10px}.card-title{font-size:20px}button{min-height:44px}.car .date{font-size:8px}</style><ha-card>${this.label(this.config.title)?`<header class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${escape(this.label(this.config.title))}</span>${this.otaHeader(this.config.blocks?.find(b=>b.type==='start'))}</header>`:''}<div data-alert-summary>${this.alertSummary()}</div>${body||`<p class="empty">${this.t('Abre Editar y añade tu primer bloque.')}</p>`}<div role="status" class="feedback">${escape(this.feedback??'')}</div></ha-card>`;
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
+    for(const el of this.shadowRoot.querySelectorAll('[data-battery-details]'))el.open=batteryOpen.has(el.closest('[data-block]').dataset.block);
+    for(const el of this.shadowRoot.querySelectorAll('[data-battery-heat],[data-battery-intensity]')){
+      const block=blocks.find(item=>item.id===el.closest('[data-block]').dataset.block);
+      el.onclick=()=>this.runBatteryControl(block,el.dataset,sources.get(block));
+    }
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
     const statuses=this.config.blocks.flatMap(b=>b.vehicle_status??[]);
@@ -236,10 +254,36 @@ export class VEBuilderCard extends HTMLElement {
     this._mapHosts=[...this.shadowRoot.querySelectorAll('[data-map]')];
     if(this._mapHosts.length)this.syncMaps();
   }
+  async runBatteryControl(block,dataset,sources){
+    if(this.pending||!block||!sources)return;
+    const {batteryHeat,batteryIntensity}=dataset;
+    const getAction=()=>batteryHeat
+      ? batteryPreheatAction(block,this._hass,batteryHeat)
+      : batteryIntensityAction(sources.intensity,this.state[sources.intensity],Number(batteryIntensity));
+    if(!getAction())return;
+    this.pending=true;
+    try{
+      if(batteryHeat){
+        this._batteryConfirm=true;
+        const label=batteryHeat==='start'?'Iniciar':'Detener';
+        if(!(await this.confirmAction(this.t(label)+' · '+this.t('Precalentamiento'))))return;
+        if(!this.isConnected||!this.config.blocks.includes(block))return;
+      }
+      const action=getAction();
+      if(!action)return;
+      if(action.target)await this._hass.callService(action.domain,action.service,{},action.target);
+      else await this._hass.callService(action.domain,action.service,action.data);
+      this.feedback=this.t('Orden enviada. El estado se actualizará al recibir la respuesta.');
+    }catch{
+      this.feedback=this.t('No se pudo enviar la orden.');
+    }finally{
+      this.pending=false;this._batteryConfirm=false;this._dirty=true;this.render();
+    }
+  }
   async activate(field){
     if(!field||this.pending)return;
     const block=this.config.blocks.find(b=>b.fields?.some(f=>f.id===field.id));
-    const tap=field.tap??(['actions','modes'].includes(block?.type)?'toggle':'more-info');
+    const tap=field.tap??(['actions','modes','battery'].includes(block?.type)?'toggle':'more-info');
     if(tap==='more-info'){this.moreInfo(field.entity);return;}
     const action=actionFor(field.entity,this.state[field.entity],tap);if(!action)return;
     if((field.confirm??field.entity.startsWith('lock.'))&&!(await this.confirmAction(this.label(field.name)||field.entity)))return;

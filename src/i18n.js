@@ -1916,3 +1916,145 @@ for(const [key,labels] of Object.entries({
   EN[key]=labels[0];
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=labels[index+1]);
 }
+
+for(const [key,labels] of Object.entries({
+  "Nivel de batería y controles de carga.": [
+    "Battery level and charging controls.",
+    "Nível da bateria e controlos de carregamento.",
+    "Niveau de batterie et commandes de recharge.",
+    "Akkustand und Ladesteuerung.",
+    "Livello batteria e comandi di ricarica.",
+    "Accuniveau en laadbediening."
+  ],
+  "Precalentamiento": [
+    "Preheating",
+    "Pré-aquecimento",
+    "Préchauffage",
+    "Vorwärmen",
+    "Preriscaldamento",
+    "Voorverwarming"
+  ],
+  "Mostrar precalentamiento": [
+    "Show preheating",
+    "Mostrar pré-aquecimento",
+    "Afficher le préchauffage",
+    "Vorwärmen anzeigen",
+    "Mostra preriscaldamento",
+    "Voorverwarming tonen"
+  ],
+  "Sensor de precalentamiento": [
+    "Preheating sensor",
+    "Sensor de pré-aquecimento",
+    "Capteur de préchauffage",
+    "Vorwärmsensor",
+    "Sensore preriscaldamento",
+    "Voorverwarmingssensor"
+  ],
+  "Entidad objetivo del vehículo": [
+    "Vehicle target entity",
+    "Entidade alvo do veículo",
+    "Entité cible du véhicule",
+    "Zielentität des Fahrzeugs",
+    "Entità di destinazione del veicolo",
+    "Doelentiteit van voertuig"
+  ],
+  "Servicio de inicio": [
+    "Start service",
+    "Serviço de início",
+    "Service de démarrage",
+    "Startdienst",
+    "Servizio di avvio",
+    "Startservice"
+  ],
+  "Servicio de parada": [
+    "Stop service",
+    "Serviço de paragem",
+    "Service d’arrêt",
+    "Stoppdienst",
+    "Servizio di arresto",
+    "Stopservice"
+  ],
+  "Iniciar": [
+    "Start",
+    "Iniciar",
+    "Démarrer",
+    "Starten",
+    "Avvia",
+    "Starten"
+  ],
+  "Detener": [
+    "Stop",
+    "Parar",
+    "Arrêter",
+    "Stoppen",
+    "Arresta",
+    "Stoppen"
+  ],
+  "Desconocido": [
+    "Unknown",
+    "Desconhecido",
+    "Inconnu",
+    "Unbekannt",
+    "Sconosciuto",
+    "Onbekend"
+  ],
+  "No disponible": [
+    "Unavailable",
+    "Indisponível",
+    "Indisponible",
+    "Nicht verfügbar",
+    "Non disponibile",
+    "Niet beschikbaar"
+  ],
+  "Límites y potencia": [
+    "Limits and power",
+    "Limites e potência",
+    "Limites et puissance",
+    "Grenzen und Leistung",
+    "Limiti e potenza",
+    "Limieten en vermogen"
+  ],
+  "Mostrar como Batería": [
+    "Show as Battery",
+    "Mostrar como Bateria",
+    "Afficher comme Batterie",
+    "Als Batterie anzeigen",
+    "Mostra come Batteria",
+    "Weergave als Accu"
+  ],
+  "Mantener separado": [
+    "Keep separate",
+    "Manter separado",
+    "Garder séparé",
+    "Getrennt lassen",
+    "Mantieni separato",
+    "Gescheiden houden"
+  ],
+  "Bloque de potencia": [
+    "Power block",
+    "Bloco de potência",
+    "Bloc de puissance",
+    "Leistungsblock",
+    "Blocco potenza",
+    "Vermogensblok"
+  ],
+  "Reducir intensidad": [
+    "Decrease current",
+    "Reduzir corrente",
+    "Réduire le courant",
+    "Strom reduzieren",
+    "Riduci corrente",
+    "Stroom verlagen"
+  ],
+  "Aumentar intensidad": [
+    "Increase current",
+    "Aumentar corrente",
+    "Augmenter le courant",
+    "Strom erhöhen",
+    "Aumenta corrente",
+    "Stroom verhogen"
+  ]
+})){
+  EN[key]??=labels[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]??=labels[index+1]);
+}

@@ -1,5 +1,10 @@
 # VE Builder Card 1.7.5
 
+## 1.8.0-beta.1
+
+- EN: Battery section with dynamic 3D chassis, live charging data and compact controls. Compatible charging-mode sections retain their configured entities. Optional confirmed XPengTK battery preheating.
+- ES: Sección Batería con chasis 3D dinámico, datos de carga en directo y controles compactos. Los modos de carga compatibles conservan sus entidades. Precalentamiento XPengTK opcional y con confirmación.
+
 ## English
 
 - Add **Charging sources** to Costs and savings with live power (W/kW) and daily charged energy (kWh/Wh), including visual editor selectors for sensors and input_number helpers.
