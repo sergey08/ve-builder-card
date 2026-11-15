@@ -8,7 +8,7 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
-## Stable 1.7.5 — charging sources in Costs and savings
+## Stable 1.8.0 — Battery and charging controls
 
 The **Charging sources** panel supports both live charging power (W/kW) and today's accumulated energy (kWh/Wh). In the visual editor, choose **Automatic**, **Power (W)**, or **Daily energy (kWh)** and assign solar, grid, and total entities (`sensor.*` and `input_number.*` supported).
 
@@ -16,7 +16,7 @@ In daily-energy mode, the **total charged appears above a full-width stacked bar
 
 For a worked example, see [the Spanish configuration guide](README.es.md). The final appearance was confirmed in Home Assistant on beta.5 before this stable release.
 
-### Battery beta (v1.8.0-beta.7)
+### Battery
 
 Battery displays the lower configured percentage limit and its source, with the energy cap shown separately. A text entity can supply the reason for waiting. Add, remove or reorder charging modes and link their entities in the editor. The standalone Battery card omits the extra title.
 
@@ -30,7 +30,7 @@ In the Battery settings, choose the sensors manually or reuse the overview readi
 
 For XPengTK 0.6.49, enable **Show preheating** and select the status sensor and the vehicle target entity. The configurable services default to `xpeng.start_battery_preheating` and `xpeng.stop_battery_preheating`. Each action requires confirmation. If the state is unknown or unavailable, the controls are disabled. Leave preheating disabled on unsupported vehicles.
 
-In HACS or Marketplace, open the card’s menu, choose **Redownload**, enable beta versions if needed and select `v1.8.0-beta.7`. Reload the dashboard after downloading.
+In HACS or Marketplace, update VE Builder Card to `v1.8.0` and reload the dashboard. If you are using a beta, choose the stable release under **Redownload**.
 
 ## Install from the Marketplace
 
@@ -62,7 +62,7 @@ The card and visual editor support **7 languages**:
 
 Choose the language separately for each card using the visual editor dropdown. **Automatic** follows Home Assistant. Standard labels follow the selected language; custom titles, names and text remain as entered.
 
-**Stable release: 1.7.5.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
+**Stable release: 1.8.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.0).
 
 ## Standard labels and card language
 
@@ -199,7 +199,7 @@ Select **Copy section** at the end of a block. In another card on the same page 
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-### Beta de Batería (v1.8.0-beta.7)
+### Batería
 
 Batería muestra el menor límite porcentual configurado y su origen, con el tope de energía aparte. Una entidad de texto puede indicar el motivo de espera. El editor permite añadir, eliminar y ordenar modos y vincular sus entidades. La tarjeta independiente Batería omite el título superior.
 
@@ -213,7 +213,7 @@ En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar l
 
 Para XPengTK 0.6.49, activa **Mostrar precalentamiento** y selecciona el sensor de estado y la entidad objetivo del vehículo. Los servicios configurables son `xpeng.start_battery_preheating` y `xpeng.stop_battery_preheating` de forma predeterminada. Cada acción requiere confirmación. Los botones se desactivan si el estado es desconocido o no está disponible. Deja el precalentamiento desactivado si el vehículo no lo admite.
 
-En HACS o Marketplace, abre el menú de la tarjeta, elige **Volver a descargar**, muestra las versiones beta si hace falta y selecciona `v1.8.0-beta.7`. Recarga el panel tras descargarla.
+En HACS o Marketplace, actualiza VE Builder Card a `v1.8.0` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
 
 ## Instalar desde el Marketplace
 
@@ -245,7 +245,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.7.5.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.7.5).
+**Versión estable: 1.8.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.0).
 
 ## Nombres estándar e idioma de la tarjeta
 
