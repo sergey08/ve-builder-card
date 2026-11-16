@@ -8,7 +8,7 @@
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
-## Stable 1.8.0 — Battery and charging controls
+## Stable 1.8.1 — Compact Battery card
 
 The **Charging sources** panel supports both live charging power (W/kW) and today's accumulated energy (kWh/Wh). In the visual editor, choose **Automatic**, **Power (W)**, or **Daily energy (kWh)** and assign solar, grid, and total entities (`sensor.*` and `input_number.*` supported).
 
@@ -36,7 +36,7 @@ In the Battery settings, choose the sensors manually or reuse the overview readi
 
 For XPengTK 0.6.49, enable **Show preheating** and select the status sensor and the vehicle target entity. The configurable services default to `xpeng.start_battery_preheating` and `xpeng.stop_battery_preheating`. Each action requires confirmation. If the state is unknown or unavailable, the controls are disabled. Leave preheating disabled on unsupported vehicles.
 
-In HACS or Marketplace, update VE Builder Card to `v1.8.0` and reload the dashboard. If you are using a beta, choose the stable release under **Redownload**.
+In HACS or Marketplace, update VE Builder Card to `v1.8.1` and reload the dashboard. If you are using a beta, choose the stable release under **Redownload**.
 
 ## Install from the Marketplace
 
@@ -68,7 +68,7 @@ The card and visual editor support **7 languages**:
 
 Choose the language separately for each card using the visual editor dropdown. **Automatic** follows Home Assistant. Standard labels follow the selected language; custom titles, names and text remain as entered.
 
-**Stable release: 1.8.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.0).
+**Stable release: 1.8.1.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.1).
 
 ## Standard labels and card language
 
@@ -225,7 +225,7 @@ En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar l
 
 Para XPengTK 0.6.49, activa **Mostrar precalentamiento** y selecciona el sensor de estado y la entidad objetivo del vehículo. Los servicios configurables son `xpeng.start_battery_preheating` y `xpeng.stop_battery_preheating` de forma predeterminada. Cada acción requiere confirmación. Los botones se desactivan si el estado es desconocido o no está disponible. Deja el precalentamiento desactivado si el vehículo no lo admite.
 
-En HACS o Marketplace, actualiza VE Builder Card a `v1.8.0` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
+En HACS o Marketplace, actualiza VE Builder Card a `v1.8.1` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
 
 ## Instalar desde el Marketplace
 
@@ -257,7 +257,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.8.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.0).
+**Versión estable: 1.8.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.1).
 
 ## Nombres estándar e idioma de la tarjeta
 
