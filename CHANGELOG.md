@@ -1,3 +1,8 @@
+# VE Builder Card 1.8.1-beta.2
+
+- EN: Battery uses slightly smaller range and power figures, a smaller preheating panel, and compact readings for current, surplus, energy charged today and time remaining below the main indicators.
+- ES: Batería reduce ligeramente las cifras de autonomía y potencia, compacta el precalentamiento y coloca la intensidad, los excedentes, lo cargado hoy y el tiempo restante bajo los indicadores principales.
+
 # VE Builder Card 1.8.1-beta.1
 
 - EN: Battery is more compact. Charge targets and limits are smaller, and power details use a compact grid without repeating the headline power reading. The configured current is displayed without adjustment buttons.

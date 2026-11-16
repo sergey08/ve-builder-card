@@ -101,6 +101,8 @@ test('battery figures link to their entities, round to integers and keep power e
   assert.match(markup,/>1,234 W</);
   assert.match(markup,/class="battery-flow"/);
   assert.match(markup,/data-field="energy"/);
+  assert.ok(markup.indexOf('data-field="energy"')<markup.indexOf('class="battery-illustration'));
+  assert.ok(markup.indexOf('class="battery-metrics"')<markup.indexOf('class="battery-power"'));
   assert.doesNotMatch(markup,/data-field="power"|data-battery-intensity|<details/);
   state['sensor.power'].state='0';
   assert.doesNotMatch(renderBattery(card,{id:'battery'},{power:'sensor.power'}),/class="battery-flow"/);

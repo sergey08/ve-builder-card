@@ -2069,7 +2069,7 @@ for(const [key,values] of Object.entries({"Objetivo de carga":["Charge target","
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
 }
 
-const VERSION = '1.8.1-beta.1';
+const VERSION = '1.8.1-beta.2';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2969,6 +2969,10 @@ function renderBattery(card,block,sources,renderSection){
       ${metric(sources.power,'lightning-bolt-outline','Potencia de carga')}
       <span class="battery-connector ${connected||charging?'battery-connected':''}"><ha-icon icon="mdi:power-plug-outline"></ha-icon>${t(liveLabel)}</span>
     </div>
+    ${sources.intensity||powerFields.length?`<div class="battery-power">
+      ${sources.intensity?`<span><small>${t('Intensidad configurada')}</small><strong>${reading(sources.intensity,0)}</strong></span>`:''}
+      ${powerFields.map(field=>`<button type="button" class="battery-power-reading" data-field="${escape(field.id)}"><small>${escape(card.label(field.name)||state[field.entity]?.attributes?.friendly_name||field.entity)}</small><strong>${escape(stateText(state[field.entity],field,card.lang))}</strong></button>`).join('')}
+    </div>`:''}
     <div class="battery-top">
       <button type="button" class="battery-illustration ${charging?'battery-charging':''} ${status==='on'?'battery-heating':''}" aria-label="${t('Batería')} · ${level===null?t('Sin datos'):escape(pct)}"${infoTarget(sources.level)}>
         <img src="${batteryChassis}" alt="" width="1040" height="472">
@@ -2986,10 +2990,6 @@ function renderBattery(card,block,sources,renderSection){
     ${limitControls?`<div class="battery-adjustments">
       ${limitControls?`<div class="battery-limits">${renderSection(limitControls)}</div>`:''}
     </div>`:''}
-    ${sources.intensity||powerFields.length?`<div class="battery-power">
-      ${sources.intensity?`<span><small>${t('Intensidad configurada')}</small><strong>${reading(sources.intensity,0)}</strong></span>`:''}
-      ${powerFields.map(field=>`<button type="button" class="battery-power-reading" data-field="${escape(field.id)}"><small>${escape(card.label(field.name)||state[field.entity]?.attributes?.friendly_name||field.entity)}</small><strong>${escape(stateText(state[field.entity],field,card.lang))}</strong></button>`).join('')}
-    </div>`:''}
   </div>`;
 }
 
@@ -2999,6 +2999,7 @@ const batteryStyles=`
 .battery-metrics>span,.battery-metric,.battery-preheat>div{display:flex;align-items:center;gap:6px}
 .battery-panel .battery-metric,.battery-panel .battery-illustration{padding:0;border:0;font:inherit}
 .battery-metric{background:transparent;color:inherit;text-align:start}
+.battery-panel .battery-metric strong{font-size:20px;line-height:1.15}
 .battery-panel :is(.battery-metric,.battery-illustration):disabled{opacity:1;cursor:default}
 .battery-panel :is(.battery-metric,.battery-illustration):focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
 .battery-metrics ha-icon,.battery-preheat ha-icon{--mdc-icon-size:19px}
@@ -3022,32 +3023,35 @@ const batteryStyles=`
 .battery-soc{position:absolute;inset:0;display:grid;place-items:center;color:white;font-size:clamp(26px,10cqw,52px);text-shadow:0 2px 8px black}
 @keyframes battery-charge-flow{from{background-position:0 0}to{background-position:100% 0}}
 @media(prefers-reduced-motion:reduce){.battery-glow{transition:none}.battery-flow{display:none}}
-.battery-preheat{display:grid;gap:5px;border:1px solid var(--divider-color);border-radius:10px;padding:7px}
+.battery-preheat{display:grid;gap:3px;border:1px solid var(--divider-color);border-radius:8px;padding:4px 6px}
+.battery-panel .battery-preheat strong{font-size:14px;line-height:1.2}
+.battery-preheat ha-icon{--mdc-icon-size:15px}
 .battery-preheat>div{flex-wrap:wrap}
 .battery-preheat>.battery-preheat-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
-.battery-preheat [role=status]{font-size:12px}
+.battery-preheat [role=status]{font-size:11px;line-height:1.2;padding:2px 6px}
 .battery-heat-active{border-color:var(--warning-color,#f79e21)}
 .battery-heat-active [role=status]{background:var(--warning-color,#f79e21);color:#231605;border-color:transparent}
 .battery-panel button[data-battery-heat]{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:44px;border:1px solid var(--divider-color);border-radius:8px;background:var(--secondary-background-color);color:var(--primary-text-color)}
+.battery-panel button[data-battery-heat]{min-height:34px;padding:2px 5px;font-size:12px}
 .battery-panel button:disabled{opacity:.48}
 .battery-panel .mode-grid{margin:0;padding:0;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
 .battery-panel .mode-button{margin:0}
 .battery-panel .mode-button small{display:none}
 .battery-panel .mode-button:disabled small{display:block}
-.battery-adjustments,.battery-power{border-top:1px solid var(--divider-color);padding-top:6px}
+.battery-adjustments{border-top:1px solid var(--divider-color);padding-top:6px}
 .battery-adjustments{display:grid;align-items:center;gap:8px}
 .battery-adjustments section>header{padding:2px 0;font-size:14px}
-.battery-power{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px}
-.battery-power>span,.battery-panel .battery-power-reading{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:4px 6px;text-align:start;overflow-wrap:anywhere}
-.battery-panel .battery-power-reading{border:0;border-radius:6px;background:var(--secondary-background-color);color:inherit}
+.battery-power{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}
+.battery-power>span,.battery-panel .battery-power-reading{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:2px 5px;text-align:start;overflow-wrap:anywhere;min-width:0}
+.battery-panel .battery-power-reading{min-height:30px;border:0;border-radius:5px;background:var(--secondary-background-color);color:inherit}
 .battery-power small{color:var(--secondary-text-color);font-size:11px;line-height:1.2}
-.battery-panel .battery-power strong{font-size:13px;line-height:1.2}
+.battery-panel .battery-power strong{font-size:12px;line-height:1.2;text-align:end;flex-shrink:0;max-width:55%}
 .battery-adjustments .charge-limits{margin:0;padding:4px 6px;display:grid;gap:0}
 .battery-adjustments .limit-row{margin:0;min-width:0}
 .battery-panel .limit-heading strong{font-size:15px;line-height:1.3}
 .battery-adjustments .limit-row input{margin:0;min-height:24px}
 .battery-adjustments .limit-row+.limit-row{border-top:1px solid var(--divider-color);padding-top:3px}
-@container (min-width:440px){.battery-adjustments .charge-limits{grid-template-columns:repeat(auto-fit,minmax(min(100%,110px),1fr));gap:8px}.battery-adjustments .limit-row+.limit-row{border-top:0;padding-top:0}.battery-power{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}}
+@container (min-width:440px){.battery-adjustments .charge-limits{grid-template-columns:repeat(auto-fit,minmax(min(100%,110px),1fr));gap:8px}.battery-adjustments .limit-row+.limit-row{border-top:0;padding-top:0}.battery-power{grid-template-columns:repeat(auto-fit,minmax(155px,1fr))}}
 @container (min-width:540px){.battery-top:has(.battery-preheat){grid-template-columns:minmax(0,2.6fr) minmax(0,1fr)}}
 `;
 

@@ -18,6 +18,8 @@ For a worked example, see [the Spanish configuration guide](README.es.md). The f
 
 ### Battery
 
+Battery uses slightly smaller range and power figures, a smaller preheating panel, and compact readings for current, surplus, energy charged today and time remaining below the main indicators.
+
 Battery is more compact. Charge targets and limits are smaller, and power details use a compact grid without repeating the headline power reading. The configured current is displayed without adjustment buttons.
 
 Battery displays the lower configured percentage limit and its source, with the energy cap shown separately. A text entity can supply the reason for waiting. Add, remove or reorder charging modes and link their entities in the editor. The standalone Battery card omits the extra title.
@@ -202,6 +204,8 @@ Select **Copy section** at the end of a block. In another card on the same page 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
 ### Batería
+
+Batería reduce ligeramente las cifras de autonomía y potencia, compacta el precalentamiento y coloca la intensidad, los excedentes, lo cargado hoy y el tiempo restante bajo los indicadores principales.
 
 Batería ocupa menos espacio. Los objetivos y límites de carga usan cifras más pequeñas y las lecturas de potencia se agrupan en una cuadrícula compacta. La intensidad configurada se muestra sin botones de ajuste.
 
