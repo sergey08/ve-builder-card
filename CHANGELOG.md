@@ -1,3 +1,8 @@
+# VE Builder Card 1.8.1-beta.3
+
+- EN: Battery readings use the dashboard theme without gray tiles. The embedded chassis has a transparent background and remains available offline.
+- ES: Las lecturas de Batería siguen el tema del panel y se muestran sin cajas grises. El chasis tiene fondo transparente y sigue disponible sin conexión.
+
 # VE Builder Card 1.8.1-beta.2
 
 - EN: Battery uses slightly smaller range and power figures, a smaller preheating panel, and compact readings for current, surplus, energy charged today and time remaining below the main indicators.

@@ -113,7 +113,7 @@ export function renderBattery(card,block,sources,renderSection){
     </div>`:''}
     <div class="battery-top">
       <button type="button" class="battery-illustration ${charging?'battery-charging':''} ${status==='on'?'battery-heating':''}" aria-label="${t('Batería')} · ${level===null?t('Sin datos'):escape(pct)}"${infoTarget(sources.level)}>
-        <img src="${batteryChassis}" alt="" width="1040" height="472">
+        <img src="${batteryChassis}" alt="" width="960" height="436">
         <span class="battery-pack"><span class="battery-glow" style="width:${level??0}%"></span>${charging?`<span class="battery-flow" style="animation-delay:-${Date.now()%1800}ms"></span>`:''}</span>
         <strong class="battery-soc" aria-hidden="true">${escape(pct)}</strong>
       </button>
@@ -137,21 +137,24 @@ export const batteryStyles=`
 .battery-metrics>span,.battery-metric,.battery-preheat>div{display:flex;align-items:center;gap:6px}
 .battery-panel .battery-metric,.battery-panel .battery-illustration{padding:0;border:0;font:inherit}
 .battery-metric{background:transparent;color:inherit;text-align:start}
-.battery-panel .battery-metric strong{font-size:20px;line-height:1.15}
+.battery-panel .battery-metric strong{font-size:20px;line-height:1.15;color:var(--primary-text-color)}
+.battery-metric ha-icon{color:var(--primary-color)}
+.battery-metrics .battery-connector{font-weight:600}
 .battery-panel :is(.battery-metric,.battery-illustration):disabled{opacity:1;cursor:default}
 .battery-panel :is(.battery-metric,.battery-illustration):focus-visible{outline:2px solid var(--primary-color);outline-offset:2px}
 .battery-metrics ha-icon,.battery-preheat ha-icon{--mdc-icon-size:19px}
 .battery-metrics small{display:block;color:var(--secondary-text-color)}
 .battery-connector,.battery-preheat [role=status]{border:1px solid var(--divider-color);border-radius:20px;padding:3px 8px}
-.battery-connected{color:var(--success-color,#258640)}
+.battery-metrics .battery-connected{border-color:var(--primary-color);color:var(--primary-text-color)}
+.battery-connected ha-icon{color:var(--primary-color)}
 .battery-summary{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--secondary-text-color);font-size:12px}
 .battery-summary>span{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px}
 .battery-panel .battery-summary strong{color:var(--primary-text-color);font-size:13px;line-height:1.25;font-weight:700}
 .battery-summary ha-icon{--mdc-icon-size:16px}
 .battery-top{display:grid;align-items:center;gap:8px}
-.battery-illustration{display:block;width:100%;position:relative;isolation:isolate;overflow:hidden;border-radius:10px;background:#0e1e2a}
+.battery-illustration{display:block;width:100%;position:relative;isolation:isolate;overflow:hidden;border-radius:10px;background:transparent}
 .battery-illustration img{display:block;width:100%;height:auto}
-.battery-pack{position:absolute;inset:28.5% 22.5% 25% 25.1%;clip-path:polygon(7% 0,93% 0,97% 11%,100% 84%,98% 100%,2% 100%,0% 87%,4% 12%);mix-blend-mode:screen}
+.battery-pack{position:absolute;inset:29.5% 22.5% 21.5% 25.1%;clip-path:polygon(7% 0,93% 0,97% 11%,100% 84%,98% 100%,2% 100%,0% 87%,4% 12%);mix-blend-mode:screen}
 .battery-glow{display:block;height:100%;background:linear-gradient(90deg,#13de22a6,#09f32ba6 94%,#7dff8d);box-shadow:0 0 12px #56ff60;transition:width .28s}
 .battery-glow[style="width:0%"]{box-shadow:none}
 .battery-flow{position:absolute;inset:0;pointer-events:none;--flow-color:#6bff7fc9;background:linear-gradient(103deg,transparent 22%,var(--flow-color) 52%,transparent 78%) repeat-x;background-size:33.333% 100%;animation:battery-charge-flow 1800ms linear infinite}
@@ -181,9 +184,11 @@ export const batteryStyles=`
 .battery-adjustments section>header{padding:2px 0;font-size:14px}
 .battery-power{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}
 .battery-power>span,.battery-panel .battery-power-reading{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:2px 5px;text-align:start;overflow-wrap:anywhere;min-width:0}
-.battery-panel .battery-power-reading{min-height:30px;border:0;border-radius:5px;background:var(--secondary-background-color);color:inherit}
+.battery-panel .battery-power-reading{min-height:30px;border:0;background:transparent;color:inherit}
+.battery-panel .battery-power-reading:focus-visible{outline:2px solid var(--primary-color);outline-offset:1px}
+.battery-panel .battery-power-reading:hover strong{color:var(--primary-color)}
 .battery-power small{color:var(--secondary-text-color);font-size:11px;line-height:1.2}
-.battery-panel .battery-power strong{font-size:12px;line-height:1.2;text-align:end;flex-shrink:0;max-width:55%}
+.battery-panel .battery-power strong{font-size:12px;line-height:1.2;text-align:end;flex-shrink:0;max-width:55%;color:var(--primary-text-color)}
 .battery-adjustments .charge-limits{margin:0;padding:4px 6px;display:grid;gap:0}
 .battery-adjustments .limit-row{margin:0;min-width:0}
 .battery-panel .limit-heading strong{font-size:15px;line-height:1.3}

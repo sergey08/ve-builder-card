@@ -28,6 +28,8 @@ Aspecto visual confirmado por el usuario en Home Assistant con la beta.5 antes d
 
 ### Batería
 
+Las lecturas de Batería siguen el tema del panel y se muestran sin cajas grises. El chasis tiene fondo transparente y sigue disponible sin conexión.
+
 Batería reduce ligeramente las cifras de autonomía y potencia, compacta el precalentamiento y coloca la intensidad, los excedentes, lo cargado hoy y el tiempo restante bajo los indicadores principales.
 
 Batería ocupa menos espacio. Los objetivos y límites de carga usan cifras más pequeñas y las lecturas de potencia se agrupan en una cuadrícula compacta. La intensidad configurada se muestra sin botones de ajuste.

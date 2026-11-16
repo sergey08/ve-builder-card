@@ -46,7 +46,7 @@ test('illustration embeds its asset, clips the level and signals live charging a
   const card={state,_hass:{states:state},lang:'es',t:value=>value};
   const block={battery:{show_preheating:true,preheat_state_entity:'binary_sensor.heat'}};
   const markup=renderBattery(card,block,{level:'sensor.soc',power:'sensor.power'});
-  assert.match(markup,/src="data:image\/jpeg;base64,/);
+  assert.match(markup,/src="data:image\/png;base64,/);
   assert.match(markup,/width:46%/);
   assert.match(markup,/battery-charging battery-heating/);
   assert.match(markup,/46 %/);

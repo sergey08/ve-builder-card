@@ -18,6 +18,8 @@ For a worked example, see [the Spanish configuration guide](README.es.md). The f
 
 ### Battery
 
+Battery readings use the dashboard theme without gray tiles. The embedded chassis has a transparent background and remains available offline.
+
 Battery uses slightly smaller range and power figures, a smaller preheating panel, and compact readings for current, surplus, energy charged today and time remaining below the main indicators.
 
 Battery is more compact. Charge targets and limits are smaller, and power details use a compact grid without repeating the headline power reading. The configured current is displayed without adjustment buttons.
@@ -204,6 +206,8 @@ Select **Copy section** at the end of a block. In another card on the same page 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
 ### Batería
+
+Las lecturas de Batería siguen el tema del panel y se muestran sin cajas grises. El chasis tiene fondo transparente y sigue disponible sin conexión.
 
 Batería reduce ligeramente las cifras de autonomía y potencia, compacta el precalentamiento y coloca la intensidad, los excedentes, lo cargado hoy y el tiempo restante bajo los indicadores principales.
 
