@@ -28,6 +28,8 @@ Aspecto visual confirmado por el usuario en Home Assistant con la beta.5 antes d
 
 ### Batería
 
+Batería ocupa menos espacio. Los objetivos y límites de carga usan cifras más pequeñas y las lecturas de potencia se agrupan en una cuadrícula compacta. La intensidad configurada se muestra sin botones de ajuste.
+
 Batería muestra el menor límite porcentual configurado y su origen, con el tope de energía aparte. Una entidad de texto puede indicar el motivo de espera. El editor permite añadir, eliminar y ordenar modos y vincular sus entidades. La tarjeta independiente Batería omite el título superior.
 
 Autonomía y potencia de carga se muestran sin decimales. Pulsa sobre la autonomía, la potencia o el chasis para abrir su entidad. La batería muestra bandas de luz en movimiento durante la carga y el bloque de potencia queda visible.
@@ -36,7 +38,7 @@ Los botones de precalentamiento ocupan todo el ancho, los modos de carga se mues
 
 La sección Batería muestra el porcentaje sobre un chasis 3D, junto con la autonomía, la potencia de carga y el estado del cable. Las secciones existentes tituladas «Modos de carga» se muestran como Batería y conservan sus entidades y acciones. Los bloques de selección genéricos mantienen su presentación. También puedes añadir un bloque Batería desde el editor visual.
 
-En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar las lecturas del bloque de inicio. Si hay un único bloque de potencia o de límites, la primera sección Batería muestra los límites y agrupa las lecturas adicionales en **Potencia de carga**. Si hay varios, selecciona uno de forma explícita o elige **Mantener separado**. Selecciona un ayudante numérico o una entidad `number` para ajustar la intensidad. Los sensores de solo lectura siguen mostrando su valor.
+En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar las lecturas del bloque de inicio. Si hay un único bloque de potencia o de límites, la primera sección Batería muestra los límites y agrupa las lecturas adicionales en **Potencia de carga**. Si hay varios, selecciona uno de forma explícita o elige **Mantener separado**. Selecciona una entidad para mostrar la intensidad configurada.
 
 Para XPengTK 0.6.49, activa **Mostrar precalentamiento** y selecciona el sensor de estado y la entidad objetivo del vehículo. Los servicios configurables son `xpeng.start_battery_preheating` y `xpeng.stop_battery_preheating` de forma predeterminada. Cada acción requiere confirmación. Los botones se desactivan si el estado es desconocido o no está disponible. Deja el precalentamiento desactivado si el vehículo no lo admite.
 

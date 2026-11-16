@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {exportCard,inspectCardImport} from '../src/transfer.js';
 import {normalize,chargingModeTap,isStandaloneBattery} from '../src/core.js';
-import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,batteryVehicleLimitField,batteryChargeSummary,renderBattery} from '../src/battery.js';
+import {isBatteryBlock,batterySources,batteryPreheatAction,batteryVehicleLimitField,batteryChargeSummary,renderBattery} from '../src/battery.js';
 
 test('legacy mode IDs and YAML survive while a single power and limits block can be reused',()=>{
   const config=normalize({blocks:[
@@ -40,12 +40,6 @@ test('XPengTK only enables the appropriate available command and sends vehicle_e
   assert.equal(batteryPreheatAction(block,hass,'start'),undefined);
 });
 
-test('intensity respects the number helper step and limits',()=>{
-  const state={state:'6',attributes:{min:6,max:32,step:0.1}};
-  assert.equal(batteryIntensityAction('number.amps',state,-1),undefined);
-  assert.equal(batteryIntensityAction('number.amps',state,1).data.value,6.1);
-  assert.equal(batteryIntensityAction('sensor.amps',state,1),undefined);
-});
 
 test('illustration embeds its asset, clips the level and signals live charging and heat',()=>{
   const state={'sensor.soc':{state:'46'},'sensor.power':{state:'1000'},'binary_sensor.heat':{state:'on'}};
@@ -97,20 +91,17 @@ test('battery figures link to their entities, round to integers and keep power e
     'sensor.power':{state:'1234.4',attributes:{unit_of_measurement:'W'}}
   };
   const field={id:'power',entity:'sensor.power',display:'bar',decimals:2};
-  const powerBlock={id:'power-details',type:'power',fields:[field]};
-  const card={state,_hass:{states:state},lang:'en',t:value=>value};
-  let shown;
+  const extra={id:'energy',entity:'sensor.energy',name:'Energy today'};
+  const powerBlock={id:'power-details',type:'power',fields:[field,extra]};
+  const card={state,_hass:{states:state},lang:'en',t:value=>value,label:value=>value};
   const markup=renderBattery(card,{id:'battery'},
-    {level:'sensor.level',range:'sensor.range',power:'sensor.power',powerBlock},
-    section=>{shown=section;return 'shown';});
+    {level:'sensor.level',range:'sensor.range',power:'sensor.power',intensity:'number.amps',powerBlock});
   for(const id of Object.keys(state))assert.ok(markup.includes('data-entity="'+id+'"'));
   assert.match(markup,/>230 km</);
   assert.match(markup,/>1,234 W</);
   assert.match(markup,/class="battery-flow"/);
-  assert.match(markup,/class="battery-power">shown/);
-  assert.doesNotMatch(markup,/<details/);
-  assert.equal(shown.fields[0].decimals,0);
-  assert.equal(field.decimals,2);
+  assert.match(markup,/data-field="energy"/);
+  assert.doesNotMatch(markup,/data-field="power"|data-battery-intensity|<details/);
   state['sensor.power'].state='0';
   assert.doesNotMatch(renderBattery(card,{id:'battery'},{power:'sensor.power'}),/class="battery-flow"/);
 });

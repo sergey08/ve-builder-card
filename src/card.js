@@ -4,7 +4,7 @@ import {vehicleRain,rainStyles} from './rain.js';
 import {language,translate,standardLabel} from './i18n.js';
 import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,isStandaloneBattery,chargingModeTap,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
 import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles,chargingSourceStyles} from './styles.js';
-import {isBatteryBlock,batterySources,batteryPreheatAction,batteryIntensityAction,batteryVehicleLimitField,renderBattery,batteryStyles} from './battery.js';
+import {isBatteryBlock,batterySources,batteryPreheatAction,batteryVehicleLimitField,renderBattery,batteryStyles} from './battery.js';
 import './editor.js';
 
 export class VEBuilderCard extends HTMLElement {
@@ -241,9 +241,9 @@ export class VEBuilderCard extends HTMLElement {
     for(const host of this.shadowRoot.querySelectorAll('[data-map]')){const old=maps.get(host.dataset.map);const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(old&&old.mapConfig===JSON.stringify(block))host.replaceWith(old);}
     for(const host of this.shadowRoot.querySelectorAll('[data-tyre-advice]')){host._adviceMarkup=host.innerHTML;if(adviceOpen.has(host.dataset.tyreAdvice)&&host.querySelector('details'))host.querySelector('details').open=true;}
     this.bindAlertSummary();if(alertsOpen){const details=this.shadowRoot.querySelector?.('[data-alert-summary] details');if(details)details.open=true;}
-    for(const el of this.shadowRoot.querySelectorAll('[data-battery-heat],[data-battery-intensity]')){
+    for(const el of this.shadowRoot.querySelectorAll('[data-battery-heat]')){
       const block=blocks.find(item=>item.id===el.closest('[data-block]').dataset.block);
-      el.onclick=()=>this.runBatteryControl(block,el.dataset,sources.get(block));
+      el.onclick=()=>this.runBatteryPreheat(block,el.dataset.batteryHeat);
     }
     const fields=this.allFields();
     this.shadowRoot.querySelectorAll('[data-field]').forEach(el=>el.addEventListener('click',()=>this.activate(fields.find(f=>f.id===el.dataset.field))));
@@ -254,21 +254,16 @@ export class VEBuilderCard extends HTMLElement {
     this._mapHosts=[...this.shadowRoot.querySelectorAll('[data-map]')];
     if(this._mapHosts.length)this.syncMaps();
   }
-  async runBatteryControl(block,dataset,sources){
-    if(this.pending||!block||!sources)return;
-    const {batteryHeat,batteryIntensity}=dataset;
-    const getAction=()=>batteryHeat
-      ? batteryPreheatAction(block,this._hass,batteryHeat)
-      : batteryIntensityAction(sources.intensity,this.state[sources.intensity],Number(batteryIntensity));
+  async runBatteryPreheat(block,operation){
+    if(this.pending||!block)return;
+    const getAction=()=>batteryPreheatAction(block,this._hass,operation);
     if(!getAction())return;
     this.pending=true;
     try{
-      if(batteryHeat){
-        this._batteryConfirm=true;
-        const label=batteryHeat==='start'?'Iniciar':'Detener';
-        if(!(await this.confirmAction(this.t(label)+' · '+this.t('Precalentamiento'))))return;
-        if(!this.isConnected||!this.config.blocks.includes(block))return;
-      }
+      this._batteryConfirm=true;
+      const label=operation==='start'?'Iniciar':'Detener';
+      if(!(await this.confirmAction(this.t(label)+' · '+this.t('Precalentamiento'))))return;
+      if(!this.isConnected||!this.config.blocks.includes(block))return;
       const action=getAction();
       if(!action)return;
       if(action.target)await this._hass.callService(action.domain,action.service,{},action.target);
