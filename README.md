@@ -79,7 +79,7 @@ Standard saved labels now follow the selected card language in English, Spanish,
 
 In the **Overview with image** block, select an optional OTA version sensor (`ota_version_entity`) and update-status sensor (`ota_status_entity`). The card reads the `current_version` attribute (or a usable sensor state), displays the OS/version to the right of the vehicle title, and adds an amber alert icon only when an update is pending. Leave the version sensor blank to hide the indicator entirely. Example for XPeng Toolkit: `sensor.ota_update_xpeng_135818` and `sensor.ota_status_xpeng_135818`.
 
-## Screenshots — VE Builder Card 1.7.5
+## Screenshots — VE Builder Card
 
 The following screenshots show a real XPeng G6 configuration in Home Assistant. Values and available actions depend on the user's vehicle and integrations.
 
@@ -88,10 +88,10 @@ The following screenshots show a real XPeng G6 configuration in Home Assistant. 
 | <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 battery, range, vehicle image and actions" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Visual editor with configuration, visibility, design and live preview" width="480"> |
 | Battery, range, vehicle image and controls | Edit fields and blocks with live preview, without writing YAML |
 
-| Costs and savings | Charging controls |
+| Costs and savings | Battery |
 |:--:|:--:|
-| <img src="assets/screenshots/costs-savings-2026.png" alt="Solar and grid daily charging sources, electricity costs and savings" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Charging modes, power and charge limits" width="300"> |
-| Stacked solar/grid energy bar, daily total and savings | Modes, charge power, finish thresholds and charging limits |
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Solar and grid daily charging sources, electricity costs and savings" width="300"> | <img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/battery-2026.png" alt="Battery card with charge level, preheating, charging modes and limits" width="300"> |
+| Stacked solar/grid energy bar, daily total and savings | Battery level, preheating, charging modes and limits |
 
 **Vehicle status**
 
@@ -265,7 +265,7 @@ Los nombres estándar guardados siguen ahora el idioma de la tarjeta en inglés,
 
 
 
-## Capturas — VE Builder Card 1.7.5
+## Capturas — VE Builder Card
 
 Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assistant. Los valores y las acciones disponibles dependen de las integraciones instaladas por cada usuario.
 
@@ -274,10 +274,10 @@ Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assi
 | <img src="assets/screenshots/vehicle-overview-2026.png" alt="XPeng G6 con batería, autonomía, imagen y acciones" width="300"> | <img src="assets/screenshots/visual-editor-2026.png" alt="Editor visual con configuración, visibilidad, diseño y vista previa" width="480"> |
 | Batería, autonomía, imagen del coche y controles | Configuración de campos y bloques con vista previa, sin escribir YAML |
 
-| Gastos y ahorro | Controles de carga |
+| Gastos y ahorro | Batería |
 |:--:|:--:|
-| <img src="assets/screenshots/costs-savings-2026.png" alt="Fuentes de carga solar y red, costes y ahorros" width="300"> | <img src="assets/screenshots/charging-controls-2026.png" alt="Modos de carga, potencia y límites" width="300"> |
-| Barra de energía solar/red, total diario y ahorros | Modos, potencia y límites de finalización de carga |
+| <img src="assets/screenshots/costs-savings-2026.png" alt="Fuentes de carga solar y red, costes y ahorros" width="300"> | <img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/screenshots/battery-2026.png" alt="Tarjeta Batería con nivel de carga, precalentamiento, modos y límites" width="300"> |
+| Barra de energía solar/red, total diario y ahorros | Nivel de batería, precalentamiento, modos y límites de carga |
 
 **Estado del vehículo**
 
