@@ -1,7 +1,7 @@
 import {STATUS_TYPES,newVehicleStatus,vehicleStatusValues} from './vehicle-status.js';
 import {exportCard,inspectCardImport,TRANSFER_LIMIT} from './transfer.js';
 import {language,translate,translateSchema,LANGUAGES,standardLabel} from './i18n.js';
-import {TYPES,BLOCK_DESCRIPTIONS,POSITIONS,clone,normalize,newBlock,newField,uid,isStandaloneBattery,chargingModeTap,validate,templateBlocks,CARD_SECTIONS,cardSectionBlocks,BODY_PARTS,suggestVehicleEntities,vehicleWizardBlocks,valueSeverity,CHARGING_SOURCES} from './core.js';
+import {TYPES,BLOCK_DESCRIPTIONS,POSITIONS,clone,normalize,newBlock,newField,uid,isStandaloneBattery,chargingModeTap,validate,templateBlocks,CARD_SECTIONS,cardSectionBlocks,BODY_PARTS,valueSeverity,CHARGING_SOURCES} from './core.js';
 
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
@@ -124,7 +124,20 @@ export class VEBuilderEditor extends HTMLElement {
   button(parent,label,fn,danger=false){const button=document.createElement('button');button.type='button';button.textContent=this.t(label);if(danger)button.className='danger';button.onclick=fn;parent.append(button);return button;}
   panel(parent,key,title,open=false){const panel=document.createElement('details');panel.dataset.key=key;panel.open=open;const summary=document.createElement('summary');summary.textContent=standardLabel(this.t(title),this.lang,this.config.translate_standard_labels!==false);panel.append(summary);parent.append(panel);return panel;}
   form(parent,data,schema,change){
-    const form=document.createElement('ha-form');form.hass=this._hass;form.data=clone(data);form.schema=translateSchema(schema,this.lang);form.computeLabel=field=>this.t(LABELS[field.name]??POSITIONS[field.name]??field.name);
+    const scope=parent.closest('[data-entity-scope]')?.dataset.entityScope;
+    const device=this.sectionDevices?.get(scope);
+    const scopedSchema=device?schema.map(field=>{
+      const selector=field.selector?.entity;
+      if(!selector||selector.include_entities)return field;
+      const domain=selector.domain;
+      const domains=Array.isArray(domain)?domain:domain?[domain]:[];
+      const candidates=this.entityRegistry.filter(entry=>entry.device_id===device&&
+        (!domains.length||domains.includes(entry.entity_id.split('.')[0]))).map(entry=>entry.entity_id);
+      const existing=data[field.name];
+      if(typeof existing==='string'&&existing&&!candidates.includes(existing))candidates.push(existing);
+      return {...field,selector:{entity:{...selector,include_entities:candidates}}};
+    }):schema;
+    const form=document.createElement('ha-form');form.hass=this._hass;form.data=clone(data);form.schema=translateSchema(scopedSchema,this.lang);form.computeLabel=field=>this.t(LABELS[field.name]??POSITIONS[field.name]??field.name);
     form.addEventListener('value-changed',event=>{event.stopPropagation();const values=event.detail.value??{};const allowed=new Set(schema.map(s=>s.name));const patch=Object.fromEntries(Object.entries(values).filter(([key])=>allowed.has(key)));change(patch);});parent.append(form);return form;
   }
   moveItem(list,id,target){
@@ -195,23 +208,43 @@ export class VEBuilderEditor extends HTMLElement {
     }
     parent.append(group);
   }
-  wizardPanel(parent){
-    this.wizard??={kind:'electric',device:'',charging:true,vehicle:true,location:false};const w=this.wizard;
-    const box=this.panel(parent,'setup-wizard','Asistente inicial',this.config.blocks.length===0||this.config.blocks.length===1&&!this.config.blocks[0].fields?.length);
-    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un dispositivo y revisa las sugerencias. No se envían órdenes al vehículo. Los apartados existentes se conservan.');box.append(hint);
-    if(!w.review){
-      this.form(box,{...w,wizard_device:w.device},[select('kind',{electric:'Vehículo eléctrico',combustion:'Gasolina / GNC'}),{name:'wizard_device',selector:{device:{}}},bool('charging'),bool('vehicle'),bool('location')],patch=>{if('wizard_device' in patch){w.device=patch.wizard_device;delete patch.wizard_device;}Object.assign(w,patch);});
-      const button=this.button(box,'Buscar entidades',async()=>{button.disabled=true;try{const registry=await this._hass.callWS({type:'config/entity_registry/list'});this.entityRegistry=registry;w.chosen=suggestVehicleEntities(w.device,registry,this._hass.states);w.review=true;w.error=false;this.openKey='setup-wizard';this.render();}catch{w.error=true;button.disabled=false;const msg=document.createElement('p');msg.textContent=this.t('No se pudo consultar el dispositivo. Inténtalo de nuevo.');box.append(msg);}});
-      return;
-    }
-    const hint2=document.createElement('p');hint2.className='muted';hint2.textContent=this.t('Revisa cada entidad. Las coincidencias ambiguas quedan vacías. Puedes cambiarlas o dejarlas sin asignar.');box.append(hint2);
-    const specs=[[w.kind==='combustion'?'fuel':'battery',w.kind==='combustion'?'Combustible':'Batería','sensor'],['range','Autonomía','sensor'],['odometer','Odómetro','sensor']];
-    if(w.kind==='electric'&&w.charging)specs.push(['power','Potencia de carga','sensor'],['connector','Sensor del conector','binary_sensor'],['charging','Entidad del estado de carga','binary_sensor']);
-    if(w.vehicle){specs.push(['gear','Marcha','sensor'],['bonnet','Capó','binary_sensor'],['trunk','Maletero','binary_sensor']);for(const [pos,label]of Object.entries(POSITIONS)){specs.push(['pressure_'+pos,this.t('Presión')+' · '+this.t(label),'sensor'],['door_'+pos,BODY_PARTS[pos],'binary_sensor']);}}
-    if(w.location)specs.push(['location','Ubicación',['person','device_tracker']]);
-    for(const [role,label,domain]of specs){const name=document.createElement('p');name.textContent=this.t(label);box.append(name);this.form(box,{entity:w.chosen[role]||''},[entity('entity',domain)],patch=>{w.chosen[role]=patch.entity||'';});}
-    this.button(box,'Volver',()=>{w.review=false;this.openKey='setup-wizard';this.render();});
-    this.button(box,'Añadir apartados revisados',()=>{const blocks=vehicleWizardBlocks(w.kind,w,w.chosen,this._hass?.states,this.lang);if(this.config.blocks.length===1){const b=this.config.blocks[0];if(b.type==='start'&&!b.fields?.length&&!b.image&&!b.connector_entity&&!b.charging_entity&&!b.power_entity)this.config.blocks=[];}this.config.blocks.push(...blocks);w.review=false;this.openKey=blocks[0].id;this.emit();this.render();});
+  sectionEntitySearch(panel,block){
+    panel.dataset.entityScope=block.id;
+    const filters=this.sectionDevices??=new Map();
+    const active=filters.get(block.id)??'';
+    const box=this.panel(panel,block.id+'-entity-search','Buscar entidades');
+    const hint=document.createElement('p');
+    hint.className='muted';
+    hint.textContent=this.t('Elige un dispositivo para filtrar las entidades de este apartado.');
+    box.append(hint);
+    let device=active;
+    const button=this.button(box,'Buscar entidades',async()=>{
+      if(!device)return;
+      button.disabled=true;
+      try{
+        const registry=await this._hass.callWS({type:'config/entity_registry/list'});
+        if(!this.config.blocks.includes(block)||!button.isConnected)return;
+        this.entityRegistry=registry;
+        filters.set(block.id,device);
+        this.openKey=box.dataset.key;
+        this.render();
+      }catch{
+        if(!button.isConnected)return;
+        button.disabled=false;
+        hint.textContent=this.t('No se pudo consultar el dispositivo. Inténtalo de nuevo.');
+      }
+    });
+    button.disabled=!device;
+    const form=this.form(box,{device},[{name:'device',selector:{device:{}}}],patch=>{
+      device=patch.device??'';
+      button.disabled=!device;
+    });
+    box.insertBefore(form,button);
+    if(active)this.button(box,'Quitar filtro',()=>{
+      filters.delete(block.id);
+      this.openKey=box.dataset.key;
+      this.render();
+    });
   }
   templates(parent){
     const box=this.panel(parent,'templates','Plantillas iniciales',this.config.blocks.length===0);
@@ -343,6 +376,7 @@ export class VEBuilderEditor extends HTMLElement {
     form.computeLabel=field=>this.t(labels[field.name]);
   }
   blockEditor(panel,block){
+    this.sectionEntitySearch(panel,block);
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=standardLabel(block.title,this.lang,this.config.translate_standard_labels!==false)||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
@@ -418,7 +452,6 @@ export class VEBuilderEditor extends HTMLElement {
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.sectionMenu(root);
     const advanced=this.panel(root,'advanced-blocks','Configuración avanzada');
-    this.wizardPanel(advanced);
     this.templates(advanced);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);

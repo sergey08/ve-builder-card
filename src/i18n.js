@@ -2136,3 +2136,25 @@ for(const [key,values] of Object.entries({
   EN[key]=values[0];
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
 }
+
+for(const [key,values] of Object.entries({
+  "Elige un dispositivo para filtrar las entidades de este apartado.": [
+    "Choose a device to filter entities in this section.",
+    "Escolhe um dispositivo para filtrar as entidades desta secção.",
+    "Choisissez un appareil pour filtrer les entités de cette section.",
+    "Wähle ein Gerät, um die Entitäten dieses Abschnitts zu filtern.",
+    "Scegli un dispositivo per filtrare le entità di questa sezione.",
+    "Kies een apparaat om de entiteiten in dit onderdeel te filteren."
+  ],
+  "Quitar filtro": [
+    "Clear filter",
+    "Remover filtro",
+    "Effacer le filtre",
+    "Filter entfernen",
+    "Rimuovi filtro",
+    "Filter wissen"
+  ]
+})){
+  EN[key]=values[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
+}

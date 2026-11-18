@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.2
+
+- EN: Use **Find entities** inside each section to filter its entity pickers by device. The filter never fills fields or changes other sections.
+- ES: Usa **Buscar entidades** dentro de cada apartado para filtrar sus selectores por dispositivo. El filtro no rellena campos ni cambia otros apartados.
+
 # VE Builder Card 1.9.0-beta.1
 
 - EN: Select any combination of Car and actions, Battery, Map, and Costs and savings in Card sections, then add them together. Individual blocks and device discovery remain available in Advanced setup.
