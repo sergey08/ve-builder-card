@@ -2158,3 +2158,7 @@ for(const [key,values] of Object.entries({
   EN[key]=values[0];
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
 }
+
+for(const [code,label] of Object.entries({"en":"Choose and add at least one section to create the card.","pt":"Escolhe e adiciona pelo menos uma secção para criar o cartão.","fr":"Choisissez et ajoutez au moins une section pour créer la carte.","de":"Wähle mindestens einen Abschnitt und füge ihn hinzu.","it":"Scegli e aggiungi almeno una sezione per creare la scheda.","nl":"Kies en voeg minstens één onderdeel toe om de kaart te maken."})){
+  (code==='en'?EN:EXTRA[code])['Elige y añade al menos un apartado para crear la tarjeta.']=label;
+}
