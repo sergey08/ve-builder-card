@@ -111,6 +111,8 @@ Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Diseña tu tarjeta
 
+Selecciona uno o varios apartados entre Coche y acciones, Batería, Mapa y Gastos y ahorro, y añádelos juntos. La configuración por bloques y la detección de entidades siguen disponibles en Configuración avanzada.
+
 Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
 
 Empieza con una plantilla de vehículo eléctrico, vehículo de combustión, gastos o mapa del vehículo. Las plantillas no traen sensores preasignados. Cada tarjeta tiene su propia configuración. El filtro opcional por dispositivo facilita encontrar entidades sin cambiar su dispositivo asignado.

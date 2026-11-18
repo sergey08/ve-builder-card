@@ -2069,7 +2069,77 @@ for(const [key,values] of Object.entries({"Objetivo de carga":["Charge target","
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
 }
 
-const VERSION = '1.8.1';
+for(const [key,values] of Object.entries({
+  "Coche y acciones": [
+    "Car and actions",
+    "Carro e ações",
+    "Voiture et actions",
+    "Fahrzeug und Aktionen",
+    "Auto e azioni",
+    "Auto en acties"
+  ],
+  "Apartados de la tarjeta": [
+    "Card sections",
+    "Secções do cartão",
+    "Sections de la carte",
+    "Kartenabschnitte",
+    "Sezioni della scheda",
+    "Kaartonderdelen"
+  ],
+  "Añadir apartados seleccionados": [
+    "Add selected sections",
+    "Adicionar secções selecionadas",
+    "Ajouter les sections sélectionnées",
+    "Ausgewählte Abschnitte hinzufügen",
+    "Aggiungi sezioni selezionate",
+    "Geselecteerde onderdelen toevoegen"
+  ],
+  "Configuración avanzada": [
+    "Advanced setup",
+    "Configuração avançada",
+    "Configuration avancée",
+    "Erweiterte Einstellungen",
+    "Configurazione avanzata",
+    "Geavanceerde instellingen"
+  ],
+  "Imagen, estado del vehículo y botones de acción.": [
+    "Vehicle image, status and action buttons.",
+    "Imagem, estado e ações do veículo.",
+    "Image, état et actions du véhicule.",
+    "Fahrzeugbild, Status und Aktionsschaltflächen.",
+    "Immagine, stato e azioni del veicolo.",
+    "Afbeelding, status en acties van de auto."
+  ],
+  "Nivel de carga, precalentamiento, modos y límites.": [
+    "Charge level, preheating, modes and limits.",
+    "Nível, pré-aquecimento, modos e limites de carga.",
+    "Niveau de charge, préchauffage, modes et limites.",
+    "Ladestand, Vorwärmen, Modi und Grenzwerte.",
+    "Livello, preriscaldamento, modalità e limiti di carica.",
+    "Laadniveau, voorverwarming, modi en limieten."
+  ],
+  "Ubicación del vehículo en el mapa.": [
+    "Vehicle location on the map.",
+    "Localização do veículo no mapa.",
+    "Position du véhicule sur la carte.",
+    "Fahrzeugstandort auf der Karte.",
+    "Posizione del veicolo sulla mappa.",
+    "Locatie van de auto op de kaart."
+  ],
+  "Costes, ahorros y fuentes de carga.": [
+    "Costs, savings and charging sources.",
+    "Custos, poupanças e fontes de carga.",
+    "Coûts, économies et sources de recharge.",
+    "Kosten, Einsparungen und Ladequellen.",
+    "Costi, risparmi e fonti di ricarica.",
+    "Kosten, besparingen en laadbronnen."
+  ]
+})){
+  EN[key]=values[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
+}
+
+const VERSION = '1.9.0-beta.1';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2138,9 +2208,44 @@ function actionFor(entity, state, tap='toggle') {
   return null;
 }
 
+const CARD_SECTIONS={
+  car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen, estado del vehículo y botones de acción.'},
+  battery:{label:'Batería',icon:'mdi:battery-charging',description:'Nivel de carga, precalentamiento, modos y límites.'},
+  map:{label:'Mapa',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
+  expenses:{label:'Gastos y ahorro',icon:'mdi:cash-multiple',description:'Costes, ahorros y fuentes de carga.'}
+};
+
+function cardSectionBlocks(selection,lang='es'){
+  const blocks=[];
+  const car=selection.includes('car');
+  const battery=selection.includes('battery');
+  if(car||battery){
+    const [overview,charge,power,limits,actions]=templateBlocks('electric',lang);
+    if(car)blocks.push(overview,actions,translatedBlock('tyres',lang));
+    if(battery){
+      charge.battery={power_block:power.id,limits_block:limits.id};
+      limits.fields=[
+        {...newField(),name:translate('Límite por porcentaje',lang),unit:'%'},
+        {...newField(),name:translate('Límite por energía',lang),unit:'kWh'}
+      ];
+      blocks.push(charge,power,limits);
+    }
+  }
+  if(selection.includes('map'))blocks.push(translatedBlock('map',lang));
+  if(selection.includes('expenses'))blocks.push(...templateBlocks('expenses',lang));
+  return blocks;
+}
+
+function translatedBlock(type,lang){
+  const block=newBlock(type);
+  block.title=translate(block.title,lang);
+  if(block.note)block.note=translate(block.note,lang);
+  return block;
+}
+
 function templateBlocks(kind,lang='es') {
  const field=(name,options={})=>({...newField(),name:translate(name,lang),...options});
- const block=(type,options={})=>{const b=newBlock(type);b.title=translate(b.title,lang);if(b.note)b.note=translate(b.note,lang);return Object.assign(b,options);};
+ const block=(type,options={})=>Object.assign(translatedBlock(type,lang),options);
  if(kind==='electric')return [block('start',{fields:[field('Ubicación',{format:'presence',icon:'mdi:map-marker'}),field('Batería',{icon:'mdi:battery',unit:'%'}),field('Autonomía',{unit:'km',icon:'mdi:map-marker-distance'}),field('Odómetro',{unit:'km',icon:'mdi:counter'})]}),block('battery'),block('power',{fields:[field('Potencia de carga',{display:'bar',min:0,max:7400,unit:'W'}),field('Intensidad configurada',{unit:'A'}),field('Excedentes disponibles',{unit:'W'}),field('Cargado hoy',{unit:'kWh',decimals:2}),field('Tiempo para finalizar')]}),block('limits'),block('actions')];
  if(kind==='combustion')return [block('start',{show_status:false,show_cable:false,animate:false,fields:[field('Ubicación',{format:'presence',icon:'mdi:map-marker'}),field('Combustible',{unit:'%',icon:'mdi:gas-station'}),field('Autonomía',{unit:'km',icon:'mdi:map-marker-distance'}),field('Odómetro',{unit:'km',icon:'mdi:counter'})]})];
  if(kind==='expenses')return [block('expenses',{prices:[field('Electricidad',{unit:'€/kWh',decimals:4}),field('Combustible',{unit:'€/L',decimals:3})],groups:[['Coste de carga','cost','mdi:ev-station'],['Ahorro solar','solar','mdi:solar-power'],['Ahorro frente al combustible','diesel','mdi:gas-station']].map(([name,style,icon])=>({id:uid(),name:translate(name,lang),style,icon,fields:['Hoy','Este mes','Este año'].map(name=>field(name,{unit:'€',decimals:2}))}))})];
@@ -2483,7 +2588,7 @@ const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
 const LABELS={active_value:'Estado activo (opcional)',translate_standard_labels:'Traducir nombres estándar',max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',ota_version_entity:'Sensor de versión OTA (opcional)',ota_status_entity:'Sensor de actualización disponible (opcional)',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
-const CSS=`textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;padding:10px;margin:8px 0;border:1px solid var(--divider-color);border-radius:8px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;resize:vertical}.transfer-file{display:block;margin:14px 0}.transfer-file input{display:block;max-width:100%;margin:8px 0}.transfer-preview{padding:12px;margin-top:12px;border:1px solid var(--primary-color);border-radius:10px}.transfer-preview p{overflow-wrap:anywhere}.transfer-preview details p{font-size:12px}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
+const CSS=`.section-menu{margin:12px 0;padding:12px;min-width:0;border:1px solid var(--divider-color);border-radius:12px}.section-menu legend{padding:0 4px;font-weight:600}.section-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px}.section-option{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px;border:1px solid var(--divider-color);border-radius:8px;cursor:pointer}.section-option:has(input:checked){border-color:var(--primary-color)}.section-option input{accent-color:var(--primary-color)}.section-option ha-icon{color:var(--primary-color);flex:none}.section-option small{display:block;line-height:1.25}.section-menu button:disabled{opacity:.5;cursor:default}textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;padding:10px;margin:8px 0;border:1px solid var(--divider-color);border-radius:8px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;resize:vertical}.transfer-file{display:block;margin:14px 0}.transfer-file input{display:block;max-width:100%;margin:8px 0}.transfer-preview{padding:12px;margin-top:12px;border:1px solid var(--primary-color);border-radius:10px}.transfer-preview p{overflow-wrap:anywhere}.transfer-preview details p{font-size:12px}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 let copiedSection=null;
 
@@ -2615,10 +2720,59 @@ class VEBuilderEditor extends HTMLElement {
     handle.addEventListener('dragend',()=>{this.dragItem=null;this.shadowRoot.querySelectorAll('.dragging,.drop-target').forEach(el=>el.classList.remove('dragging','drop-target'));});
   }
   addTemplate(kind){
-    const blocks=templateBlocks(kind,this.lang);if(!blocks.length)return;
-    // The empty starter is a placeholder; configured blocks are always preserved.
-    if(this.config.blocks.length===1){const b=this.config.blocks[0];if(b.type==='start'&&!b.fields?.length&&!b.image&&!b.connector_entity&&!b.charging_entity&&!b.power_entity)this.config.blocks=[];}
+    this.appendSections(templateBlocks(kind,this.lang));
+  }
+  appendSections(blocks){
+    if(!blocks.length)return;
+    const [starter]=this.config.blocks;
+    if(this.config.blocks.length===1&&starter.type==='start'&&
+      !starter.fields?.length&&!starter.vehicle_status?.length&&!starter.image&&
+      !starter.connector_entity&&!starter.charging_entity&&!starter.power_entity&&
+      !starter.ota_version_entity&&!starter.ota_status_entity&&!starter.rain?.enabled&&!starter.note){
+      this.config.blocks=[];
+    }
     this.config.blocks.push(...blocks);this.openKey=blocks[0].id;this.emit();this.render();
+  }
+  sectionMenu(parent){
+    const group=document.createElement('fieldset');
+    group.className='section-menu';
+    const legend=document.createElement('legend');
+    legend.textContent=this.t('Apartados de la tarjeta');
+    group.append(legend);
+    const grid=document.createElement('div');
+    grid.className='section-options';
+    const selected=this.selectedSections??=new Set();
+    const add=this.button(group,'Añadir apartados seleccionados',()=>{
+      const blocks=cardSectionBlocks([...selected],this.lang);
+      selected.clear();
+      this.appendSections(blocks);
+    });
+    add.disabled=selected.size===0;
+    group.insertBefore(grid,add);
+    for(const [key,entry] of Object.entries(CARD_SECTIONS)){
+      const option=document.createElement('label');
+      option.className='section-option';
+      const input=document.createElement('input');
+      input.type='checkbox';
+      input.checked=selected.has(key);
+      input.addEventListener('change',()=>{
+        if(input.checked)selected.add(key);
+        else selected.delete(key);
+        add.disabled=selected.size===0;
+      });
+      const icon=document.createElement('ha-icon');
+      icon.setAttribute('icon',entry.icon);
+      icon.setAttribute('aria-hidden','true');
+      const copy=document.createElement('span');
+      const title=document.createElement('strong');
+      title.textContent=this.t(entry.label);
+      const description=document.createElement('small');
+      description.textContent=this.t(entry.description);
+      copy.append(title,description);
+      option.append(input,icon,copy);
+      grid.append(option);
+    }
+    parent.append(group);
   }
   wizardPanel(parent){
     this.wizard??={kind:'electric',device:'',charging:true,vehicle:true,location:false};const w=this.wizard;
@@ -2841,8 +2995,10 @@ class VEBuilderEditor extends HTMLElement {
     this.sectionClipboard(root);
     this.transferPanel(root);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
-    this.wizardPanel(root);
-    this.templates(root);
+    this.sectionMenu(root);
+    const advanced=this.panel(root,'advanced-blocks','Configuración avanzada');
+    this.wizardPanel(advanced);
+    this.templates(advanced);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
@@ -2850,10 +3006,10 @@ class VEBuilderEditor extends HTMLElement {
       this.button(toolbar,'Copiar apartado',()=>this.copySection(block));
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });
-    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un tipo de bloque genérico. Después configura su título, entidades y presentación. No se copian los datos de otros bloques.');root.append(hint);
+    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un tipo de bloque genérico. Después configura su título, entidades y presentación. No se copian los datos de otros bloques.');advanced.append(hint);
     const add=document.createElement('div');add.className='add';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de bloque'));for(const [type,label]of Object.entries(TYPES)){const option=document.createElement('option');option.value=type;option.textContent=this.t(label);picker.append(option);}add.append(picker);
-    this.button(add,'＋ Añadir bloque',()=>{const block=newBlock(picker.value);block.title=this.t(block.title);if(block.note)block.note=this.t(block.note);this.config.blocks.push(block);this.openKey=block.id;this.emit();this.render();});root.append(add);
-    const description=document.createElement('p');description.className='muted';description.id='block-type-description';description.setAttribute('aria-live','polite');picker.setAttribute('aria-describedby',description.id);const describe=()=>description.textContent=this.t(BLOCK_DESCRIPTIONS[picker.value]);picker.addEventListener('change',describe);describe();root.append(description);
+    this.button(add,'＋ Añadir bloque',()=>{const block=newBlock(picker.value);block.title=this.t(block.title);if(block.note)block.note=this.t(block.note);this.config.blocks.push(block);this.openKey=block.id;this.emit();this.render();});advanced.append(add);
+    const description=document.createElement('p');description.className='muted';description.id='block-type-description';description.setAttribute('aria-live','polite');picker.setAttribute('aria-describedby',description.id);const describe=()=>description.textContent=this.t(BLOCK_DESCRIPTIONS[picker.value]);picker.addEventListener('change',describe);describe();advanced.append(description);
     root.querySelectorAll('details[data-key]').forEach(el=>{if(state.has(el.dataset.key))el.open=state.get(el.dataset.key);if(el.dataset.key===this.openKey){el.open=true;let parent=el.parentElement?.closest('details');while(parent){parent.open=true;parent=parent.parentElement?.closest('details');}}});this.openKey=null;
     for(const [node,top]of scroll)node.scrollTop=top;this.updateWarnings();
   }

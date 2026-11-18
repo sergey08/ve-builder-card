@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.8.1';
+export const VERSION = '1.9.0-beta.1';
 export const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 export const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -68,9 +68,44 @@ export function actionFor(entity, state, tap='toggle') {
   return null;
 }
 
+export const CARD_SECTIONS={
+  car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen, estado del vehículo y botones de acción.'},
+  battery:{label:'Batería',icon:'mdi:battery-charging',description:'Nivel de carga, precalentamiento, modos y límites.'},
+  map:{label:'Mapa',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
+  expenses:{label:'Gastos y ahorro',icon:'mdi:cash-multiple',description:'Costes, ahorros y fuentes de carga.'}
+};
+
+export function cardSectionBlocks(selection,lang='es'){
+  const blocks=[];
+  const car=selection.includes('car');
+  const battery=selection.includes('battery');
+  if(car||battery){
+    const [overview,charge,power,limits,actions]=templateBlocks('electric',lang);
+    if(car)blocks.push(overview,actions,translatedBlock('tyres',lang));
+    if(battery){
+      charge.battery={power_block:power.id,limits_block:limits.id};
+      limits.fields=[
+        {...newField(),name:translate('Límite por porcentaje',lang),unit:'%'},
+        {...newField(),name:translate('Límite por energía',lang),unit:'kWh'}
+      ];
+      blocks.push(charge,power,limits);
+    }
+  }
+  if(selection.includes('map'))blocks.push(translatedBlock('map',lang));
+  if(selection.includes('expenses'))blocks.push(...templateBlocks('expenses',lang));
+  return blocks;
+}
+
+function translatedBlock(type,lang){
+  const block=newBlock(type);
+  block.title=translate(block.title,lang);
+  if(block.note)block.note=translate(block.note,lang);
+  return block;
+}
+
 export function templateBlocks(kind,lang='es') {
  const field=(name,options={})=>({...newField(),name:translate(name,lang),...options});
- const block=(type,options={})=>{const b=newBlock(type);b.title=translate(b.title,lang);if(b.note)b.note=translate(b.note,lang);return Object.assign(b,options);};
+ const block=(type,options={})=>Object.assign(translatedBlock(type,lang),options);
  if(kind==='electric')return [block('start',{fields:[field('Ubicación',{format:'presence',icon:'mdi:map-marker'}),field('Batería',{icon:'mdi:battery',unit:'%'}),field('Autonomía',{unit:'km',icon:'mdi:map-marker-distance'}),field('Odómetro',{unit:'km',icon:'mdi:counter'})]}),block('battery'),block('power',{fields:[field('Potencia de carga',{display:'bar',min:0,max:7400,unit:'W'}),field('Intensidad configurada',{unit:'A'}),field('Excedentes disponibles',{unit:'W'}),field('Cargado hoy',{unit:'kWh',decimals:2}),field('Tiempo para finalizar')]}),block('limits'),block('actions')];
  if(kind==='combustion')return [block('start',{show_status:false,show_cable:false,animate:false,fields:[field('Ubicación',{format:'presence',icon:'mdi:map-marker'}),field('Combustible',{unit:'%',icon:'mdi:gas-station'}),field('Autonomía',{unit:'km',icon:'mdi:map-marker-distance'}),field('Odómetro',{unit:'km',icon:'mdi:counter'})]})];
  if(kind==='expenses')return [block('expenses',{prices:[field('Electricidad',{unit:'€/kWh',decimals:4}),field('Combustible',{unit:'€/L',decimals:3})],groups:[['Coste de carga','cost','mdi:ev-station'],['Ahorro solar','solar','mdi:solar-power'],['Ahorro frente al combustible','diesel','mdi:gas-station']].map(([name,style,icon])=>({id:uid(),name:translate(name,lang),style,icon,fields:['Hoy','Este mes','Este año'].map(name=>field(name,{unit:'€',decimals:2}))}))})];

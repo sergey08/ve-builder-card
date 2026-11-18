@@ -101,6 +101,8 @@ Four tyre-pressure readings, transmission state and context-aware advice.
 
 ## Build your card
 
+Select any combination of Car and actions, Battery, Map, and Costs and savings in Card sections, then add them together. Individual blocks and device discovery remain available in Advanced setup.
+
 Set a title, add blocks and select entities. Rename blocks and fields, add or remove items, and drag fields or blocks to reorder them. Use the visual editor to choose field size, width, icons, units, decimal places and presentation as information, buttons or bars. Undo and redo are available during an editing session.
 
 Start from an electric vehicle, combustion vehicle, costs or vehicle map template. Templates contain no preassigned sensors. Each card has its own configuration. The optional device filter helps find entities without changing their device assignments.
@@ -286,6 +288,8 @@ Estas imágenes corresponden a una configuración real del XPeng G6 en Home Assi
 Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Diseña tu tarjeta
+
+Selecciona uno o varios apartados entre Coche y acciones, Batería, Mapa y Gastos y ahorro, y añádelos juntos. La configuración por bloques y la detección de entidades siguen disponibles en Configuración avanzada.
 
 Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
 

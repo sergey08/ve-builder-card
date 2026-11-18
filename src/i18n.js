@@ -2066,3 +2066,73 @@ for(const [key,values] of Object.entries({"Objetivo de carga":["Charge target","
   EN[key]=values[0];
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
 }
+
+for(const [key,values] of Object.entries({
+  "Coche y acciones": [
+    "Car and actions",
+    "Carro e ações",
+    "Voiture et actions",
+    "Fahrzeug und Aktionen",
+    "Auto e azioni",
+    "Auto en acties"
+  ],
+  "Apartados de la tarjeta": [
+    "Card sections",
+    "Secções do cartão",
+    "Sections de la carte",
+    "Kartenabschnitte",
+    "Sezioni della scheda",
+    "Kaartonderdelen"
+  ],
+  "Añadir apartados seleccionados": [
+    "Add selected sections",
+    "Adicionar secções selecionadas",
+    "Ajouter les sections sélectionnées",
+    "Ausgewählte Abschnitte hinzufügen",
+    "Aggiungi sezioni selezionate",
+    "Geselecteerde onderdelen toevoegen"
+  ],
+  "Configuración avanzada": [
+    "Advanced setup",
+    "Configuração avançada",
+    "Configuration avancée",
+    "Erweiterte Einstellungen",
+    "Configurazione avanzata",
+    "Geavanceerde instellingen"
+  ],
+  "Imagen, estado del vehículo y botones de acción.": [
+    "Vehicle image, status and action buttons.",
+    "Imagem, estado e ações do veículo.",
+    "Image, état et actions du véhicule.",
+    "Fahrzeugbild, Status und Aktionsschaltflächen.",
+    "Immagine, stato e azioni del veicolo.",
+    "Afbeelding, status en acties van de auto."
+  ],
+  "Nivel de carga, precalentamiento, modos y límites.": [
+    "Charge level, preheating, modes and limits.",
+    "Nível, pré-aquecimento, modos e limites de carga.",
+    "Niveau de charge, préchauffage, modes et limites.",
+    "Ladestand, Vorwärmen, Modi und Grenzwerte.",
+    "Livello, preriscaldamento, modalità e limiti di carica.",
+    "Laadniveau, voorverwarming, modi en limieten."
+  ],
+  "Ubicación del vehículo en el mapa.": [
+    "Vehicle location on the map.",
+    "Localização do veículo no mapa.",
+    "Position du véhicule sur la carte.",
+    "Fahrzeugstandort auf der Karte.",
+    "Posizione del veicolo sulla mappa.",
+    "Locatie van de auto op de kaart."
+  ],
+  "Costes, ahorros y fuentes de carga.": [
+    "Costs, savings and charging sources.",
+    "Custos, poupanças e fontes de carga.",
+    "Coûts, économies et sources de recharge.",
+    "Kosten, Einsparungen und Ladequellen.",
+    "Costi, risparmi e fonti di ricarica.",
+    "Kosten, besparingen en laadbronnen."
+  ]
+})){
+  EN[key]=values[0];
+  ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
+}
