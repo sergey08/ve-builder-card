@@ -227,7 +227,6 @@ export class VEBuilderEditor extends HTMLElement {
     parent.append(group);
   }
   sectionEntitySearch(panel,block){
-    panel.dataset.entityScope=block.id;
     const filters=this.sectionDevices??=new Map();
     const active=filters.get(block.id)??'';
     const box=this.panel(panel,block.id+'-entity-search','Buscar entidades');
@@ -394,6 +393,7 @@ export class VEBuilderEditor extends HTMLElement {
     form.computeLabel=field=>this.t(labels[field.name]);
   }
   blockEditor(panel,block){
+    panel.dataset.entityScope=block.id;
     if(block.type==='map'){
       this.form(panel,block,[entity('entity',['person','device_tracker'])],patch=>{Object.assign(block,patch);this.emit();});
     }
