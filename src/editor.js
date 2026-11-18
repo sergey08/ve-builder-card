@@ -124,7 +124,7 @@ export class VEBuilderEditor extends HTMLElement {
   button(parent,label,fn,danger=false){const button=document.createElement('button');button.type='button';button.textContent=this.t(label);if(danger)button.className='danger';button.onclick=fn;parent.append(button);return button;}
   panel(parent,key,title,open=false){const panel=document.createElement('details');panel.dataset.key=key;panel.open=open;const summary=document.createElement('summary');summary.textContent=standardLabel(this.t(title),this.lang,this.config.translate_standard_labels!==false);panel.append(summary);parent.append(panel);return panel;}
   form(parent,data,schema,change){
-    const scope=parent.closest('[data-entity-scope]')?.dataset.entityScope;
+    const scope=parent.closest?.('[data-entity-scope]')?.dataset.entityScope;
     const device=this.sectionDevices?.get(scope);
     const scopedSchema=device?schema.map(field=>{
       const selector=field.selector?.entity;
