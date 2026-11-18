@@ -2,7 +2,7 @@ import {plainFieldStyles} from './styles.js';
 import {vehicleStatus,vehicleStatusStyles} from './vehicle-status.js';
 import {vehicleRain,rainStyles} from './rain.js';
 import {language,translate,standardLabel} from './i18n.js';
-import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,isStandaloneBattery,chargingModeTap,newBlock,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
+import {VERSION,TYPES,POSITIONS,escape,format,number,percentage,pressure,imageUrl,stateText,normalize,actionFor,isStandaloneBattery,chargingModeTap,BODY_PARTS,openingState,valueSeverity,readingFreshness,freshnessText,readingEntities,CHARGING_SOURCES,collectCardAlerts,recommendedPressure,tyreAdvice} from './core.js';
 import {styles,compactStyles,powerLayoutStyles,vehicleMapStyles,valueColorStyles,recommendationStyles,freshnessStyles,alertSummaryStyles,chargingSourceStyles} from './styles.js';
 import {isBatteryBlock,batterySources,batteryPreheatAction,batteryVehicleLimitField,renderBattery,batteryStyles} from './battery.js';
 import './editor.js';
@@ -12,7 +12,7 @@ export class VEBuilderCard extends HTMLElement {
   t(value){return translate(value,this.lang);}
   label(value){return standardLabel(value,this.lang,this.config.translate_standard_labels!==false);}
   static getConfigElement(){return document.createElement('ve-builder-card-editor');}
-  static getStubConfig(){return {type:'custom:ve-builder-card',title:'Mi vehículo',blocks:[newBlock('start')]};}
+  static getStubConfig(){return {type:'custom:ve-builder-card',title:'Mi vehículo',blocks:[]};}
   setConfig(config){this.config=normalize(config);this._dirty=true;this._configSignature=JSON.stringify(this.config);this._entities=new Set(this._configSignature.match(/[a-z_]+\.[a-z0-9_]+/g)??[]);if(!this.shadowRoot)this.attachShadow({mode:'open'});this.render();this.syncFreshnessTimer();}
   set hass(hass){this._hass=hass;this.render();}
   connectedCallback(){this.syncFreshnessTimer();this.updateFreshness();}

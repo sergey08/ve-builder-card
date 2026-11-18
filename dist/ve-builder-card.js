@@ -2161,7 +2161,7 @@ for(const [key,values] of Object.entries({
   ['pt','fr','de','it','nl'].forEach((code,index)=>EXTRA[code][key]=values[index+1]);
 }
 
-const VERSION = '1.9.0-beta.3';
+const VERSION = '1.9.0-beta.4';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -3044,15 +3044,15 @@ class VEBuilderEditor extends HTMLElement {
     const state=new Map([...root.querySelectorAll('details[data-key]')].map(el=>[el.dataset.key,el.open]));
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
-    this.form(root,{language:'auto',translate_standard_labels:true,...this.config},[...(isStandaloneBattery(this.config.blocks)?[]:[text('title')]),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
-    const labelHelp=document.createElement('p');labelHelp.className='muted';labelHelp.textContent=this.t('Los nombres estándar siguen el idioma de la tarjeta. Los textos personalizados se conservan.');root.append(labelHelp);
-    this.historyToolbar(root);
-    this.alertsEditor(root);
-    this.sectionClipboard(root);
-    this.transferPanel(root);
-    if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.sectionMenu(root);
     const advanced=this.panel(root,'advanced-blocks','Configuración avanzada');
+    this.form(advanced,{language:'auto',translate_standard_labels:true,...this.config},[...(isStandaloneBattery(this.config.blocks)?[]:[text('title')]),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
+    const labelHelp=document.createElement('p');labelHelp.className='muted';labelHelp.textContent=this.t('Los nombres estándar siguen el idioma de la tarjeta. Los textos personalizados se conservan.');advanced.append(labelHelp);
+    this.historyToolbar(advanced);
+    this.alertsEditor(advanced);
+    this.sectionClipboard(advanced);
+    this.transferPanel(advanced);
+    if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.templates(advanced);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
@@ -3065,6 +3065,7 @@ class VEBuilderEditor extends HTMLElement {
     const add=document.createElement('div');add.className='add';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de bloque'));for(const [type,label]of Object.entries(TYPES)){const option=document.createElement('option');option.value=type;option.textContent=this.t(label);picker.append(option);}add.append(picker);
     this.button(add,'＋ Añadir bloque',()=>{const block=newBlock(picker.value);block.title=this.t(block.title);if(block.note)block.note=this.t(block.note);this.config.blocks.push(block);this.openKey=block.id;this.emit();this.render();});advanced.append(add);
     const description=document.createElement('p');description.className='muted';description.id='block-type-description';description.setAttribute('aria-live','polite');picker.setAttribute('aria-describedby',description.id);const describe=()=>description.textContent=this.t(BLOCK_DESCRIPTIONS[picker.value]);picker.addEventListener('change',describe);describe();advanced.append(description);
+    root.append(advanced);
     root.querySelectorAll('details[data-key]').forEach(el=>{if(state.has(el.dataset.key))el.open=state.get(el.dataset.key);if(el.dataset.key===this.openKey){el.open=true;let parent=el.parentElement?.closest('details');while(parent){parent.open=true;parent=parent.parentElement?.closest('details');}}});this.openKey=null;
     for(const [node,top]of scroll)node.scrollTop=top;this.updateWarnings();
   }
@@ -3277,7 +3278,7 @@ class VEBuilderCard extends HTMLElement {
   t(value){return translate(value,this.lang);}
   label(value){return standardLabel(value,this.lang,this.config.translate_standard_labels!==false);}
   static getConfigElement(){return document.createElement('ve-builder-card-editor');}
-  static getStubConfig(){return {type:'custom:ve-builder-card',title:'Mi vehículo',blocks:[newBlock('start')]};}
+  static getStubConfig(){return {type:'custom:ve-builder-card',title:'Mi vehículo',blocks:[]};}
   setConfig(config){this.config=normalize(config);this._dirty=true;this._configSignature=JSON.stringify(this.config);this._entities=new Set(this._configSignature.match(/[a-z_]+\.[a-z0-9_]+/g)??[]);if(!this.shadowRoot)this.attachShadow({mode:'open'});this.render();this.syncFreshnessTimer();}
   set hass(hass){this._hass=hass;this.render();}
   connectedCallback(){this.syncFreshnessTimer();this.updateFreshness();}

@@ -443,15 +443,15 @@ export class VEBuilderEditor extends HTMLElement {
     const state=new Map([...root.querySelectorAll('details[data-key]')].map(el=>[el.dataset.key,el.open]));
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
     root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
-    this.form(root,{language:'auto',translate_standard_labels:true,...this.config},[...(isStandaloneBattery(this.config.blocks)?[]:[text('title')]),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
-    const labelHelp=document.createElement('p');labelHelp.className='muted';labelHelp.textContent=this.t('Los nombres estándar siguen el idioma de la tarjeta. Los textos personalizados se conservan.');root.append(labelHelp);
-    this.historyToolbar(root);
-    this.alertsEditor(root);
-    this.sectionClipboard(root);
-    this.transferPanel(root);
-    if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.sectionMenu(root);
     const advanced=this.panel(root,'advanced-blocks','Configuración avanzada');
+    this.form(advanced,{language:'auto',translate_standard_labels:true,...this.config},[...(isStandaloneBattery(this.config.blocks)?[]:[text('title')]),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
+    const labelHelp=document.createElement('p');labelHelp.className='muted';labelHelp.textContent=this.t('Los nombres estándar siguen el idioma de la tarjeta. Los textos personalizados se conservan.');advanced.append(labelHelp);
+    this.historyToolbar(advanced);
+    this.alertsEditor(advanced);
+    this.sectionClipboard(advanced);
+    this.transferPanel(advanced);
+    if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
     this.templates(advanced);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
@@ -464,6 +464,7 @@ export class VEBuilderEditor extends HTMLElement {
     const add=document.createElement('div');add.className='add';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de bloque'));for(const [type,label]of Object.entries(TYPES)){const option=document.createElement('option');option.value=type;option.textContent=this.t(label);picker.append(option);}add.append(picker);
     this.button(add,'＋ Añadir bloque',()=>{const block=newBlock(picker.value);block.title=this.t(block.title);if(block.note)block.note=this.t(block.note);this.config.blocks.push(block);this.openKey=block.id;this.emit();this.render();});advanced.append(add);
     const description=document.createElement('p');description.className='muted';description.id='block-type-description';description.setAttribute('aria-live','polite');picker.setAttribute('aria-describedby',description.id);const describe=()=>description.textContent=this.t(BLOCK_DESCRIPTIONS[picker.value]);picker.addEventListener('change',describe);describe();advanced.append(description);
+    root.append(advanced);
     root.querySelectorAll('details[data-key]').forEach(el=>{if(state.has(el.dataset.key))el.open=state.get(el.dataset.key);if(el.dataset.key===this.openKey){el.open=true;let parent=el.parentElement?.closest('details');while(parent){parent.open=true;parent=parent.parentElement?.closest('details');}}});this.openKey=null;
     for(const [node,top]of scroll)node.scrollTop=top;this.updateWarnings();
   }
