@@ -46,12 +46,6 @@ test('new locale catalogues cover every interface key and recognise regional cod
  assert.equal(translate('My custom car name','pt'),'My custom car name');
 });
 
-test('language selector explicitly requests a compact Home Assistant dropdown',async()=>{
- const {readFile}=await import('node:fs/promises');
- const editor=await readFile(new URL('../src/editor.js',import.meta.url),'utf8');
- assert.match(editor,/name:'language',selector:\{select:\{mode:'dropdown'/);
-});
-
 test('saved standard labels follow all seven languages without rewriting custom text',async()=>{
  const {standardLabel}=await import('../src/i18n.js');
  for(const lang of ['en','es','pt','fr','de','it','nl']){

@@ -55,7 +55,7 @@ test('all six body openings render only confirmed open states and escape gear te
   assert.ok(card.shadowRoot.innerHTML.includes('&lt;P&gt;'));assert.ok(!card.shadowRoot.innerHTML.includes('>NaN<'));
  }
 });
-test('picker preview is labelled sample data and hides the legacy entry',()=>{
+test('picker starts empty and hides the legacy entry',()=>{
  const registry=new Map();class Element{attachShadow(){this.shadowRoot={innerHTML:'',querySelectorAll:()=>[]};}}
  const sharedRegistry=[{type:'vehicle-builder-card-v1'},{type:'unrelated-card'}];
  const window={customCards:sharedRegistry};
@@ -64,10 +64,10 @@ test('picker preview is labelled sample data and hides the legacy entry',()=>{
  assert.ok(sharedRegistry.some(c=>c.type==='ve-builder-card'));
  assert.match(window.customCards.find(c=>c.type==='ve-builder-card').name,/EV/);
  const Card=registry.get('ve-builder-card');const card=new Card();card.setConfig(Card.getStubConfig());card.hass={language:'en',states:{}};
- assert.match(card.shadowRoot.innerHTML,/Sample data/);assert.match(card.shadowRoot.innerHTML,/<svg/);assert.doesNotMatch(card.shadowRoot.innerHTML,/data-field=/);
+ assert.match(card.shadowRoot.innerHTML,/Choose and add at least one section/);assert.doesNotMatch(card.shadowRoot.innerHTML,/<svg|data-field=/);
  assert.equal(window.customCards.filter(c=>c.type==='ve-builder-card').length,1);assert.ok(!window.customCards.some(c=>c.type==='vehicle-builder-card-v1'));assert.ok(window.customCards.some(c=>c.type==='unrelated-card'));
 });
-test('mobile update path skips unrelated events and preserves sample preview DOM',()=>{
+test('mobile update path skips unrelated events and preserves empty preview DOM',()=>{
  const registry=new Map();let paints=0;
  class Element{attachShadow(){this.shadowRoot={set innerHTML(value){paints++;},querySelectorAll:()=>[]};}}
  vm.runInNewContext(readFileSync('dist/ve-builder-card.js','utf8'),{HTMLElement:Element,customElements:{get:k=>registry.get(k),define:(k,v)=>registry.set(k,v)},window:{},console:{info(){}},structuredClone});
