@@ -2165,7 +2165,7 @@ for(const [code,label] of Object.entries({"en":"Choose and add at least one sect
 
 for(const [key,labels] of Object.entries({
   'Mapa del coche':['Car map','Fahrzeugkarte','Carte du véhicule','Mappa dell’auto','Mapa do carro','Autokaart'],
-  'Imagen del coche y botones de acción.':['Car image and action buttons.','Fahrzeugbild und Aktionsschaltflächen.','Image du véhicule et boutons d’action.','Immagine dell’auto e pulsanti di azione.','Imagem do carro e botões de ação.','Autoafbeelding en actieknoppen.'],
+  'Imagen del coche, botones de acción y ubicación GPS.':['Car image, action buttons and GPS location.','Fahrzeugbild, Aktionsschaltflächen und GPS-Standort.','Image du véhicule, boutons d’action et position GPS.','Immagine dell’auto, pulsanti di azione e posizione GPS.','Imagem do carro, botões de ação e localização GPS.','Autoafbeelding, actieknoppen en gps-locatie.'],
   'Esquema del vehículo con neumáticos y aperturas.':['Vehicle diagram with tyres and openings.','Fahrzeugschema mit Reifen und Öffnungen.','Schéma du véhicule avec pneus et ouvrants.','Schema del veicolo con pneumatici e aperture.','Diagrama do veículo com pneus e aberturas.','Voertuigschema met banden en openingen.'],
   'Subir imagen':['Upload image','Bild hochladen','Importer une image','Carica immagine','Carregar imagem','Afbeelding uploaden'],
   'Subiendo imagen…':['Uploading image…','Bild wird hochgeladen…','Importation de l’image…','Caricamento immagine…','A carregar imagem…','Afbeelding uploaden…'],

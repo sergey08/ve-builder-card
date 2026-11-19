@@ -12,10 +12,10 @@ test('new cards start empty and adding a map preserves the vehicle section',()=>
  editor.setConfig({type:'custom:ve-builder-card'});
  assert.deepEqual(editor.config.blocks,[]);
  editor.appendSections(cardSectionBlocks(['car']));
- assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','actions']);
+ assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','actions','map']);
  editor.appendSections(cardSectionBlocks(['map']));
- assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','actions','tyres']);
- const diagram=editor.config.blocks[2];
+ assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','actions','map','tyres']);
+ const diagram=editor.config.blocks[3];
  assert.equal(diagram.title,'Mapa del coche');
  assert.equal(editor.revealSection,diagram.id);
  assert.deepEqual(cardSectionBlocks(['map']).map(block=>block.type),['tyres']);
