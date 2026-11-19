@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 globalThis.HTMLElement=class {};
 globalThis.customElements={get:()=>true,define:()=>{}};
 const {VEBuilderEditor}=await import('../src/editor.js');
+const {cardSectionBlocks}=await import('../src/core.js');
 test('editor does not rebuild when Home Assistant echoes the emitted config',()=>{const editor=new VEBuilderEditor();let renders=0;editor.render=()=>renders++;editor.setConfig({blocks:[{id:'start',type:'start',fields:[]}]});assert.equal(renders,1);editor.setConfig(structuredClone(editor.config));assert.equal(renders,1);});
 test('a genuine external config change is rendered',()=>{const editor=new VEBuilderEditor();let renders=0;editor.render=()=>renders++;editor.setConfig({blocks:[],title:'A'});editor.setConfig({...structuredClone(editor.config),title:'B'});assert.equal(renders,2);assert.equal(editor.config.title,'B');});
 
@@ -10,10 +11,14 @@ test('new cards start empty and adding a map preserves the vehicle section',()=>
  const editor=new VEBuilderEditor();editor.render=()=>{};editor.emit=()=>{};
  editor.setConfig({type:'custom:ve-builder-card'});
  assert.deepEqual(editor.config.blocks,[]);
- editor.appendSections([{id:'car',type:'start',fields:[]}]);
- editor.appendSections([{id:'map',type:'map',entity:'device_tracker.car'}]);
- assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','map']);
- assert.equal(editor.revealSection,'map');
+ editor.appendSections(cardSectionBlocks(['car']));
+ assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','actions']);
+ editor.appendSections(cardSectionBlocks(['map']));
+ assert.deepEqual(editor.config.blocks.map(block=>block.type),['start','actions','tyres']);
+ const diagram=editor.config.blocks[2];
+ assert.equal(diagram.title,'Mapa del coche');
+ assert.equal(editor.revealSection,diagram.id);
+ assert.deepEqual(cardSectionBlocks(['map']).map(block=>block.type),['tyres']);
 });
 
 test('reordering works in both directions and preserves field and group data',()=>{

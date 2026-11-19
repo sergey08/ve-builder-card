@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.9.0-beta.8';
+export const VERSION = '1.9.0-beta.9';
 export const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 export const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -69,8 +69,8 @@ export function actionFor(entity, state, tap='toggle') {
 }
 
 export const CARD_SECTIONS={
-  car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen, estado del vehículo y botones de acción.'},
-  map:{label:'Mapa del coche',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
+  car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen del coche y botones de acción.'},
+  map:{label:'Mapa del coche',icon:'mdi:tire',description:'Esquema del vehículo con neumáticos y aperturas.'},
   battery:{label:'Batería',icon:'mdi:battery-charging',description:'Nivel de carga, precalentamiento, modos y límites.'},
   expenses:{label:'Gastos y ahorro',icon:'mdi:cash-multiple',description:'Costes, ahorros y fuentes de carga.'}
 };
@@ -81,7 +81,7 @@ export function cardSectionBlocks(selection,lang='es'){
   const battery=selection.includes('battery');
   if(car||battery){
     const [overview,charge,power,limits,actions]=templateBlocks('electric',lang);
-    if(car)blocks.push(overview,actions,translatedBlock('tyres',lang));
+    if(car)blocks.push(overview,actions);
     if(battery){
       charge.battery={power_block:power.id,limits_block:limits.id};
       limits.fields=[
@@ -91,7 +91,11 @@ export function cardSectionBlocks(selection,lang='es'){
       blocks.push(charge,power,limits);
     }
   }
-  if(selection.includes('map'))blocks.push(translatedBlock('map',lang));
+  if(selection.includes('map')){
+    const diagram=translatedBlock('tyres',lang);
+    diagram.title=translate(CARD_SECTIONS.map.label,lang);
+    blocks.push(diagram);
+  }
   if(selection.includes('expenses'))blocks.push(...templateBlocks('expenses',lang));
   return blocks;
 }

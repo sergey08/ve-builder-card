@@ -2167,6 +2167,8 @@ for(const [code,label] of Object.entries({"en":"Choose and add at least one sect
 
 for(const [key,labels] of Object.entries({
   'Mapa del coche':['Car map','Fahrzeugkarte','Carte du véhicule','Mappa dell’auto','Mapa do carro','Autokaart'],
+  'Imagen del coche y botones de acción.':['Car image and action buttons.','Fahrzeugbild und Aktionsschaltflächen.','Image du véhicule et boutons d’action.','Immagine dell’auto e pulsanti di azione.','Imagem do carro e botões de ação.','Autoafbeelding en actieknoppen.'],
+  'Esquema del vehículo con neumáticos y aperturas.':['Vehicle diagram with tyres and openings.','Fahrzeugschema mit Reifen und Öffnungen.','Schéma du véhicule avec pneus et ouvrants.','Schema del veicolo con pneumatici e aperture.','Diagrama do veículo com pneus e aberturas.','Voertuigschema met banden en openingen.'],
   'Subir imagen':['Upload image','Bild hochladen','Importer une image','Carica immagine','Carregar imagem','Afbeelding uploaden'],
   'Subiendo imagen…':['Uploading image…','Bild wird hochgeladen…','Importation de l’image…','Caricamento immagine…','A carregar imagem…','Afbeelding uploaden…'],
   'No se pudo subir la imagen.':['Could not upload the image.','Das Bild konnte nicht hochgeladen werden.','Impossible d’importer l’image.','Impossibile caricare l’immagine.','Não foi possível carregar a imagem.','De afbeelding kon niet worden geüpload.'],
@@ -2175,7 +2177,7 @@ for(const [key,labels] of Object.entries({
   ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
 }
 
-const VERSION = '1.9.0-beta.8';
+const VERSION = '1.9.0-beta.9';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2245,8 +2247,8 @@ function actionFor(entity, state, tap='toggle') {
 }
 
 const CARD_SECTIONS={
-  car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen, estado del vehículo y botones de acción.'},
-  map:{label:'Mapa del coche',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
+  car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen del coche y botones de acción.'},
+  map:{label:'Mapa del coche',icon:'mdi:tire',description:'Esquema del vehículo con neumáticos y aperturas.'},
   battery:{label:'Batería',icon:'mdi:battery-charging',description:'Nivel de carga, precalentamiento, modos y límites.'},
   expenses:{label:'Gastos y ahorro',icon:'mdi:cash-multiple',description:'Costes, ahorros y fuentes de carga.'}
 };
@@ -2257,7 +2259,7 @@ function cardSectionBlocks(selection,lang='es'){
   const battery=selection.includes('battery');
   if(car||battery){
     const [overview,charge,power,limits,actions]=templateBlocks('electric',lang);
-    if(car)blocks.push(overview,actions,translatedBlock('tyres',lang));
+    if(car)blocks.push(overview,actions);
     if(battery){
       charge.battery={power_block:power.id,limits_block:limits.id};
       limits.fields=[
@@ -2267,7 +2269,11 @@ function cardSectionBlocks(selection,lang='es'){
       blocks.push(charge,power,limits);
     }
   }
-  if(selection.includes('map'))blocks.push(translatedBlock('map',lang));
+  if(selection.includes('map')){
+    const diagram=translatedBlock('tyres',lang);
+    diagram.title=translate(CARD_SECTIONS.map.label,lang);
+    blocks.push(diagram);
+  }
   if(selection.includes('expenses'))blocks.push(...templateBlocks('expenses',lang));
   return blocks;
 }
