@@ -2,6 +2,8 @@
 
 # VE Builder Card
 
+> **1.9.0 beta:** Choose one or more of Car and actions, Car map, Battery, and Costs and savings. A new card starts empty. Configure the location entity in Car map and upload the vehicle photo under Car and actions. Use Home Assistant’s YAML editor to copy a card’s configuration.
+
 **English** · [Español](https://github.com/sergey08/ve-builder-card/blob/main/README.es.md)
 
 [![Open in Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
@@ -200,6 +202,8 @@ Select **Copy section** at the end of a block. In another card on the same page 
 <img src="https://raw.githubusercontent.com/sergey08/ve-builder-card/main/assets/logo.png?logo=1.0.3" alt="VE Builder Card" width="160">
 
 # VE Builder Card
+
+> **Beta 1.9.0:** Elige Coche y acciones, Mapa del coche, Batería o Gastos y ahorro. Puedes combinar varios tipos en una tarjeta nueva, que empieza vacía. Configura el localizador en Mapa del coche y sube la foto desde Coche y acciones. Para copiar la configuración, usa el editor YAML de Home Assistant.
 
 [English](https://github.com/sergey08/ve-builder-card/blob/main/README.md) · **Español**
 

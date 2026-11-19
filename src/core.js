@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.9.0-beta.7';
+export const VERSION = '1.9.0-beta.8';
 export const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 export const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -46,7 +46,7 @@ export function chargingModeTap(entity){
 }
 export function normalize(config) {
   if(!config||typeof config!=='object')throw Error('La configuración debe ser un objeto.');
-  const out=clone(config); out.type='custom:ve-builder-card';out.version=1;out.title??='Mi vehículo';out.blocks??=[newBlock('start')];
+  const out=clone(config); out.type='custom:ve-builder-card';out.version=1;out.title??='Mi vehículo';out.blocks??=[];
   if(!Array.isArray(out.blocks))throw Error('Los bloques deben ser una lista.');
   const ids=new Set();
   const identify=item=>{if(!item.id||ids.has(item.id))item.id=uid();ids.add(item.id);return item;};
@@ -70,8 +70,8 @@ export function actionFor(entity, state, tap='toggle') {
 
 export const CARD_SECTIONS={
   car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen, estado del vehículo y botones de acción.'},
+  map:{label:'Mapa del coche',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
   battery:{label:'Batería',icon:'mdi:battery-charging',description:'Nivel de carga, precalentamiento, modos y límites.'},
-  map:{label:'Mapa',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
   expenses:{label:'Gastos y ahorro',icon:'mdi:cash-multiple',description:'Costes, ahorros y fuentes de carga.'}
 };
 

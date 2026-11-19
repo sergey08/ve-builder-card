@@ -2165,7 +2165,17 @@ for(const [code,label] of Object.entries({"en":"Choose and add at least one sect
   (code==='en'?EN:EXTRA[code])['Elige y añade al menos un apartado para crear la tarjeta.']=label;
 }
 
-const VERSION = '1.9.0-beta.7';
+for(const [key,labels] of Object.entries({
+  'Mapa del coche':['Car map','Fahrzeugkarte','Carte du véhicule','Mappa dell’auto','Mapa do carro','Autokaart'],
+  'Subir imagen':['Upload image','Bild hochladen','Importer une image','Carica immagine','Carregar imagem','Afbeelding uploaden'],
+  'Subiendo imagen…':['Uploading image…','Bild wird hochgeladen…','Importation de l’image…','Caricamento immagine…','A carregar imagem…','Afbeelding uploaden…'],
+  'No se pudo subir la imagen.':['Could not upload the image.','Das Bild konnte nicht hochgeladen werden.','Impossible d’importer l’image.','Impossibile caricare l’immagine.','Não foi possível carregar a imagem.','De afbeelding kon niet worden geüpload.'],
+  'La entidad de ubicación aún no tiene coordenadas.':['The location entity has no coordinates yet.','Die Standortentität hat noch keine Koordinaten.','L’entité de localisation n’a pas encore de coordonnées.','L’entità di posizione non ha ancora coordinate.','A entidade de localização ainda não tem coordenadas.','De locatie-entiteit heeft nog geen coördinaten.']
+})){
+  ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
+}
+
+const VERSION = '1.9.0-beta.8';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2212,7 +2222,7 @@ function chargingModeTap(entity){
 }
 function normalize(config) {
   if(!config||typeof config!=='object')throw Error('La configuración debe ser un objeto.');
-  const out=clone(config); out.type='custom:ve-builder-card';out.version=1;out.title??='Mi vehículo';out.blocks??=[newBlock('start')];
+  const out=clone(config); out.type='custom:ve-builder-card';out.version=1;out.title??='Mi vehículo';out.blocks??=[];
   if(!Array.isArray(out.blocks))throw Error('Los bloques deben ser una lista.');
   const ids=new Set();
   const identify=item=>{if(!item.id||ids.has(item.id))item.id=uid();ids.add(item.id);return item;};
@@ -2236,8 +2246,8 @@ function actionFor(entity, state, tap='toggle') {
 
 const CARD_SECTIONS={
   car:{label:'Coche y acciones',icon:'mdi:car',description:'Imagen, estado del vehículo y botones de acción.'},
+  map:{label:'Mapa del coche',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
   battery:{label:'Batería',icon:'mdi:battery-charging',description:'Nivel de carga, precalentamiento, modos y límites.'},
-  map:{label:'Mapa',icon:'mdi:map-marker',description:'Ubicación del vehículo en el mapa.'},
   expenses:{label:'Gastos y ahorro',icon:'mdi:cash-multiple',description:'Costes, ahorros y fuentes de carga.'}
 };
 
@@ -2614,9 +2624,7 @@ const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:
 const entity=(name,domain)=>({name,selector:{entity:domain?{domain}:{}}});
 const bool=name=>({name,selector:{boolean:{}}});
 const LABELS={active_value:'Estado activo (opcional)',translate_standard_labels:'Traducir nombres estándar',max_age_minutes:'Considerar antiguo a partir de · minutos',timestamp_entity:'Sensor con la fecha de lectura (opcional)',recommended_front_bar:'Presión recomendada delante · bar (en frío)',recommended_rear_bar:'Presión recomendada detrás · bar (en frío)',enabled:'Activar colores por valor',direction:'Avisar cuando el valor sea',warning:'Umbral de aviso · ámbar',critical:'Umbral crítico · rojo',kind:'Tipo de vehículo',charging:'Incluir carga',vehicle:'Incluir mapa del vehículo',location:'Incluir ubicación',gear_entity:"Sensor de marcha",gear_name:"Nombre de la marcha",open_value:"Estado que significa abierto",closed_value:"Estado que significa cerrado",device:"Filtrar entidades por dispositivo (opcional)",language:'Idioma',title:'Título',name:'Nombre visible (opcional)',entity:'Entidad',icon:'Icono',display:'Presentación',size:'Tamaño',style:'Estilo',width:'Anchura',tap:'Al pulsar',confirm:'Pedir confirmación',decimals:'Decimales',unit:'Unidad (opcional; se obtiene del sensor)',format:'Formato del dato',min:'Mínimo',max:'Máximo',image:'Imagen · URL o ruta /local/',image_height:'Altura de la imagen (px)',show_image:'Mostrar imagen',animate:'Animar durante la carga',show_status:'Mostrar estado de carga',show_cable:'Mostrar manguera',ota_version_entity:'Sensor de versión OTA (opcional)',ota_status_entity:'Sensor de actualización disponible (opcional)',connector_entity:'Sensor del conector',charging_entity:'Entidad del estado de carga',charging_value:'Estado que significa cargando',power_entity:'Potencia real · verifica si entra energía',zoom:'Zoom',hours:'Horas de recorrido · 0 para ocultarlo',show_dates:'Mostrar fechas de lectura',note:'Comentario al pie'};
-const CSS=`.section-menu{margin:12px 0;padding:12px;min-width:0;border:1px solid var(--divider-color);border-radius:12px}.section-menu legend{padding:0 4px;font-weight:600}.section-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px}.section-option{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px;border:1px solid var(--divider-color);border-radius:8px;cursor:pointer}.section-option:has(input:checked){border-color:var(--primary-color)}.section-option input{accent-color:var(--primary-color)}.section-option ha-icon{color:var(--primary-color);flex:none}.section-option small{display:block;line-height:1.25}.section-menu button:disabled{opacity:.5;cursor:default}textarea{display:block;box-sizing:border-box;width:100%;max-width:100%;padding:10px;margin:8px 0;border:1px solid var(--divider-color);border-radius:8px;background:var(--card-background-color);color:var(--primary-text-color);font:inherit;resize:vertical}.transfer-file{display:block;margin:14px 0}.transfer-file input{display:block;max-width:100%;margin:8px 0}.transfer-preview{padding:12px;margin-top:12px;border:1px solid var(--primary-color);border-radius:10px}.transfer-preview p{overflow-wrap:anywhere}.transfer-preview details p{font-size:12px}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}.intro{padding:14px;border-radius:12px;background:var(--secondary-background-color);line-height:1.6}.intro h3{margin:0 0 6px}.intro p{margin:0;color:var(--secondary-text-color);font-size:13px}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.add{padding:12px;border:1px dashed var(--divider-color);border-radius:12px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
-
-let copiedSection=null;
+const CSS=`.section-menu{margin:12px 0;padding:12px;min-width:0;border:1px solid var(--divider-color);border-radius:12px}.section-menu legend{padding:0 4px;font-weight:600}.section-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px}.section-option{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px;border:1px solid var(--divider-color);border-radius:8px;cursor:pointer}.section-option:has(input:checked){border-color:var(--primary-color)}.section-option input{accent-color:var(--primary-color)}.section-option ha-icon{color:var(--primary-color);flex:none}.section-option small{display:block;line-height:1.25}.section-menu button:disabled{opacity:.5;cursor:default}.image-upload{display:block;margin:10px 0}.image-upload input{display:block;margin-top:6px;max-width:100%}summary.reorder-handle{cursor:grab}summary.reorder-handle:before{content:"⠿";display:inline-block;margin-right:9px;color:var(--secondary-text-color);font-size:20px;vertical-align:middle}summary.reorder-handle:active{cursor:grabbing}details.dragging{opacity:.45}details.drop-target{outline:2px solid var(--primary-color);outline-offset:2px}:host{display:block;color:var(--primary-text-color)}details{border:1px solid var(--divider-color);border-radius:12px;margin:12px 0;padding:12px}details details{background:var(--secondary-background-color);margin:8px 0}summary{cursor:pointer;line-height:1.6;font-weight:600;padding:4px}details[open]>summary{color:var(--primary-color);margin-bottom:10px}button,select{font:inherit;border:1px solid var(--divider-color);background:var(--secondary-background-color);color:var(--primary-text-color);border-radius:8px;padding:9px 12px;min-height:44px;margin:6px 6px 0 0;cursor:pointer}button:hover{border-color:var(--primary-color)}button:focus-visible,summary:focus-visible{outline:2px solid var(--primary-color);outline-offset:3px}.danger{color:var(--error-color,#db4437)}ha-form{display:block;margin:10px 0}.muted{font-size:12px;color:var(--secondary-text-color);line-height:1.5}.warnings{margin:12px 0;font-size:12px;color:var(--secondary-text-color);line-height:1.5}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:4px}small{font-size:12px;font-weight:400;color:var(--secondary-text-color)}`;
 
 class VEBuilderEditor extends HTMLElement {
   get lang(){return language(this.config,this._hass);}
@@ -2625,7 +2633,7 @@ class VEBuilderEditor extends HTMLElement {
     // Home Assistant can enable Save when it adds layout defaults to a new card.
     let dialog=this;
     while(dialog&&dialog.localName!=='hui-dialog-edit-card'){
-      dialog=dialog.getRootNode()?.host;
+      dialog=dialog.parentElement??dialog.getRootNode()?.host;
     }
     if(!dialog)return;
     this.saveGuard=new AbortController();
@@ -2677,76 +2685,6 @@ class VEBuilderEditor extends HTMLElement {
   updateHistoryButtons(){
     for(const [key,list]of [['undo',this.history],['redo',this.future]]){const button=this.shadowRoot?.querySelector('[data-history="'+key+'"]');if(button)button.disabled=!list?.length;}
   }
-  alertsEditor(parent){
-    const panel=this.panel(parent,'alerts-summary','Resumen de avisos');const options=this.config.alerts??{};
-    const toggle=this.form(panel,{enabled:!!options.enabled},[bool('enabled')],patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();this.render();});toggle.computeLabel=()=>this.t('Mostrar resumen de avisos');
-    if(!options.enabled)return;
-    const labels={include_values:'Valores en aviso o crítico',include_tyres:'Presiones en aviso o crítico',include_openings:'Puertas, capó y maletero abiertos',include_stale:'Datos antiguos'};
-    const form=this.form(panel,{include_values:true,include_tyres:true,include_openings:true,include_stale:true,...options},Object.keys(labels).map(bool),patch=>{this.config.alerts={...this.config.alerts,...patch};this.emit();});form.computeLabel=field=>this.t(labels[field.name]);
-    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Solo resume esta tarjeta y utiliza sus umbrales y entidades configurados. Desaparece cuando no hay avisos. Pulsa un aviso para ver detalles, sin ejecutar acciones.');panel.append(hint);
-  }
-  copySection(block){copiedSection=clone(block);this.copyFeedback='Apartado copiado. Abre otra tarjeta de este panel y pulsa Pegar apartado.';this.render();}
-  pasteSection(){
-    if(!copiedSection)return false;
-    const copy=clone(copiedSection);copy.id=uid();
-    for(const fields of [copy.fields,copy.prices,copy.vehicle_status])fields?.forEach(f=>f.id=uid());
-    copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});
-    this.config.blocks.push(copy);this.openKey=copy.id;this.copyFeedback='Apartado pegado. Revisa sus entidades y pulsa Guardar.';this.emit();this.render();return true;
-  }
-  sectionClipboard(parent){
-    const box=this.panel(parent,'section-clipboard','Reutilizar apartados');
-    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Copia un apartado desde sus botones y pégalo en otra tarjeta abierta en esta misma página. Conserva entidades, nombres y estilo. La copia temporal se borra al recargar; no usa el portapapeles del sistema.');box.append(hint);
-    const paste=this.button(box,'Pegar apartado',()=>this.pasteSection());paste.disabled=!copiedSection;
-    if(copiedSection){const label=document.createElement('p');label.className='muted';label.textContent=this.t('Apartado copiado')+': '+(copiedSection.title||this.t(TYPES[copiedSection.type]||'Bloque'));box.append(label);this.button(box,'Borrar copia temporal',()=>{copiedSection=null;this.copyFeedback='';this.render();});}
-    if(this.copyFeedback){const feedback=document.createElement('p');feedback.className='muted';feedback.setAttribute('role','status');feedback.textContent=this.t(this.copyFeedback);box.append(feedback);}
-  }
-  previewImport(){
-    try{this.importPreview=inspectCardImport(this.importText??'',this._hass?.states??{});this.transferMessage='';}
-    catch(error){this.importPreview=null;this.transferMessage=error.message;}
-    this.openKey='card-transfer';this.render();
-  }
-  applyImport(mode){
-    if(!this.importPreview)return false;
-    // Revalidate the exact text at apply time, after any edit or state update.
-    let result;try{result=inspectCardImport(this.importText??'',this._hass?.states??{});}catch(error){this.importPreview=null;this.transferMessage=error.message;this.render();return false;}
-    if(mode==='append')this.config.blocks.push(...result.config.blocks);
-    else if(mode==='replace')this.config=result.config;
-    else return false;
-    this.importPreview=null;this.importText='';this.transferMessage='Importación aplicada. Revisa las entidades y pulsa Guardar. Puedes deshacer este cambio.';
-    this.openKey='card-transfer';this.emit();this.render();return true;
-  }
-  transferPanel(parent){
-    const panel=this.panel(parent,'card-transfer','Exportar e importar tarjeta');
-    const paragraph=value=>{const p=document.createElement('p');p.className='muted';p.textContent=this.t(value);panel.append(p);return p;};
-    paragraph('Guarda una copia JSON o comparte el diseño. Los archivos no incluyen lecturas del coche. Las imágenes conservan su URL; no se adjuntan.');
-    const label=document.createElement('label'),checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=this.exportEntities!==false;checkbox.onchange=()=>{this.exportEntities=checkbox.checked;};label.append(checkbox,document.createTextNode(' '+this.t('Incluir entidades en la exportación')));panel.append(label);
-    paragraph('Desmarca esta opción para compartir el diseño sin asignaciones de entidades. Revisa también títulos, notas y direcciones de imágenes antes de compartirlo.');
-    this.button(panel,'Descargar tarjeta JSON',()=>{
-      const blob=new Blob([exportCard(this.config,{includeEntities:this.exportEntities!==false})],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-      link.href=url;link.download='ve-builder-card.json';panel.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    });
-    const fileLabel=document.createElement('label');fileLabel.className='transfer-file';fileLabel.textContent=this.t('Abrir archivo JSON');
-    const file=document.createElement('input');file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label',this.t('Abrir archivo JSON'));file.onchange=async()=>{
-      const selected=file.files?.[0];if(!selected)return;this.importPreview=null;panel.querySelector('[data-import-preview]')?.remove();const request=this._importRequest=(this._importRequest??0)+1;
-      if(selected.size>TRANSFER_LIMIT){this.importPreview=null;this.transferMessage='El archivo supera el límite de 512 KB.';this.render();return;}
-      try{const source=await selected.text();if(request!==this._importRequest)return;this.importText=source;this.previewImport();}catch{if(request===this._importRequest){this.importPreview=null;this.transferMessage='No se pudo leer el archivo.';this.render();}}
-    };fileLabel.append(file);panel.append(fileLabel);
-    const areaLabel=document.createElement('label');areaLabel.className='transfer-file';areaLabel.textContent=this.t('O pega aquí la configuración JSON');
-    const area=document.createElement('textarea');area.value=this.importText??'';area.rows=6;area.spellcheck=false;area.maxLength=TRANSFER_LIMIT;area.setAttribute('aria-label',this.t('O pega aquí la configuración JSON'));
-    area.oninput=()=>{this._importRequest=(this._importRequest??0)+1;this.importText=area.value;this.importPreview=null;panel.querySelector('[data-import-preview]')?.remove();};areaLabel.append(area);panel.append(areaLabel);
-    this.button(panel,'Revisar importación',()=>this.previewImport());
-    if(this.importPreview){
-      const preview=document.createElement('div');preview.dataset.importPreview='';preview.className='transfer-preview';panel.append(preview);
-      const heading=document.createElement('strong');heading.textContent=this.importPreview.config.title;preview.append(heading);
-      for(const [key,count]of [['Apartados',this.importPreview.blocks],['Campos',this.importPreview.fields],['Entidades',this.importPreview.entities.length],['Entidades no disponibles',this.importPreview.missing.length]]){const line=document.createElement('p');line.textContent=this.t(key)+': '+count;preview.append(line);}
-      if(this.importPreview.missing.length){const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=this.t('Entidades no disponibles');details.append(summary);for(const id of this.importPreview.missing){const line=document.createElement('p');line.textContent=id;details.append(line);}preview.append(details);}
-      const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añadir conserva el título y los ajustes actuales. Reemplazar cambia toda esta tarjeta. No se crean sensores ni se envían órdenes al vehículo.');preview.append(hint);
-      this.button(preview,'Añadir solo los apartados',()=>this.applyImport('append'));
-      this.button(preview,'Reemplazar esta tarjeta',()=>this.applyImport('replace'),true);
-      this.button(preview,'Cancelar',()=>{this.importPreview=null;this.render();});
-    }
-    if(this.transferMessage){const status=paragraph(this.transferMessage);status.setAttribute('role','status');}
-  }
   historyToolbar(parent){
     const bar=document.createElement('div');bar.className='toolbar';
     for(const [key,label]of [['undo','↶ Deshacer'],['redo','↷ Rehacer']]){const button=this.button(bar,label,()=>this.travelHistory(key));button.dataset.history=key;}
@@ -2795,18 +2733,8 @@ class VEBuilderEditor extends HTMLElement {
     handle.addEventListener('drop',event=>{event.preventDefault();event.stopPropagation();panel.classList.remove('drop-target');if(this.dragItem?.key!==key)return;const id=this.dragItem.id;this.dragItem=null;this.moveItem(list,id,index);});
     handle.addEventListener('dragend',()=>{this.dragItem=null;this.shadowRoot.querySelectorAll('.dragging,.drop-target').forEach(el=>el.classList.remove('dragging','drop-target'));});
   }
-  addTemplate(kind){
-    this.appendSections(templateBlocks(kind,this.lang));
-  }
   appendSections(blocks){
     if(!blocks.length)return;
-    const [starter]=this.config.blocks;
-    if(this.config.blocks.length===1&&starter.type==='start'&&
-      !starter.fields?.length&&!starter.vehicle_status?.length&&!starter.image&&
-      !starter.connector_entity&&!starter.charging_entity&&!starter.power_entity&&
-      !starter.ota_version_entity&&!starter.ota_status_entity&&!starter.rain?.enabled&&!starter.note){
-      this.config.blocks=[];
-    }
     this.config.blocks.push(...blocks);
     this.openKey=blocks[0].id;
     this.revealSection=blocks[0].id;
@@ -2893,12 +2821,6 @@ class VEBuilderEditor extends HTMLElement {
       this.openKey=box.dataset.key;
       this.render();
     });
-  }
-  templates(parent){
-    const box=this.panel(parent,'templates','Plantillas iniciales',this.config.blocks.length===0);
-    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Añade una base y selecciona tus entidades. Los bloques configurados se conservan.');box.append(hint);
-    for(const [kind,label]of Object.entries({electric:'Vehículo eléctrico',combustion:'Gasolina / GNC',expenses:'Gastos y ahorro',tyres:'Mapa del vehículo'}))this.button(box,label,()=>this.addTemplate(kind));
-    const tip=document.createElement('p');tip.className='muted';tip.textContent=this.t('Arrastra el asa de un campo, grupo o bloque para cambiar su posición. Con teclado: Alt + flechas.');box.append(tip);
   }
   colorEditor(parent,owner,key,id,title='Colores según el valor'){
     const panel=this.panel(parent,id+'-colors',title);
@@ -3023,6 +2945,45 @@ class VEBuilderEditor extends HTMLElement {
     });
     form.computeLabel=field=>this.t(labels[field.name]);
   }
+  vehicleImageUpload(panel,block){
+    const label=document.createElement('label');
+    label.className='image-upload';
+    label.textContent=this.t('Subir imagen');
+    const input=document.createElement('input');
+    input.type='file';
+    input.accept='image/png,image/jpeg,image/gif,image/webp';
+    label.append(input);
+    const status=document.createElement('p');
+    status.className='muted';
+    status.setAttribute('role','status');
+    panel.append(label,status);
+    input.addEventListener('change',async()=>{
+      const file=input.files?.[0];
+      if(!file)return;
+      const originalImage=block.image;
+      input.disabled=true;
+      status.textContent=this.t('Subiendo imagen…');
+      try{
+        const body=new FormData();
+        body.append('file',file);
+        const response=await this._hass.fetchWithAuth('/api/image/upload',{method:'POST',body});
+        if(!response.ok)throw new Error('Image upload failed');
+        const {id}=await response.json();
+        if(typeof id!=='string'||!id)throw new Error('Missing image ID');
+        if(!this.isConnected||!this.config.blocks.includes(block)||block.image!==originalImage)return;
+        block.image='/api/image/serve/'+encodeURIComponent(id)+'/original';
+        block.show_image=true;
+        this.openKey=panel.dataset.key;
+        this.emit();
+        this.render();
+      }catch{
+        status.textContent=this.t('No se pudo subir la imagen.');
+      }finally{
+        input.value='';
+        input.disabled=false;
+      }
+    });
+  }
   blockEditor(panel,block){
     panel.dataset.entityScope=block.id;
     if(block.type==='map'){
@@ -3033,6 +2994,7 @@ class VEBuilderEditor extends HTMLElement {
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
+      this.vehicleImageUpload(image,block);
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
       const otaPanel=this.panel(panel,block.id+'-ota','Versión del sistema y actualizaciones');
       this.form(otaPanel,block,[entity('ota_version_entity','sensor'),entity('ota_status_entity',['sensor','binary_sensor','update'])],patch=>{Object.assign(block,patch);this.emit();});
@@ -3094,29 +3056,16 @@ class VEBuilderEditor extends HTMLElement {
     if(!this.config)return;if(!this.shadowRoot)this.attachShadow({mode:'open'});const root=this.shadowRoot;
     const state=new Map([...root.querySelectorAll('details[data-key]')].map(el=>[el.dataset.key,el.open]));
     const scroll=[];for(let node=this;node;node=node.parentElement??node.getRootNode()?.host){scroll.push([node,node.scrollTop]);}
-    root.innerHTML=`<style>${CSS}</style><div class="intro"><h3>VE Builder Card</h3><p>${this.t('Añade un bloque, elige sus entidades y personaliza la presentación. La vista previa se actualiza mientras editas.')}</p></div><div class="warnings" role="status"></div>`;
+    root.innerHTML=`<style>${CSS}</style><div class="warnings" role="status"></div>`;
     this.sectionMenu(root);
-    const advanced=this.panel(root,'advanced-blocks','Configuración avanzada');
-    this.form(advanced,{language:'auto',translate_standard_labels:true,...this.config},[...(isStandaloneBattery(this.config.blocks)?[]:[text('title')]),bool('translate_standard_labels'),{name:'language',selector:{select:{mode:'dropdown',options:Object.entries(LANGUAGES).map(([value,label])=>({value,label:value==='auto'?this.t('Automático')+' · Home Assistant':label}))}}}],patch=>{const changed=(patch.language!==undefined&&patch.language!==this.config.language)||patch.translate_standard_labels!==undefined;Object.assign(this.config,patch);this.emit();if(changed)this.render();});
-    const labelHelp=document.createElement('p');labelHelp.className='muted';labelHelp.textContent=this.t('Los nombres estándar siguen el idioma de la tarjeta. Los textos personalizados se conservan.');advanced.append(labelHelp);
-    this.historyToolbar(advanced);
-    this.alertsEditor(advanced);
-    this.sectionClipboard(advanced);
-    this.transferPanel(advanced);
     if(this.deviceFilterError){const warning=document.createElement('p');warning.className='muted';warning.textContent=this.t('No se pudo cargar el filtro. Puedes elegir la entidad sin filtrar.');root.append(warning);}
-    this.templates(advanced);
+    if(this.config.blocks.length)this.historyToolbar(root);
     this.config.blocks.forEach((block,index)=>{
       const panel=this.panel(root,block.id,block.title||TYPES[block.type]||'Bloque');this.reorderHandle(panel,this.config.blocks,index,'blocks');this.blockEditor(panel,block);
       const toolbar=document.createElement('div');toolbar.className='toolbar';panel.append(toolbar);
       this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.vehicle_status?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
-      this.button(toolbar,'Copiar apartado',()=>this.copySection(block));
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });
-    const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Elige un tipo de bloque genérico. Después configura su título, entidades y presentación. No se copian los datos de otros bloques.');advanced.append(hint);
-    const add=document.createElement('div');add.className='add';const picker=document.createElement('select');picker.setAttribute('aria-label',this.t('Tipo de bloque'));for(const [type,label]of Object.entries(TYPES)){const option=document.createElement('option');option.value=type;option.textContent=this.t(label);picker.append(option);}add.append(picker);
-    this.button(add,'＋ Añadir bloque',()=>{const block=newBlock(picker.value);block.title=this.t(block.title);if(block.note)block.note=this.t(block.note);this.config.blocks.push(block);this.openKey=block.id;this.emit();this.render();});advanced.append(add);
-    const description=document.createElement('p');description.className='muted';description.id='block-type-description';description.setAttribute('aria-live','polite');picker.setAttribute('aria-describedby',description.id);const describe=()=>description.textContent=this.t(BLOCK_DESCRIPTIONS[picker.value]);picker.addEventListener('change',describe);describe();advanced.append(description);
-    root.append(advanced);
     root.querySelectorAll('details[data-key]').forEach(el=>{if(state.has(el.dataset.key))el.open=state.get(el.dataset.key);if(el.dataset.key===this.openKey){el.open=true;let parent=el.parentElement?.closest('details');while(parent){parent.open=true;parent=parent.parentElement?.closest('details');}}});this.openKey=null;
     for(const [node,top]of scroll)node.scrollTop=top;
     if(this.revealSection){
@@ -3526,24 +3475,21 @@ class VEBuilderCard extends HTMLElement {
   }
   limits(block){return `<div class="charge-limits">${(block.fields??[]).map(f=>{const state=this.state[f.entity],a=state?.attributes??{},value=number(state?.state),valid=!f.read_only&&value!==null&&number(a.min)!==null&&number(a.max)!==null&&a.max>a.min;return `<label class="limit-row ${this.severity(f)}"><div class="limit-heading"><span>${escape(this.label(f.name)||a.friendly_name||this.t('Límite'))}</span><strong data-limit-label="${escape(f.id)}">${escape(stateText(state,f,this.lang))}</strong></div><input type="range" data-limit="${escape(f.id)}" aria-label="${escape(this.label(f.name)||this.t('Límite'))}" min="${escape(a.min??0)}" max="${escape(a.max??100)}" step="${escape(a.step??1)}" value="${escape(value??0)}" ${!valid?'disabled':''}/></label>`;}).join('')}</div>`;}
   allFields(){return (this.config.blocks??[]).flatMap(b=>[...(b.fields??[]),...(b.prices??[]),...(b.groups??[]).flatMap(g=>g.fields??[]),...(isBatteryBlock(b)?[batteryVehicleLimitField(b)].filter(Boolean):[])]);}
-  showcase(){
-    return `<style>${styles}
-    .showcase{padding:18px;background:linear-gradient(145deg,var(--ha-card-background,var(--card-background-color)),var(--secondary-background-color));border-radius:16px}.showcase-tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-color);font-weight:700}.showcase h3{margin:8px 0 12px;font-size:21px}.showcase-metrics{display:flex;gap:6px;flex-wrap:wrap}.showcase-metrics span{padding:6px 10px;border-radius:20px;background:var(--ha-card-background,var(--card-background-color));font-size:11px;margin:0}.showcase svg{display:block;width:100%;height:150px}.showcase-power{padding:12px;background:var(--ha-card-background,var(--card-background-color));border-radius:12px}.showcase-power>div:first-child{display:flex;justify-content:space-between;font-size:12px}.showcase-bar{height:7px;border-radius:8px;margin-top:10px;background:var(--divider-color)}.showcase-bar:after{content:"";display:block;width:62%;height:100%;border-radius:8px;background:var(--primary-color)}.showcase-features{display:flex;justify-content:space-around;gap:6px;margin-top:14px;font-size:11px;color:var(--secondary-text-color)}.showcase p{font-size:11px;line-height:1.5;margin:12px 0 0;color:var(--secondary-text-color)}
-    </style><ha-card><div class="showcase"><div class="showcase-tag">${this.t('Vista de ejemplo')}</div><h3>${this.t('Tu vehículo, a tu manera')}</h3><div class="showcase-metrics"><span>🔋 80 %</span><span>↗ 320 km</span><span>🌡 21 °C</span></div>
-    <svg viewBox="0 0 400 160" role="img" aria-label="${escape(this.t('Vista de ejemplo'))}"><ellipse cx="203" cy="131" rx="150" ry="11" fill="var(--divider-color)" opacity=".4"/><path d="M46 111 L58 85 Q66 74 102 69 L136 37 Q148 29 172 29 L241 30 Q260 31 282 64 L327 75 Q351 81 354 105 L352 120 L48 120 Z" fill="var(--secondary-background-color)" stroke="var(--primary-color)" stroke-width="3"/><path d="M118 67 L146 39 L185 38 L185 67 Z M197 38 L237 39 Q253 42 268 67 L197 67 Z" fill="var(--primary-color)" opacity=".3"/><path d="M192 74 L192 113 M279 76 L285 113" stroke="var(--divider-color)" stroke-width="2"/><path d="M59 91 L85 91 M328 88 L344 93" stroke="var(--primary-color)" stroke-width="5" stroke-linecap="round"/><circle cx="113" cy="119" r="24" fill="var(--ha-card-background,var(--card-background-color))" stroke="var(--primary-color)" stroke-width="4"/><circle cx="113" cy="119" r="11" fill="var(--divider-color)"/><circle cx="291" cy="119" r="24" fill="var(--ha-card-background,var(--card-background-color))" stroke="var(--primary-color)" stroke-width="4"/><circle cx="291" cy="119" r="11" fill="var(--divider-color)"/><path d="M24 136 L24 96 Q24 87 34 87 L56 87" fill="none" stroke="var(--primary-color)" stroke-width="3" stroke-linecap="round"/></svg>
-    <div class="showcase-power"><div><b>${this.t('Potencia de carga')}</b><b>4,6 kW</b></div><div class="showcase-bar"></div></div><div class="showcase-features"><b>${this.t('Mapa del vehículo')}</b><b>${this.t('Gastos y ahorro')}</b><b>${this.t('Ubicación')}</b></div><p>${this.t('Datos de ejemplo. Abre Editar y elige una plantilla para empezar.')}</p></div></ha-card>`;
-  }
   render(){
     if(!this._hass||!this.config)return;
     // HA state objects are immutable: compare only entities used by this card.
-    // Avoid serialising every attribute and repainting the sample on unrelated updates.
     if(this._editingSlider||this._batteryConfirm)return;
     const states=[...this._entities].map(id=>this.state[id]);
     if(this.config.blocks.some(isBatteryBlock))states.push(this._hass.services);
     const unchanged=!this._dirty&&this._renderLanguage===this.lang&&this._renderUser===this._hass.user&&this._renderStates?.length===states.length&&states.every((state,i)=>state===this._renderStates[i]);
     if(unchanged){if(this._mapHosts?.length)this.syncMaps();return;}
     this._dirty=false;this._renderStates=states;this._renderLanguage=this.lang;this._renderUser=this._hass.user;
-    const blocks=this.config.blocks??[];if(blocks.length===0||(blocks.length===1&&blocks[0].type==='start'&&!blocks[0].fields?.length&&!blocks[0].vehicle_status?.length&&!blocks[0].image&&!blocks[0].connector_entity&&!blocks[0].charging_entity&&!blocks[0].power_entity)){this._mapHosts=[];this.shadowRoot.innerHTML=this.showcase();return;}
+    const blocks=this.config.blocks;
+    if(!blocks.length){
+      this._mapHosts=[];
+      this.shadowRoot.innerHTML=`<style>${styles}</style><ha-card><p class="empty">${this.t('Elige y añade al menos un apartado para crear la tarjeta.')}</p></ha-card>`;
+      return;
+    }
         const sources=new Map(blocks.filter(isBatteryBlock).map(block=>[block,batterySources(block,blocks,this.state)]));
     const embedded=new Set();
     for(const source of sources.values()){
@@ -3611,7 +3557,45 @@ class VEBuilderCard extends HTMLElement {
   confirmAction(name){return new Promise(resolve=>{const dialog=document.createElement('dialog');dialog.innerHTML=`<p>${this.t('¿Ejecutar')} ${escape(name)}?</p><button data-yes>${this.t('Confirmar')}</button><button data-no>${this.t('Cancelar')}</button>`;this.shadowRoot.append(dialog);let done=false;const finish=value=>{if(done)return;done=true;dialog.remove();resolve(value);};dialog.querySelector('[data-yes]').onclick=()=>finish(true);dialog.querySelector('[data-no]').onclick=()=>finish(false);dialog.oncancel=()=>finish(false);dialog.showModal();});}
   async syncMaps(){
     if(!this.shadowRoot||!this.config)return;
-    for(const host of this._mapHosts??[]){const block=this.config.blocks.find(b=>b.id===host.dataset.map);if(!block?.entity){host.textContent=this.t('Elige la entidad de ubicación en Editar.');continue;}if(host.card){host.card.hass=this._hass;continue;}if(host.loading)continue;host.loading=true;try{const helpers=await window.loadCardHelpers();if(!host.isConnected)continue;const card=helpers.createCardElement({type:'map',entities:[block.entity],default_zoom:Number(block.zoom)||14,hours_to_show:Number(block.hours)||0});card.hass=this._hass;host.replaceChildren(card);host.card=card;host.mapConfig=JSON.stringify(block);}catch{host.textContent=this.t('No se pudo cargar el mapa. Recarga el panel.');}finally{host.loading=false;}}
+    for(const host of this._mapHosts??[]){
+      const block=this.config.blocks.find(b=>b.id===host.dataset.map);
+      if(!block?.entity){
+        host.textContent=this.t('Elige la entidad de ubicación en Editar.');
+        continue;
+      }
+      const attributes=this.state[block.entity]?.attributes;
+      if(!Number.isFinite(attributes?.latitude)||!Number.isFinite(attributes?.longitude)){
+        host.card=null;
+        host.textContent=this.t('La entidad de ubicación aún no tiene coordenadas.');
+        continue;
+      }
+      if(host.card){
+        host.card.hass=this._hass;
+        continue;
+      }
+      if(host.loading)continue;
+      host.loading=true;
+      try{
+        const helpers=await window.loadCardHelpers();
+        if(!host.isConnected)continue;
+        const latest=this.state[block.entity]?.attributes;
+        if(!Number.isFinite(latest?.latitude)||!Number.isFinite(latest?.longitude))continue;
+        const card=helpers.createCardElement({
+          type:'map',
+          entities:[block.entity],
+          default_zoom:Number(block.zoom)||14,
+          hours_to_show:Number(block.hours)||0
+        });
+        card.hass=this._hass;
+        host.replaceChildren(card);
+        host.card=card;
+        host.mapConfig=JSON.stringify(block);
+      }catch{
+        host.textContent=this.t('No se pudo cargar el mapa. Recarga el panel.');
+      }finally{
+        host.loading=false;
+      }
+    }
   }
 }
 if(!customElements.get('ve-builder-card'))customElements.define('ve-builder-card',VEBuilderCard);

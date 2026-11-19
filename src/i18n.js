@@ -2162,3 +2162,13 @@ for(const [key,values] of Object.entries({
 for(const [code,label] of Object.entries({"en":"Choose and add at least one section to create the card.","pt":"Escolhe e adiciona pelo menos uma secção para criar o cartão.","fr":"Choisissez et ajoutez au moins une section pour créer la carte.","de":"Wähle mindestens einen Abschnitt und füge ihn hinzu.","it":"Scegli e aggiungi almeno una sezione per creare la scheda.","nl":"Kies en voeg minstens één onderdeel toe om de kaart te maken."})){
   (code==='en'?EN:EXTRA[code])['Elige y añade al menos un apartado para crear la tarjeta.']=label;
 }
+
+for(const [key,labels] of Object.entries({
+  'Mapa del coche':['Car map','Fahrzeugkarte','Carte du véhicule','Mappa dell’auto','Mapa do carro','Autokaart'],
+  'Subir imagen':['Upload image','Bild hochladen','Importer une image','Carica immagine','Carregar imagem','Afbeelding uploaden'],
+  'Subiendo imagen…':['Uploading image…','Bild wird hochgeladen…','Importation de l’image…','Caricamento immagine…','A carregar imagem…','Afbeelding uploaden…'],
+  'No se pudo subir la imagen.':['Could not upload the image.','Das Bild konnte nicht hochgeladen werden.','Impossible d’importer l’image.','Impossibile caricare l’immagine.','Não foi possível carregar a imagem.','De afbeelding kon niet worden geüpload.'],
+  'La entidad de ubicación aún no tiene coordenadas.':['The location entity has no coordinates yet.','Die Standortentität hat noch keine Koordinaten.','L’entité de localisation n’a pas encore de coordonnées.','L’entità di posizione non ha ancora coordinate.','A entidade de localização ainda não tem coordenadas.','De locatie-entiteit heeft nog geen coördinaten.']
+})){
+  ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
+}
