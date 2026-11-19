@@ -2165,7 +2165,7 @@ for(const [code,label] of Object.entries({"en":"Choose and add at least one sect
   (code==='en'?EN:EXTRA[code])['Elige y añade al menos un apartado para crear la tarjeta.']=label;
 }
 
-const VERSION = '1.9.0-beta.6';
+const VERSION = '1.9.0-beta.7';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2621,6 +2621,32 @@ let copiedSection=null;
 class VEBuilderEditor extends HTMLElement {
   get lang(){return language(this.config,this._hass);}
   t(value){return translate(value,this.lang);}
+  connectedCallback(){
+    // Home Assistant can enable Save when it adds layout defaults to a new card.
+    let dialog=this;
+    while(dialog&&dialog.localName!=='hui-dialog-edit-card'){
+      dialog=dialog.getRootNode()?.host;
+    }
+    if(!dialog)return;
+    this.saveGuard=new AbortController();
+    const options={capture:true,signal:this.saveGuard.signal};
+    const preventEmptySave=event=>{
+      if(this.config?.blocks.length!==0)return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.shadowRoot?.querySelector('.warnings')?.scrollIntoView({block:'nearest'});
+    };
+    dialog.addEventListener('click',event=>{
+      const save=event.composedPath().some(node=>
+        node.localName==='ha-button'&&node.getAttribute('slot')==='primaryAction'&&
+        node.parentElement?.localName==='ha-dialog-footer'&&node.getRootNode().host===dialog);
+      if(save)preventEmptySave(event);
+    },options);
+    dialog.addEventListener('editor-save',preventEmptySave,options);
+  }
+  disconnectedCallback(){
+    this.saveGuard?.abort();
+  }
   setConfig(config){
     const normalized=normalize(config);
     if(!this.config&&normalized.blocks.length===0)this.emptyStarterConfig=clone(config);

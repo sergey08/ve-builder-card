@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.7
+
+- EN: Prevent saving a card without sections when Home Assistant enables Save after applying layout defaults.
+- ES: Se bloquea el guardado sin apartados si Home Assistant habilita Guardar al aplicar los ajustes de diseño.
+
 # VE Builder Card 1.9.0-beta.6
 
 - EN: Show the correct section after adding it, open the location picker first for Map, preserve its device filter and require a section before saving a new card.

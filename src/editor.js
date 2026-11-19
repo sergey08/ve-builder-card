@@ -16,6 +16,32 @@ let copiedSection=null;
 export class VEBuilderEditor extends HTMLElement {
   get lang(){return language(this.config,this._hass);}
   t(value){return translate(value,this.lang);}
+  connectedCallback(){
+    // Home Assistant can enable Save when it adds layout defaults to a new card.
+    let dialog=this;
+    while(dialog&&dialog.localName!=='hui-dialog-edit-card'){
+      dialog=dialog.getRootNode()?.host;
+    }
+    if(!dialog)return;
+    this.saveGuard=new AbortController();
+    const options={capture:true,signal:this.saveGuard.signal};
+    const preventEmptySave=event=>{
+      if(this.config?.blocks.length!==0)return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.shadowRoot?.querySelector('.warnings')?.scrollIntoView({block:'nearest'});
+    };
+    dialog.addEventListener('click',event=>{
+      const save=event.composedPath().some(node=>
+        node.localName==='ha-button'&&node.getAttribute('slot')==='primaryAction'&&
+        node.parentElement?.localName==='ha-dialog-footer'&&node.getRootNode().host===dialog);
+      if(save)preventEmptySave(event);
+    },options);
+    dialog.addEventListener('editor-save',preventEmptySave,options);
+  }
+  disconnectedCallback(){
+    this.saveGuard?.abort();
+  }
   setConfig(config){
     const normalized=normalize(config);
     if(!this.config&&normalized.blocks.length===0)this.emptyStarterConfig=clone(config);
