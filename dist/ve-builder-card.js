@@ -2102,6 +2102,8 @@ for(const [key,values] of Object.entries({
     "Configurazione avanzata",
     "Geavanceerde instellingen"
   ],
+  "Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.": ["Device entities: {count}. Open a selector in this section to choose one.","Entidades do dispositivo: {count}. Abre um seletor desta secção para escolher uma.","Entités de l’appareil : {count}. Ouvrez un sélecteur de cette section pour en choisir une.","Entitäten des Geräts: {count}. Öffne ein Auswahlfeld in diesem Abschnitt.","Entità del dispositivo: {count}. Apri un selettore di questa sezione per sceglierne una.","Apparaatentiteiten: {count}. Open een kiezer in dit onderdeel om er een te kiezen."],
+  "El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.": ["This device has no enabled entities. The selectors show all entities.","O dispositivo não tem entidades ativadas. Os seletores mostram todas as entidades.","L’appareil ne comporte aucune entité activée. Les sélecteurs affichent toutes les entités.","Das Gerät hat keine aktivierten Entitäten. Die Auswahlfelder zeigen alle Entitäten.","Il dispositivo non ha entità abilitate. I selettori mostrano tutte le entità.","Dit apparaat heeft geen ingeschakelde entiteiten. De kiezers tonen alle entiteiten."],
   "Imagen, estado del vehículo y botones de acción.": [
     "Vehicle image, status and action buttons.",
     "Imagem, estado e ações do veículo.",
@@ -2177,7 +2179,7 @@ for(const [key,labels] of Object.entries({
   ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
 }
 
-const VERSION = '1.9.0-beta.10';
+const VERSION = '1.9.0-beta.11';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2719,6 +2721,7 @@ class VEBuilderEditor extends HTMLElement {
       const domains=Array.isArray(domain)?domain:domain?[domain]:[];
       const candidates=this.entityRegistry.filter(entry=>entry.device_id===device&&
         (!domains.length||domains.includes(entry.entity_id.split('.')[0]))).map(entry=>entry.entity_id);
+      if(!candidates.length)return field;
       const existing=data[field.name];
       if(typeof existing==='string'&&existing&&!candidates.includes(existing))candidates.push(existing);
       return {...field,selector:{entity:{...selector,include_entities:candidates}}};
@@ -2797,19 +2800,29 @@ class VEBuilderEditor extends HTMLElement {
     const box=this.panel(panel,block.id+'-entity-search','Buscar entidades');
     const hint=document.createElement('p');
     hint.className='muted';
-    hint.textContent=this.t('Elige un dispositivo para filtrar las entidades de este apartado.');
+    hint.setAttribute('role','status');
+    const found=this.entityRegistry?.filter(entry=>entry.device_id===active).length??0;
+    hint.textContent=active
+      ? this.t('Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.').replace('{count}',found)
+      : this.t('Elige un dispositivo para filtrar las entidades de este apartado.');
     box.append(hint);
     let device=active;
     const button=this.button(box,'Buscar entidades',async()=>{
       if(!device)return;
+      const selectedDevice=device;
       button.disabled=true;
       try{
         const registry=await this._hass.callWS({type:'config/entity_registry/list'});
-        if(!this.config.blocks.includes(block)||!button.isConnected)return;
-        this.entityRegistry=registry;
-        filters.set(block.id,device);
+        if(!this.config.blocks.includes(block)||!button.isConnected||device!==selectedDevice)return;
+        this.entityRegistry=registry.filter(entry=>!entry.disabled_by);
+        if(this.entityRegistry.some(entry=>entry.device_id===device))filters.set(block.id,device);
+        else filters.delete(block.id);
         this.openKey=box.dataset.key;
         this.render();
+        if(!filters.has(block.id)){
+          const status=Array.from(this.shadowRoot.querySelectorAll('details')).find(item=>item.dataset.key===box.dataset.key)?.querySelector('[role="status"]');
+          if(status)status.textContent=this.t('El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.');
+        }
       }catch{
         if(!button.isConnected)return;
         button.disabled=false;
@@ -2999,17 +3012,17 @@ class VEBuilderEditor extends HTMLElement {
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=standardLabel(block.title,this.lang,this.config.translate_standard_labels!==false)||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
+      const otaPanel=this.panel(panel,block.id+'-ota','Versión del sistema y actualizaciones');
+      this.form(otaPanel,block,[entity('ota_version_entity','sensor'),entity('ota_status_entity',['sensor','binary_sensor','update'])],patch=>{Object.assign(block,patch);this.emit();});
+      const fields=this.panel(panel,block.id+'-fields','Información sobre el vehículo',true);this.fieldList(fields,block.fields??(block.fields=[]),block.id);
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.vehicleImageUpload(image,block);
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
-      const otaPanel=this.panel(panel,block.id+'-ota','Versión del sistema y actualizaciones');
-      this.form(otaPanel,block,[entity('ota_version_entity','sensor'),entity('ota_status_entity',['sensor','binary_sensor','update'])],patch=>{Object.assign(block,patch);this.emit();});
-      this.rainEditor(panel,block);
-      this.statusEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);
-      const fields=this.panel(panel,block.id+'-fields','Información sobre el vehículo',true);this.fieldList(fields,block.fields??(block.fields=[]),block.id);
+      this.rainEditor(panel,block);
+      this.statusEditor(panel,block);
     }else if(['modes','battery'].includes(block.type)){
       this.fieldList(panel,block.fields??(block.fields=[]),block.id,'mode');
       this.batteryEditor(panel,block);
@@ -3285,6 +3298,8 @@ const batteryStyles=`
 `;
 
 
+const defaultVehicleImage='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 230"><g fill="none" stroke="#82919c" stroke-width="5" stroke-linejoin="round"><path fill="#82919c" fill-opacity=".23" d="M44 148l7-27 48-14 40-34q11-10 29-10h75q20 0 31 12l31 33 37 10q14 4 16 19l2 18H44z"/><path d="m110 110 39-32h58v32zm110-32h22q14 0 23 10l20 22h-65z"/><circle cx="109" cy="154" r="22" fill="#38434b"/><circle cx="300" cy="154" r="22" fill="#38434b"/></g></svg>');
+
 class VEBuilderCard extends HTMLElement {
   get lang(){return language(this.config,this._hass);}
   t(value){return translate(value,this.lang);}
@@ -3380,8 +3395,8 @@ class VEBuilderCard extends HTMLElement {
   start(block){
     const plugged=this.state[block.connector_entity]?.state==='on',charging=this.state[block.charging_entity]?.state===(block.charging_value??'Charging');
     const power=number(this.state[block.power_entity]?.state),active=block.power_entity?power!==null&&power>0:charging,animated=active&&block.animate!==false;
-    const image=imageUrl(block.image),cable=(plugged||active)&&block.show_cable!==false;
-    return this.fields(block.fields)+(block.show_image!==false&&image?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.label(this.config.title)||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/><div class="rain-host" data-rain="${escape(block.id)}">${this.rainOverlay(block)}</div>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'')+this.vehicleStatuses(block);
+    const image=imageUrl(block.image)||defaultVehicleImage,cable=(plugged||active)&&block.show_cable!==false;
+    return this.fields(block.fields)+(block.show_image!==false?`<div class="vehicle ${animated?'is-charging':''}" style="--vehicle-height:${Math.max(80,Math.min(600,number(block.image_height)??210))}px"><img src="${escape(image)}" alt="${escape(this.label(this.config.title)||this.t('Vehículo'))}" style="height:var(--vehicle-height)"/><div class="rain-host" data-rain="${escape(block.id)}">${this.rainOverlay(block)}</div>${cable?`<svg class="charge-cable ${animated?'cable-animated':'cable-static'}" style="height:var(--vehicle-height)" viewBox="0 0 400 230" aria-hidden="true"><path class="cable-base" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><path class="cable-flow" d="M12 210 L12 164 Q12 149 30 149 L70 149 Q88 149 88 130 L88 112"/><rect x="81" y="102" width="14" height="16" rx="3"/></svg>`:''}${animated?'<div class="charge-glow"></div>':''}${block.show_status!==false&&(block.connector_entity||block.charging_entity)?`<div class="charge-status">${this.t(active?'Cargando':plugged?(block.power_entity&&power===null?'Conectado · Sin datos de potencia':'Conectado · Sin carga'):'Desconectado')}</div>`:''}</div>`:'')+this.vehicleStatuses(block);
   }
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);

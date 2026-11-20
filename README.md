@@ -103,7 +103,7 @@ Four tyre-pressure readings, transmission state and context-aware advice.
 
 ## Build your card
 
-Select any combination of Car and actions, Battery, Map, and Costs and savings in Card sections, then add them together. Individual blocks remain available in Advanced setup. Use **Find entities** inside each section to filter its entity pickers by device. The filter never fills fields or changes other sections.
+Select any combination of Car and actions, Battery, Map, and Costs and savings in Card sections, then add them together. Individual blocks remain available in Advanced setup. Use **Find entities** inside each section to filter its entity pickers by device. The editor reports how many enabled entities the device has. Open a field’s entity picker to select a compatible entity. The vehicle overview shows a default illustration until you choose an image.
 
 Set a title, add blocks and select entities. Rename blocks and fields, add or remove items, and drag fields or blocks to reorder them. Use the visual editor to choose field size, width, icons, units, decimal places and presentation as information, buttons or bars. Undo and redo are available during an editing session.
 
@@ -293,7 +293,7 @@ Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Diseña tu tarjeta
 
-Selecciona uno o varios apartados entre Coche y acciones, Batería, Mapa y Gastos y ahorro, y añádelos juntos. La configuración por bloques sigue disponible en Configuración avanzada. Usa **Buscar entidades** dentro de cada apartado para filtrar sus selectores por dispositivo. El filtro no rellena campos ni cambia otros apartados.
+Selecciona uno o varios apartados entre Coche y acciones, Batería, Mapa y Gastos y ahorro, y añádelos juntos. La configuración por bloques sigue disponible en Configuración avanzada. Usa **Buscar entidades** dentro de cada apartado para filtrar sus selectores por dispositivo. El editor indica cuántas entidades habilitadas tiene el dispositivo. Abre el selector de un campo para elegir una entidad compatible. Inicio con imagen muestra una ilustración por defecto hasta que elijas otra imagen.
 
 Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
 

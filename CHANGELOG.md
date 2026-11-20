@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.11
+
+- EN: The vehicle overview settings follow the card layout, with a default vehicle illustration and feedback when filtering entities by device.
+- ES: Los ajustes de Inicio con imagen siguen el orden de la tarjeta, con una ilustración de coche por defecto y mensajes al filtrar entidades por dispositivo.
+
 # VE Builder Card 1.9.0-beta.10
 
 - EN: Car and actions includes the vehicle overview, action buttons and GPS location. Car map opens the vehicle diagram for tyres and openings.

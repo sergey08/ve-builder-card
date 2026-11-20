@@ -97,6 +97,7 @@ export class VEBuilderEditor extends HTMLElement {
       const domains=Array.isArray(domain)?domain:domain?[domain]:[];
       const candidates=this.entityRegistry.filter(entry=>entry.device_id===device&&
         (!domains.length||domains.includes(entry.entity_id.split('.')[0]))).map(entry=>entry.entity_id);
+      if(!candidates.length)return field;
       const existing=data[field.name];
       if(typeof existing==='string'&&existing&&!candidates.includes(existing))candidates.push(existing);
       return {...field,selector:{entity:{...selector,include_entities:candidates}}};
@@ -175,19 +176,29 @@ export class VEBuilderEditor extends HTMLElement {
     const box=this.panel(panel,block.id+'-entity-search','Buscar entidades');
     const hint=document.createElement('p');
     hint.className='muted';
-    hint.textContent=this.t('Elige un dispositivo para filtrar las entidades de este apartado.');
+    hint.setAttribute('role','status');
+    const found=this.entityRegistry?.filter(entry=>entry.device_id===active).length??0;
+    hint.textContent=active
+      ? this.t('Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.').replace('{count}',found)
+      : this.t('Elige un dispositivo para filtrar las entidades de este apartado.');
     box.append(hint);
     let device=active;
     const button=this.button(box,'Buscar entidades',async()=>{
       if(!device)return;
+      const selectedDevice=device;
       button.disabled=true;
       try{
         const registry=await this._hass.callWS({type:'config/entity_registry/list'});
-        if(!this.config.blocks.includes(block)||!button.isConnected)return;
-        this.entityRegistry=registry;
-        filters.set(block.id,device);
+        if(!this.config.blocks.includes(block)||!button.isConnected||device!==selectedDevice)return;
+        this.entityRegistry=registry.filter(entry=>!entry.disabled_by);
+        if(this.entityRegistry.some(entry=>entry.device_id===device))filters.set(block.id,device);
+        else filters.delete(block.id);
         this.openKey=box.dataset.key;
         this.render();
+        if(!filters.has(block.id)){
+          const status=Array.from(this.shadowRoot.querySelectorAll('details')).find(item=>item.dataset.key===box.dataset.key)?.querySelector('[role="status"]');
+          if(status)status.textContent=this.t('El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.');
+        }
       }catch{
         if(!button.isConnected)return;
         button.disabled=false;
@@ -377,17 +388,17 @@ export class VEBuilderEditor extends HTMLElement {
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=standardLabel(block.title,this.lang,this.config.translate_standard_labels!==false)||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
+      const otaPanel=this.panel(panel,block.id+'-ota','Versión del sistema y actualizaciones');
+      this.form(otaPanel,block,[entity('ota_version_entity','sensor'),entity('ota_status_entity',['sensor','binary_sensor','update'])],patch=>{Object.assign(block,patch);this.emit();});
+      const fields=this.panel(panel,block.id+'-fields','Información sobre el vehículo',true);this.fieldList(fields,block.fields??(block.fields=[]),block.id);
       const image=this.panel(panel,block.id+'-image','Imagen del vehículo');
       this.vehicleImageUpload(image,block);
       this.form(image,block,[bool('show_image'),text('image'),numeric('image_height',80,600,10)],patch=>{Object.assign(block,patch);this.emit();});
-      const otaPanel=this.panel(panel,block.id+'-ota','Versión del sistema y actualizaciones');
-      this.form(otaPanel,block,[entity('ota_version_entity','sensor'),entity('ota_status_entity',['sensor','binary_sensor','update'])],patch=>{Object.assign(block,patch);this.emit();});
-      this.rainEditor(panel,block);
-      this.statusEditor(panel,block);
       const charge=this.panel(panel,block.id+'-charge','Estado y animación de carga');
       this.form(charge,block,[entity('connector_entity','binary_sensor'),entity('charging_entity'),text('charging_value'),entity('power_entity','sensor'),bool('show_status'),bool('show_cable'),bool('animate')],patch=>{Object.assign(block,patch);this.emit();});
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('La manguera queda fija cuando el conector está conectado y no entra energía. La imagen permanece dentro de Home Assistant; usa una URL o una ruta /local/.');charge.append(hint);
-      const fields=this.panel(panel,block.id+'-fields','Información sobre el vehículo',true);this.fieldList(fields,block.fields??(block.fields=[]),block.id);
+      this.rainEditor(panel,block);
+      this.statusEditor(panel,block);
     }else if(['modes','battery'].includes(block.type)){
       this.fieldList(panel,block.fields??(block.fields=[]),block.id,'mode');
       this.batteryEditor(panel,block);
