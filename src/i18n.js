@@ -2100,9 +2100,6 @@ for(const [key,values] of Object.entries({
     "Configurazione avanzata",
     "Geavanceerde instellingen"
   ],
-  "Buscando entidades…": ["Finding entities…","A procurar entidades…","Recherche des entités…","Entitäten werden gesucht…","Ricerca delle entità…","Entiteiten zoeken…"],
-  "Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.": ["Device entities: {count}. Open a selector in this section to choose one.","Entidades do dispositivo: {count}. Abre um seletor desta secção para escolher uma.","Entités de l’appareil : {count}. Ouvrez un sélecteur de cette section pour en choisir une.","Entitäten des Geräts: {count}. Öffne ein Auswahlfeld in diesem Abschnitt.","Entità del dispositivo: {count}. Apri un selettore di questa sezione per sceglierne una.","Apparaatentiteiten: {count}. Open een kiezer in dit onderdeel om er een te kiezen."],
-  "El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.": ["This device has no enabled entities. The selectors show all entities.","O dispositivo não tem entidades ativadas. Os seletores mostram todas as entidades.","L’appareil ne comporte aucune entité activée. Les sélecteurs affichent toutes les entités.","Das Gerät hat keine aktivierten Entitäten. Die Auswahlfelder zeigen alle Entitäten.","Il dispositivo non ha entità abilitate. I selettori mostrano tutte le entità.","Dit apparaat heeft geen ingeschakelde entiteiten. De kiezers tonen alle entiteiten."],
   "Imagen, estado del vehículo y botones de acción.": [
     "Vehicle image, status and action buttons.",
     "Imagem, estado e ações do veículo.",
@@ -2141,14 +2138,6 @@ for(const [key,values] of Object.entries({
 }
 
 for(const [key,values] of Object.entries({
-  "Elige un dispositivo para filtrar las entidades de este apartado.": [
-    "Choose a device to filter entities in this section.",
-    "Escolhe um dispositivo para filtrar as entidades desta secção.",
-    "Choisissez un appareil pour filtrer les entités de cette section.",
-    "Wähle ein Gerät, um die Entitäten dieses Abschnitts zu filtern.",
-    "Scegli un dispositivo per filtrare le entità di questa sezione.",
-    "Kies een apparaat om de entiteiten in dit onderdeel te filteren."
-  ],
   "Quitar filtro": [
     "Clear filter",
     "Remover filtro",

@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.14
+
+- EN: Removed the optional device filter from sections. Select entities directly in each field.
+- ES: Se retira el filtro opcional por dispositivo. Las entidades se eligen desde cada campo.
+
 # VE Builder Card 1.9.0-beta.13
 
 - EN: Selecting a device searches automatically and lists the entities found in that section.

@@ -88,21 +88,7 @@ export class VEBuilderEditor extends HTMLElement {
   button(parent,label,fn,danger=false){const button=document.createElement('button');button.type='button';button.textContent=this.t(label);if(danger)button.className='danger';button.onclick=fn;parent.append(button);return button;}
   panel(parent,key,title,open=false){const panel=document.createElement('details');panel.dataset.key=key;panel.open=open;const summary=document.createElement('summary');summary.textContent=standardLabel(this.t(title),this.lang,this.config.translate_standard_labels!==false);panel.append(summary);parent.append(panel);return panel;}
   form(parent,data,schema,change){
-    const scope=parent.closest?.('[data-entity-scope]')?.dataset.entityScope;
-    const device=this.sectionDevices?.get(scope);
-    const scopedSchema=device?schema.map(field=>{
-      const selector=field.selector?.entity;
-      if(!selector||selector.include_entities)return field;
-      const domain=selector.domain;
-      const domains=Array.isArray(domain)?domain:domain?[domain]:[];
-      const candidates=this.entityRegistry.filter(entry=>entry.device_id===device&&
-        (!domains.length||domains.includes(entry.entity_id.split('.')[0]))).map(entry=>entry.entity_id);
-      if(!candidates.length)return field;
-      const existing=data[field.name];
-      if(typeof existing==='string'&&existing&&!candidates.includes(existing))candidates.push(existing);
-      return {...field,selector:{entity:{...selector,include_entities:candidates}}};
-    }):schema;
-    const form=document.createElement('ha-form');form.hass=this._hass;form.data=clone(data);form.schema=translateSchema(scopedSchema,this.lang);form.computeLabel=field=>this.t(LABELS[field.name]??POSITIONS[field.name]??field.name);
+    const form=document.createElement('ha-form');form.hass=this._hass;form.data=clone(data);form.schema=translateSchema(schema,this.lang);form.computeLabel=field=>this.t(LABELS[field.name]??POSITIONS[field.name]??field.name);
     form.addEventListener('value-changed',event=>{event.stopPropagation();const values=event.detail.value??{};const allowed=new Set(schema.map(s=>s.name));const patch=Object.fromEntries(Object.entries(values).filter(([key])=>allowed.has(key)));change(patch);});parent.append(form);return form;
   }
   moveItem(list,id,target){
@@ -169,62 +155,6 @@ export class VEBuilderEditor extends HTMLElement {
       grid.append(option);
     }
     parent.append(group);
-  }
-  sectionEntitySearch(panel,block){
-    const filters=this.sectionDevices??=new Map();
-    const active=filters.get(block.id)??'';
-    const box=this.panel(panel,block.id+'-entity-search','Buscar entidades');
-    const hint=document.createElement('p');
-    hint.className='muted';
-    hint.setAttribute('role','status');
-    const entries=active?(this.entityRegistry??[]).filter(entry=>entry.device_id===active):[];
-    hint.textContent=entries.length
-      ? this.t('Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.').replace('{count}',entries.length)
-      : this.t(active?'El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.':'Elige un dispositivo para filtrar las entidades de este apartado.');
-    let selected=active;
-    let request=0;
-    const form=this.form(box,{device:active},[{name:'device',selector:{device:{}}}],async patch=>{
-      const device=patch.device??'';
-      if(device===selected)return;
-      selected=device;
-      const current=++request;
-      if(device){
-        box.setAttribute('aria-busy','true');
-        hint.textContent=this.t('Buscando entidades…');
-        try{
-          const registry=await this._hass.callWS({type:'config/entity_registry/list'});
-          if(!box.isConnected||current!==request)return;
-          this.entityRegistry=registry.filter(entry=>!entry.disabled_by);
-        }catch{
-          if(!box.isConnected||current!==request)return;
-          box.removeAttribute('aria-busy');
-          selected=active;
-          form.data={device:active};
-          hint.textContent=this.t('No se pudo consultar el dispositivo. Inténtalo de nuevo.');
-          return;
-        }
-        filters.set(block.id,device);
-      }else filters.delete(block.id);
-      this.openKey=box.dataset.key;
-      this.render();
-    });
-    box.append(hint);
-    if(entries.length){
-      const list=document.createElement('ul');
-      list.style.cssText='max-height:10rem;overflow:auto;overflow-wrap:anywhere';
-      for(const {entity_id} of entries){
-        const item=document.createElement('li');
-        const name=this._hass.states[entity_id]?.attributes?.friendly_name;
-        item.textContent=name?`${name} · ${entity_id}`:entity_id;
-        list.append(item);
-      }
-      box.append(list);
-    }
-    if(active)this.button(box,'Quitar filtro',()=>{
-      filters.delete(block.id);
-      this.openKey=box.dataset.key;
-      this.render();
-    });
   }
   colorEditor(parent,owner,key,id,title='Colores según el valor'){
     const panel=this.panel(parent,id+'-colors',title);
@@ -389,11 +319,9 @@ export class VEBuilderEditor extends HTMLElement {
     });
   }
   blockEditor(panel,block){
-    panel.dataset.entityScope=block.id;
     if(block.type==='map'){
       this.form(panel,block,[entity('entity',['person','device_tracker'])],patch=>{Object.assign(block,patch);this.emit();});
     }
-    this.sectionEntitySearch(panel,block);
     this.form(panel,block,[text('title')],patch=>{Object.assign(block,patch);panel.querySelector('summary').textContent=standardLabel(block.title,this.lang,this.config.translate_standard_labels!==false)||this.t(TYPES[block.type]);this.emit();});
     if(['start','fields','power','tyres','expenses','map'].includes(block.type))this.freshnessEditor(panel,block);
     if(block.type==='start'){
