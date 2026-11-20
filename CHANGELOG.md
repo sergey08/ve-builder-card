@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.13
+
+- EN: Selecting a device searches automatically and lists the entities found in that section.
+- ES: Al seleccionar un dispositivo, el editor busca automáticamente y muestra las entidades encontradas en ese apartado.
+
 # VE Builder Card 1.9.0-beta.12
 
 - EN: Hide empty action and location map sections until an entity is configured.

@@ -177,40 +177,49 @@ export class VEBuilderEditor extends HTMLElement {
     const hint=document.createElement('p');
     hint.className='muted';
     hint.setAttribute('role','status');
-    const found=this.entityRegistry?.filter(entry=>entry.device_id===active).length??0;
-    hint.textContent=active
-      ? this.t('Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.').replace('{count}',found)
-      : this.t('Elige un dispositivo para filtrar las entidades de este apartado.');
-    box.append(hint);
-    let device=active;
-    const button=this.button(box,'Buscar entidades',async()=>{
-      if(!device)return;
-      const selectedDevice=device;
-      button.disabled=true;
-      try{
-        const registry=await this._hass.callWS({type:'config/entity_registry/list'});
-        if(!this.config.blocks.includes(block)||!button.isConnected||device!==selectedDevice)return;
-        this.entityRegistry=registry.filter(entry=>!entry.disabled_by);
-        if(this.entityRegistry.some(entry=>entry.device_id===device))filters.set(block.id,device);
-        else filters.delete(block.id);
-        this.openKey=box.dataset.key;
-        this.render();
-        if(!filters.has(block.id)){
-          const status=Array.from(this.shadowRoot.querySelectorAll('details')).find(item=>item.dataset.key===box.dataset.key)?.querySelector('[role="status"]');
-          if(status)status.textContent=this.t('El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.');
+    const entries=active?(this.entityRegistry??[]).filter(entry=>entry.device_id===active):[];
+    hint.textContent=entries.length
+      ? this.t('Entidades del dispositivo: {count}. Abre un selector de este apartado para elegir una.').replace('{count}',entries.length)
+      : this.t(active?'El dispositivo no tiene entidades habilitadas. Los selectores muestran todas las entidades.':'Elige un dispositivo para filtrar las entidades de este apartado.');
+    let selected=active;
+    let request=0;
+    const form=this.form(box,{device:active},[{name:'device',selector:{device:{}}}],async patch=>{
+      const device=patch.device??'';
+      if(device===selected)return;
+      selected=device;
+      const current=++request;
+      if(device){
+        box.setAttribute('aria-busy','true');
+        hint.textContent=this.t('Buscando entidades…');
+        try{
+          const registry=await this._hass.callWS({type:'config/entity_registry/list'});
+          if(!box.isConnected||current!==request)return;
+          this.entityRegistry=registry.filter(entry=>!entry.disabled_by);
+        }catch{
+          if(!box.isConnected||current!==request)return;
+          box.removeAttribute('aria-busy');
+          selected=active;
+          form.data={device:active};
+          hint.textContent=this.t('No se pudo consultar el dispositivo. Inténtalo de nuevo.');
+          return;
         }
-      }catch{
-        if(!button.isConnected)return;
-        button.disabled=false;
-        hint.textContent=this.t('No se pudo consultar el dispositivo. Inténtalo de nuevo.');
+        filters.set(block.id,device);
+      }else filters.delete(block.id);
+      this.openKey=box.dataset.key;
+      this.render();
+    });
+    box.append(hint);
+    if(entries.length){
+      const list=document.createElement('ul');
+      list.style.cssText='max-height:10rem;overflow:auto;overflow-wrap:anywhere';
+      for(const {entity_id} of entries){
+        const item=document.createElement('li');
+        const name=this._hass.states[entity_id]?.attributes?.friendly_name;
+        item.textContent=name?`${name} · ${entity_id}`:entity_id;
+        list.append(item);
       }
-    });
-    button.disabled=!device;
-    const form=this.form(box,{device},[{name:'device',selector:{device:{}}}],patch=>{
-      device=patch.device??'';
-      button.disabled=!device;
-    });
-    box.insertBefore(form,button);
+      box.append(list);
+    }
     if(active)this.button(box,'Quitar filtro',()=>{
       filters.delete(block.id);
       this.openKey=box.dataset.key;
