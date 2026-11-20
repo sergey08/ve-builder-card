@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.18
+
+- EN: Battery, Charging modes and Charging limits appear side by side in the editor menu, with power settings under Battery.
+- ES: Batería, Modos de carga y Límites de carga aparecen al mismo nivel del menú del editor, con la potencia dentro de Batería.
+
 # VE Builder Card 1.9.0-beta.17
 
 - EN: The Battery editor groups settings under Battery, Charging modes and Charging limits. Linked power controls appear under Battery.
