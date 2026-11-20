@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.17
+
+- EN: The Battery editor groups settings under Battery, Charging modes and Charging limits. Linked power controls appear under Battery.
+- ES: El editor agrupa los ajustes en Batería, Modos de carga y Límites de carga. Los ajustes de potencia vinculados aparecen dentro de Batería.
+
 # VE Builder Card 1.9.0-beta.16
 
 - EN: The car map supports one shared pressure-drop rule using each axle’s recommended cold pressure. Existing absolute thresholds remain supported.

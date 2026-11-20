@@ -2,6 +2,8 @@ import {STATUS_TYPES,newVehicleStatus,vehicleStatusValues} from './vehicle-statu
 import {language,translate,translateSchema,standardLabel} from './i18n.js';
 import {TYPES,POSITIONS,clone,normalize,newBlock,newField,uid,chargingModeTap,validate,CARD_SECTIONS,cardSectionBlocks,BODY_PARTS,valueSeverity,CHARGING_SOURCES} from './core.js';
 
+import {isBatteryBlock,batterySources} from './battery.js';
+
 const text=name=>({name,selector:{text:{}}});
 const select=(name,options)=>({name,selector:{select:{options:Object.entries(options).map(([value,label])=>({value,label}))}}});
 const numeric=(name,min,max,step=1)=>({name,selector:{number:{min,max,step,mode:'box'}}});
@@ -252,9 +254,7 @@ export class VEBuilderEditor extends HTMLElement {
       entity('level_entity','sensor'),entity('range_entity','sensor'),
       entity('connector_entity',['binary_sensor','input_boolean']),entity('charging_entity'),text('charging_value'),
       entity('power_entity','sensor'),entity('intensity_entity',['number','input_number','sensor']),
-      entity('vehicle_limit_entity',['number','input_number']),entity('charger_limit_entity'),entity('energy_limit_entity'),
-      entity('wait_reason_entity',['sensor','input_text']),
-      choice('limits'),choice('power'),bool('show_preheating'),
+      entity('wait_reason_entity',['sensor','input_text']),choice('power'),bool('show_preheating'),
       entity('preheat_state_entity',['binary_sensor','input_boolean']),
       entity('preheat_target_entity'),text('start_service'),text('stop_service')
     ];
@@ -266,6 +266,13 @@ export class VEBuilderEditor extends HTMLElement {
       show_preheating:'Mostrar precalentamiento',preheat_state_entity:'Sensor de precalentamiento',
       preheat_target_entity:'Entidad objetivo del vehículo',start_service:'Servicio de inicio',stop_service:'Servicio de parada'
     };
+    const update=patch=>{
+      const refresh=['enabled','power_block','limits_block'].some(key=>key in patch&&patch[key]!==(block.battery?.[key]??''));
+      block.battery={...block.battery,...patch};
+      if(block.battery.enabled===undefined)delete block.battery.enabled;
+      this.emit();
+      if(refresh)this.render();
+    };
     const form=this.form(group,{
       start_service:'xpeng.start_battery_preheating',stop_service:'xpeng.stop_battery_preheating',
       ...options,enabled:options.enabled===true?'yes':options.enabled===false?'no':'auto'
@@ -273,11 +280,15 @@ export class VEBuilderEditor extends HTMLElement {
       if('enabled' in patch){
         patch.enabled=patch.enabled==='yes'?true:patch.enabled==='no'?false:undefined;
       }
-      block.battery={...block.battery,...patch};
-      if(block.battery.enabled===undefined)delete block.battery.enabled;
-      this.emit();
+      update(patch);
     });
     form.computeLabel=field=>this.t(labels[field.name]);
+    const modes=this.panel(panel,block.id+'-charging-modes','Modos de carga');
+    this.fieldList(modes,block.fields??(block.fields=[]),block.id,'mode');
+    const limits=this.panel(panel,block.id+'-charging-limits','Límites de carga');
+    this.form(limits,options,[
+      entity('vehicle_limit_entity',['number','input_number']),entity('charger_limit_entity'),entity('energy_limit_entity'),choice('limits')
+    ],update).computeLabel=field=>this.t(labels[field.name]);
   }
   vehicleImageUpload(panel,block){
     const label=document.createElement('label');
@@ -337,7 +348,6 @@ export class VEBuilderEditor extends HTMLElement {
       this.rainEditor(panel,block);
       this.statusEditor(panel,block);
     }else if(['modes','battery'].includes(block.type)){
-      this.fieldList(panel,block.fields??(block.fields=[]),block.id,'mode');
       this.batteryEditor(panel,block);
     }else if(['fields','power','actions','limits'].includes(block.type)){
       this.fieldList(panel,block.fields??(block.fields=[]),block.id,({power:'power',modes:'mode',actions:'action',limits:'limit'})[block.type]??'info');
@@ -409,6 +419,18 @@ export class VEBuilderEditor extends HTMLElement {
       this.button(toolbar,'Duplicar bloque',()=>{const copy=clone(block);copy.id=uid();copy.fields?.forEach(f=>f.id=uid());copy.prices?.forEach(f=>f.id=uid());copy.vehicle_status?.forEach(f=>f.id=uid());copy.groups?.forEach(g=>{g.id=uid();g.fields?.forEach(f=>f.id=uid());});this.config.blocks.splice(index+1,0,copy);this.emit();this.render();});
       this.button(toolbar,'Eliminar bloque',()=>{this.config.blocks.splice(index,1);this.emit();this.render();},true);
     });
+    const panels=new Map([...root.querySelectorAll('details[data-key]')].map(panel=>[panel.dataset.key,panel]));
+    const linkedPanels=new Set();
+    for(const block of this.config.blocks.filter(isBatteryBlock)){
+      const {powerBlock,limitsBlock}=batterySources(block,this.config.blocks,this._hass?.states??{});
+      for(const [linked,suffix] of [[powerBlock,'-battery'],[limitsBlock,'-charging-limits']]){
+        if(!linked||linkedPanels.has(linked))continue;
+        const child=panels.get(linked.id),parent=panels.get(block.id+suffix);
+        if(!child||!parent)continue;
+        parent.append(child);
+        linkedPanels.add(linked);
+      }
+    }
     root.querySelectorAll('details[data-key]').forEach(el=>{if(state.has(el.dataset.key))el.open=state.get(el.dataset.key);if(el.dataset.key===this.openKey){el.open=true;let parent=el.parentElement?.closest('details');while(parent){parent.open=true;parent=parent.parentElement?.closest('details');}}});this.openKey=null;
     for(const [node,top]of scroll)node.scrollTop=top;
     if(this.revealSection){
