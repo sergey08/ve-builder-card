@@ -2174,7 +2174,7 @@ for(const [key,labels] of Object.entries({
   ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
 }
 
-const VERSION = '1.9.0-beta.18';
+const VERSION = '1.9.0-beta.19';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2866,6 +2866,7 @@ class VEBuilderEditor extends HTMLElement {
     for(const message of ['Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.','Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.','La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.']){const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t(message);panel.append(hint);}
   }
   batteryEditor(panel,block){
+    const menu=panel.parentNode;
     const options=block.battery??{};
     const links=kind=>[
       {value:'',label:'Automático'},
@@ -2909,9 +2910,9 @@ class VEBuilderEditor extends HTMLElement {
       update(patch);
     });
     form.computeLabel=field=>this.t(labels[field.name]);
-    const modes=this.panel(panel.parentElement,block.id+'-charging-modes','Modos de carga');
+    const modes=this.panel(menu,block.id+'-charging-modes','Modos de carga');
     this.fieldList(modes,block.fields??(block.fields=[]),block.id,'mode');
-    const limits=this.panel(panel.parentElement,block.id+'-charging-limits','Límites de carga');
+    const limits=this.panel(menu,block.id+'-charging-limits','Límites de carga');
     this.form(limits,options,[
       entity('vehicle_limit_entity',['number','input_number']),entity('charger_limit_entity'),entity('energy_limit_entity'),choice('limits')
     ],update).computeLabel=field=>this.t(labels[field.name]);

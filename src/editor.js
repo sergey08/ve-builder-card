@@ -239,6 +239,7 @@ export class VEBuilderEditor extends HTMLElement {
     for(const message of ['Usa condiciones actuales, no previsiones ni lluvia acumulada. Sin datos recientes no se muestra lluvia. La intensidad es visual y no estima la precipitación real.','Activa solo en casa si el sensor pertenece a tu vivienda. Bajo techo oculta la lluvia; un sensor de techo desconocido también la oculta.','La vista previa ignora sensores, ubicación y techo y muestra una etiqueta de ejemplo. Desactívala después de probar.']){const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t(message);panel.append(hint);}
   }
   batteryEditor(panel,block){
+    const menu=panel.parentNode;
     const options=block.battery??{};
     const links=kind=>[
       {value:'',label:'Automático'},
@@ -282,9 +283,9 @@ export class VEBuilderEditor extends HTMLElement {
       update(patch);
     });
     form.computeLabel=field=>this.t(labels[field.name]);
-    const modes=this.panel(panel.parentElement,block.id+'-charging-modes','Modos de carga');
+    const modes=this.panel(menu,block.id+'-charging-modes','Modos de carga');
     this.fieldList(modes,block.fields??(block.fields=[]),block.id,'mode');
-    const limits=this.panel(panel.parentElement,block.id+'-charging-limits','Límites de carga');
+    const limits=this.panel(menu,block.id+'-charging-limits','Límites de carga');
     this.form(limits,options,[
       entity('vehicle_limit_entity',['number','input_number']),entity('charger_limit_entity'),entity('energy_limit_entity'),choice('limits')
     ],update).computeLabel=field=>this.t(labels[field.name]);

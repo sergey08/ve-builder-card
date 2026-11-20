@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.19
+
+- EN: Fixed missing Charging modes and Charging limits entries in the Battery editor.
+- ES: Se corrige la desaparición de Modos de carga y Límites de carga en el editor de Batería.
+
 # VE Builder Card 1.9.0-beta.18
 
 - EN: Battery, Charging modes and Charging limits appear side by side in the editor menu, with power settings under Battery.
