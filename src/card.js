@@ -229,7 +229,10 @@ export class VEBuilderCard extends HTMLElement {
         else embedded.add(source[kind]);
       }
     }
-    const renderSection=block=>{let content='';if(sources.has(block)){content=renderBattery(this,block,sources.get(block),renderSection);}else switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
+    const renderSection=block=>{
+      if(block.type==='actions'&&!block.fields?.some(field=>field.entity))return '';
+      if(block.type==='map'&&!block.entity)return '';
+      let content='';if(sources.has(block)){content=renderBattery(this,block,sources.get(block),renderSection);}else switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       const title=sources.has(block)&&(!block.title||block.type==='modes'&&standardLabel(block.title,'es')==='Modos de carga')?this.t('Batería'):this.label(block.title);
       const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${title?`<header>${escape(title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${this.label(block.note)?`<footer>${escape(this.label(block.note))}</footer>`:''}</section>`;};
     const body=blocks.filter(block=>!embedded.has(block)).map(renderSection).join('');

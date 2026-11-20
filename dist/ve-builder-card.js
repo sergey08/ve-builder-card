@@ -2179,7 +2179,7 @@ for(const [key,labels] of Object.entries({
   ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
 }
 
-const VERSION = '1.9.0-beta.11';
+const VERSION = '1.9.0-beta.12';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -3520,7 +3520,10 @@ class VEBuilderCard extends HTMLElement {
         else embedded.add(source[kind]);
       }
     }
-    const renderSection=block=>{let content='';if(sources.has(block)){content=renderBattery(this,block,sources.get(block),renderSection);}else switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
+    const renderSection=block=>{
+      if(block.type==='actions'&&!block.fields?.some(field=>field.entity))return '';
+      if(block.type==='map'&&!block.entity)return '';
+      let content='';if(sources.has(block)){content=renderBattery(this,block,sources.get(block),renderSection);}else switch(block.type){case'start':content=this.start(block);break;case'fields':content=this.fields(block.fields);break;case'power':content=this.power(block);break;case'modes':case'actions':content=this.controls(block);break;case'limits':content=this.limits(block);break;case'tyres':content=this.tyres(block);break;case'expenses':content=this.expenses(block);break;case'map':content=`<div data-map="${escape(block.id)}"></div>`;break;default:content=`<p class="empty">${this.t('Bloque no compatible.')}</p>`;}
       const title=sources.has(block)&&(!block.title||block.type==='modes'&&standardLabel(block.title,'es')==='Modos de carga')?this.t('Batería'):this.label(block.title);
       const freshness=this.blockFreshness(block);return `<section class="${freshness.status==='stale'?'data-stale':''}" data-block="${escape(block.id)}">${title?`<header>${escape(title)}</header>`:''}${this.freshnessBadge(block,freshness)}${content}${this.label(block.note)?`<footer>${escape(this.label(block.note))}</footer>`:''}</section>`;};
     const body=blocks.filter(block=>!embedded.has(block)).map(renderSection).join('');

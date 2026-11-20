@@ -1,3 +1,8 @@
+# VE Builder Card 1.9.0-beta.12
+
+- EN: Hide empty action and location map sections until an entity is configured.
+- ES: Oculta los apartados vacíos de acciones y mapa de ubicación hasta que se configure una entidad.
+
 # VE Builder Card 1.9.0-beta.11
 
 - EN: The vehicle overview settings follow the card layout, with a default vehicle illustration and feedback when filtering entities by device.
