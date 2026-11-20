@@ -1,5 +1,5 @@
 import {translate} from './i18n.js';
-export const VERSION = '1.9.0-beta.14';
+export const VERSION = '1.9.0-beta.15';
 export const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 export const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 export const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -199,7 +199,7 @@ export function collectCardAlerts(config,states={},lang='es',now=Date.now()){
  for(const block of config.blocks??[]){
   if(options.include_values!==false){const fields=[...(block.fields??[]),...(block.prices??[]),...(block.groups??[]).flatMap(g=>g.fields??[])];for(const f of fields){const state=states[f.entity],severity=valueSeverity(state?.state,f.colors);if(['warning','critical'].includes(severity))add({kind:'value',entity:f.entity,block:block.id,severity,label:f.name||state?.attributes?.friendly_name||f.entity,value:stateText(state,f,lang)});}}
   if(block.type==='tyres'){
-   if(options.include_tyres!==false){const unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';for(const [key,label]of Object.entries(POSITIONS)){const entity=block.positions?.[key],state=states[entity],n=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),severity=valueSeverity(n,block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors);if(['warning','critical'].includes(severity))add({kind:'tyre',entity,block:block.id,severity,label:translate(label,lang),value:format(n,block.decimals??2,lang)+' '+unit});}}
+   if(options.include_tyres!==false){const unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';for(const [key,label]of Object.entries(POSITIONS)){const entity=block.positions?.[key],state=states[entity],n=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),severity=tyrePressureSeverity(block,key,n,unit);if(['warning','critical'].includes(severity))add({kind:'tyre',entity,block:block.id,severity,label:translate(label,lang),value:format(n,block.decimals??2,lang)+' '+unit});}}
    if(options.include_openings!==false)for(const [key,label]of Object.entries(BODY_PARTS)){const f=block.body_parts?.[key];if(f?.entity&&openingState(states[f.entity],f)==='open')add({kind:'opening',entity:f.entity,block:block.id,severity:'warning',label:f.name||translate(label,lang),value:translate('Abierto',lang)});}
   }
   if(options.include_stale!==false){const info=readingFreshness(block.freshness,states,readingEntities(block),now);if(info.status==='stale')add({kind:'stale',entity:block.freshness?.timestamp_entity||'',block:block.id,severity:'warning',label:block.title||translate(TYPES[block.type]||'Información',lang),value:freshnessText(info,lang)});}
@@ -211,6 +211,15 @@ export function recommendedPressure(block,axle){
  const full=block.pressure_advice?.profile==='full';
  const value=number(full?block.pressure_advice?.['full_'+axle+'_bar']:block['recommended_'+axle+'_bar']);
  return value!==null&&value>0?value:null;
+}
+export function tyrePressureSeverity(block,key,value,unit){
+ const axle=key.startsWith('front')?'front':'rear';
+ const margins=block.pressure_margins;
+ if(!margins?.enabled)return valueSeverity(value,block['pressure_colors_'+axle]??block.pressure_colors);
+ const reference=recommendedPressure(block,axle), measured=pressure(value,unit,'bar');
+ if(reference===null||measured===null)return '';
+ const drop=Math.round((reference-measured)*1e8)/1e8;
+ return valueSeverity(drop,{...margins,direction:'high'});
 }
 export function tyreAdvice(block,states={},now=Date.now()){
  const options=block.pressure_advice??{};if(!options.enabled)return null;

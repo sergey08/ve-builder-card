@@ -344,15 +344,26 @@ export class VEBuilderEditor extends HTMLElement {
     }else if(block.type==='map'){
       this.form(panel,block,[numeric('zoom',1,20),numeric('hours',0,168)],patch=>{Object.assign(block,patch);this.emit();});
     }else if(block.type==='tyres'){
-      this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
-      this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero');
-      this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero');
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Parte delantera arriba. Asigna cada sensor a la rueda que corresponde. La unidad de origen se obtiene del sensor.');panel.append(hint);
       block.positions??={};this.form(panel,block.positions,Object.keys(POSITIONS).map(key=>entity(key,'sensor')),patch=>{Object.assign(block.positions,patch);this.emit();});
       this.form(panel,block,[select('unit',{bar:'bar',kPa:'kPa',psi:'psi'}),numeric('decimals',0,3),bool('show_dates')],patch=>{Object.assign(block,patch);this.emit();});
       const recommendations=this.panel(panel,block.id+'-recommended','Presiones recomendadas');
       this.form(recommendations,block,[numeric('recommended_front_bar',0,10,0.1),numeric('recommended_rear_bar',0,10,0.1)],patch=>{Object.assign(block,patch);this.emit();});
       const recommendationHint=document.createElement('p');recommendationHint.className='muted';recommendationHint.textContent=this.t('Introduce las presiones en frío de la etiqueta del vehículo. Se guardan en bar y se convierten a la unidad mostrada. Vacío o 0 oculta la referencia.');recommendations.append(recommendationHint);
+      const colors=this.panel(panel,block.id+'-pressure-margins','Colores por caída de presión');
+      const margins=block.pressure_margins??{};
+      const update=patch=>{block.pressure_margins={...block.pressure_margins,...patch};this.emit();};
+      this.form(colors,margins,[bool('enabled')],patch=>{update(patch);this.render();}).computeLabel=()=>this.t('Activar regla común de presión');
+      if(margins.enabled){
+        const labels={warning:'Caída para aviso · bar',critical:'Caída para crítico · bar'};
+        const form=this.form(colors,margins,[numeric('warning',0.01,10,0.01),numeric('critical',0.01,10,0.01)],update);
+        form.computeLabel=field=>this.t(labels[field.name]);
+        const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Cada rueda se compara con la presión recomendada de su eje. La caída crítica debe ser igual o mayor que la de aviso.');colors.append(hint);
+      }else{
+        if(block['pressure_colors'])this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure'));
+        if(block['pressure_colors_front'])this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero'));
+        if(block['pressure_colors_rear'])this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero'));
+      }
       const advice=this.panel(panel,block.id+'-advice','Consejos y perfiles de presión');
       const options={enabled:false,profile:'normal',max_temperature_age_minutes:30,temperature_mode:'fixed',home_value:'home',...block.pressure_advice};
       const labels={max_temperature_age_minutes:'Antigüedad máxima de temperatura · minutos',temperature_mode:'Origen de la temperatura',location_entity:'Entidad de ubicación del vehículo',home_value:'Estado que significa en casa',away_temperature_entity:'Temperatura exterior del vehículo · fuera de casa',enabled:'Mostrar consejos de presión',profile:'Perfil de carga',full_front_bar:'Plena carga delante · bar (en frío)',full_rear_bar:'Plena carga detrás · bar (en frío)',temperature_entity:'Temperatura exterior (opcional)',trip_end_entity:'Sensor con la fecha de fin del último trayecto (opcional)'};

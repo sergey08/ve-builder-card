@@ -2161,6 +2161,11 @@ for(const [key,labels] of Object.entries({
   'Mapa del coche':['Car map','Fahrzeugkarte','Carte du véhicule','Mappa dell’auto','Mapa do carro','Autokaart'],
   'Imagen del coche, botones de acción y ubicación GPS.':['Car image, action buttons and GPS location.','Fahrzeugbild, Aktionsschaltflächen und GPS-Standort.','Image du véhicule, boutons d’action et position GPS.','Immagine dell’auto, pulsanti di azione e posizione GPS.','Imagem do carro, botões de ação e localização GPS.','Autoafbeelding, actieknoppen en gps-locatie.'],
   'Esquema del vehículo con neumáticos y aperturas.':['Vehicle diagram with tyres and openings.','Fahrzeugschema mit Reifen und Öffnungen.','Schéma du véhicule avec pneus et ouvrants.','Schema del veicolo con pneumatici e aperture.','Diagrama do veículo com pneus e aberturas.','Voertuigschema met banden en openingen.'],
+  "Colores por caída de presión":["Colors by pressure drop","Farben nach Druckabfall","Couleurs selon la baisse de pression","Colori in base al calo di pressione","Cores por queda de pressão","Kleuren op basis van drukdaling"],
+  "Activar regla común de presión":["Enable shared pressure rule","Gemeinsame Druckregel aktivieren","Activer la règle de pression commune","Attiva regola di pressione comune","Ativar regra comum de pressão","Gedeelde drukregel inschakelen"],
+  "Caída para aviso · bar":["Warning drop · bar","Warnabfall · bar","Baisse pour avertissement · bar","Calo per avviso · bar","Queda para aviso · bar","Daling voor waarschuwing · bar"],
+  "Caída para crítico · bar":["Critical drop · bar","Kritischer Abfall · bar","Baisse critique · bar","Calo critico · bar","Queda crítica · bar","Kritieke daling · bar"],
+  "Cada rueda se compara con la presión recomendada de su eje. La caída crítica debe ser igual o mayor que la de aviso.":["Each tyre is compared with its axle’s recommended pressure. The critical drop must be at least the warning drop.","Jeder Reifen wird mit dem empfohlenen Druck seiner Achse verglichen. Der kritische Abfall muss mindestens dem Warnabfall entsprechen.","Chaque pneu est comparé à la pression recommandée de son essieu. La baisse critique doit être au moins égale à celle de l’avertissement.","Ogni pneumatico viene confrontato con la pressione consigliata del suo asse. Il calo critico deve essere almeno pari a quello di avviso.","Cada pneu é comparado com a pressão recomendada do seu eixo. A queda crítica deve ser igual ou superior à de aviso.","Elke band wordt vergeleken met de aanbevolen druk voor zijn as. De kritieke daling moet minstens zo groot zijn als de waarschuwingsdaling."],
   'Subir imagen':['Upload image','Bild hochladen','Importer une image','Carica immagine','Carregar imagem','Afbeelding uploaden'],
   'Subiendo imagen…':['Uploading image…','Bild wird hochgeladen…','Importation de l’image…','Caricamento immagine…','A carregar imagem…','Afbeelding uploaden…'],
   'No se pudo subir la imagen.':['Could not upload the image.','Das Bild konnte nicht hochgeladen werden.','Impossible d’importer l’image.','Impossibile caricare l’immagine.','Não foi possível carregar a imagem.','De afbeelding kon niet worden geüpload.'],
@@ -2169,7 +2174,7 @@ for(const [key,labels] of Object.entries({
   ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
 }
 
-const VERSION = '1.9.0-beta.14';
+const VERSION = '1.9.0-beta.15';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2369,7 +2374,7 @@ function collectCardAlerts(config,states={},lang='es',now=Date.now()){
  for(const block of config.blocks??[]){
   if(options.include_values!==false){const fields=[...(block.fields??[]),...(block.prices??[]),...(block.groups??[]).flatMap(g=>g.fields??[])];for(const f of fields){const state=states[f.entity],severity=valueSeverity(state?.state,f.colors);if(['warning','critical'].includes(severity))add({kind:'value',entity:f.entity,block:block.id,severity,label:f.name||state?.attributes?.friendly_name||f.entity,value:stateText(state,f,lang)});}}
   if(block.type==='tyres'){
-   if(options.include_tyres!==false){const unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';for(const [key,label]of Object.entries(POSITIONS)){const entity=block.positions?.[key],state=states[entity],n=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),severity=valueSeverity(n,block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors);if(['warning','critical'].includes(severity))add({kind:'tyre',entity,block:block.id,severity,label:translate(label,lang),value:format(n,block.decimals??2,lang)+' '+unit});}}
+   if(options.include_tyres!==false){const unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';for(const [key,label]of Object.entries(POSITIONS)){const entity=block.positions?.[key],state=states[entity],n=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),severity=tyrePressureSeverity(block,key,n,unit);if(['warning','critical'].includes(severity))add({kind:'tyre',entity,block:block.id,severity,label:translate(label,lang),value:format(n,block.decimals??2,lang)+' '+unit});}}
    if(options.include_openings!==false)for(const [key,label]of Object.entries(BODY_PARTS)){const f=block.body_parts?.[key];if(f?.entity&&openingState(states[f.entity],f)==='open')add({kind:'opening',entity:f.entity,block:block.id,severity:'warning',label:f.name||translate(label,lang),value:translate('Abierto',lang)});}
   }
   if(options.include_stale!==false){const info=readingFreshness(block.freshness,states,readingEntities(block),now);if(info.status==='stale')add({kind:'stale',entity:block.freshness?.timestamp_entity||'',block:block.id,severity:'warning',label:block.title||translate(TYPES[block.type]||'Información',lang),value:freshnessText(info,lang)});}
@@ -2381,6 +2386,15 @@ function recommendedPressure(block,axle){
  const full=block.pressure_advice?.profile==='full';
  const value=number(full?block.pressure_advice?.['full_'+axle+'_bar']:block['recommended_'+axle+'_bar']);
  return value!==null&&value>0?value:null;
+}
+function tyrePressureSeverity(block,key,value,unit){
+ const axle=key.startsWith('front')?'front':'rear';
+ const margins=block.pressure_margins;
+ if(!margins?.enabled)return valueSeverity(value,block['pressure_colors_'+axle]??block.pressure_colors);
+ const reference=recommendedPressure(block,axle), measured=pressure(value,unit,'bar');
+ if(reference===null||measured===null)return '';
+ const drop=Math.round((reference-measured)*1e8)/1e8;
+ return valueSeverity(drop,{...margins,direction:'high'});
 }
 function tyreAdvice(block,states={},now=Date.now()){
  const options=block.pressure_advice??{};if(!options.enabled)return null;
@@ -2958,15 +2972,26 @@ class VEBuilderEditor extends HTMLElement {
     }else if(block.type==='map'){
       this.form(panel,block,[numeric('zoom',1,20),numeric('hours',0,168)],patch=>{Object.assign(block,patch);this.emit();});
     }else if(block.type==='tyres'){
-      this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
-      this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero');
-      this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero');
       const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Parte delantera arriba. Asigna cada sensor a la rueda que corresponde. La unidad de origen se obtiene del sensor.');panel.append(hint);
       block.positions??={};this.form(panel,block.positions,Object.keys(POSITIONS).map(key=>entity(key,'sensor')),patch=>{Object.assign(block.positions,patch);this.emit();});
       this.form(panel,block,[select('unit',{bar:'bar',kPa:'kPa',psi:'psi'}),numeric('decimals',0,3),bool('show_dates')],patch=>{Object.assign(block,patch);this.emit();});
       const recommendations=this.panel(panel,block.id+'-recommended','Presiones recomendadas');
       this.form(recommendations,block,[numeric('recommended_front_bar',0,10,0.1),numeric('recommended_rear_bar',0,10,0.1)],patch=>{Object.assign(block,patch);this.emit();});
       const recommendationHint=document.createElement('p');recommendationHint.className='muted';recommendationHint.textContent=this.t('Introduce las presiones en frío de la etiqueta del vehículo. Se guardan en bar y se convierten a la unidad mostrada. Vacío o 0 oculta la referencia.');recommendations.append(recommendationHint);
+      const colors=this.panel(panel,block.id+'-pressure-margins','Colores por caída de presión');
+      const margins=block.pressure_margins??{};
+      const update=patch=>{block.pressure_margins={...block.pressure_margins,...patch};this.emit();};
+      this.form(colors,margins,[bool('enabled')],patch=>{update(patch);this.render();}).computeLabel=()=>this.t('Activar regla común de presión');
+      if(margins.enabled){
+        const labels={warning:'Caída para aviso · bar',critical:'Caída para crítico · bar'};
+        const form=this.form(colors,margins,[numeric('warning',0.01,10,0.01),numeric('critical',0.01,10,0.01)],update);
+        form.computeLabel=field=>this.t(labels[field.name]);
+        const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Cada rueda se compara con la presión recomendada de su eje. La caída crítica debe ser igual o mayor que la de aviso.');colors.append(hint);
+      }else{
+        if(block['pressure_colors'])this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure'));
+        if(block['pressure_colors_front'])this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero'));
+        if(block['pressure_colors_rear'])this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero'));
+      }
       const advice=this.panel(panel,block.id+'-advice','Consejos y perfiles de presión');
       const options={enabled:false,profile:'normal',max_temperature_age_minutes:30,temperature_mode:'fixed',home_value:'home',...block.pressure_advice};
       const labels={max_temperature_age_minutes:'Antigüedad máxima de temperatura · minutos',temperature_mode:'Origen de la temperatura',location_entity:'Entidad de ubicación del vehículo',home_value:'Estado que significa en casa',away_temperature_entity:'Temperatura exterior del vehículo · fuera de casa',enabled:'Mostrar consejos de presión',profile:'Perfil de carga',full_front_bar:'Plena carga delante · bar (en frío)',full_rear_bar:'Plena carga detrás · bar (en frío)',temperature_entity:'Temperatura exterior (opcional)',trip_end_entity:'Sensor con la fecha de fin del último trayecto (opcional)'};
@@ -3328,7 +3353,7 @@ class VEBuilderCard extends HTMLElement {
   tyres(block){
     const expanded=!!(block.body_parts&&Object.values(block.body_parts).some(f=>f.entity)||block.gear_entity);
     const coords={front_left:[57,85],front_right:[303,85],rear_left:[57,260],rear_right:[303,260]},unit=['bar','kPa','psi'].includes(block.unit)?block.unit:'bar';
-    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),recommended=pressure(recommendedPressure(block,key.startsWith('front')?'front':'rear'),'bar',unit),hasRecommended=recommended!==null&&recommended>0;return `<g class="tyre ${this.severity({colors:block[key.startsWith('front')?'pressure_colors_front':'pressure_colors_rear']??block.pressure_colors},value)}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${hasRecommended?`<text x="${x}" y="${y+36}" class="recommended">${escape(this.t('Rec. en frío'))}: ${escape(format(recommended,unit==='kPa'?0:1,this.lang))} ${unit}</text>`:''}${block.show_dates===false?'':`<text x="${x}" y="${y+(hasRecommended?49:33)}" class="date">${this.t('Último cambio')}</text><text x="${x}" y="${y+(hasRecommended?60:44)}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
+    const values=Object.entries(POSITIONS).map(([key,label])=>{const [x,y]=coords[key],entity=block.positions?.[key],state=this.state[entity],value=pressure(state?.state,state?.attributes?.unit_of_measurement,unit),recommended=pressure(recommendedPressure(block,key.startsWith('front')?'front':'rear'),'bar',unit),hasRecommended=recommended!==null&&recommended>0;const severity=tyrePressureSeverity(block,key,value,unit);return `<g class="tyre ${severity?'value-'+severity:''}" role="button" tabindex="0" data-entity="${escape(entity)}" aria-label="${escape(this.t(label))}: ${escape(format(value,block.decimals??2,this.lang))} ${unit}"><text x="${x}" y="${y}" class="pressure">${escape(format(value,block.decimals??2,this.lang))}</text><text x="${x}" y="${y+20}" class="unit">${unit}</text>${hasRecommended?`<text x="${x}" y="${y+36}" class="recommended">${escape(this.t('Rec. en frío'))}: ${escape(format(recommended,unit==='kPa'?0:1,this.lang))} ${unit}</text>`:''}${block.show_dates===false?'':`<text x="${x}" y="${y+(hasRecommended?49:33)}" class="date">${this.t('Último cambio')}</text><text x="${x}" y="${y+(hasRecommended?60:44)}" class="date">${escape(this.date(entity))}</text>`}</g>`;}).join('');
     const parts=Object.entries(BODY_PARTS).filter(([key])=>block.body_parts?.[key]?.entity).map(([key,label])=>{const f=block.body_parts[key],status=openingState(this.state[f.entity],f);return {key,f,label:this.label(f.name)||this.t(label),status,text:this.t(status==='open'?'Abierto':status==='closed'?'Cerrado':'Sin datos')};});
     const shapes=parts.filter(part=>part.status==='open').map(({key,f,label,status,text})=>{let shape='';const left=key.endsWith('left'),x=left?126:234,y=key.startsWith('front')?120:192;
       if(['bonnet','trunk'].includes(key)){const y=key==='bonnet'?55:285;shape=`<rect x="144" y="${y}" width="72" height="32" rx="12"/>`;}
