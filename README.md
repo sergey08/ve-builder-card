@@ -2,15 +2,28 @@
 
 # VE Builder Card
 
-> **1.9.0 beta:** Choose one or more of Car and actions, Car map, Battery, and Costs and savings. A new card starts empty. Configure tyres and openings in Car map and upload the vehicle photo and set the GPS tracker under Car and actions. Use Home Assistant’s YAML editor to copy a card’s configuration.
-
 **English** · [Español](https://github.com/sergey08/ve-builder-card/blob/main/README.es.md)
 
 [![Open in Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
 
 Create your own vehicle dashboard in Home Assistant. Combine vehicle information, charging controls, location, costs and a vehicle diagram using a visual editor. Works with the entities provided by your integrations; no manufacturer account is required by this card.
 
-## Stable 1.8.1 — Compact Battery card
+## Version 1.9.0 · Four cards, together or separately
+
+VE Builder Card offers four types of card:
+
+| Card | What it shows |
+| --- | --- |
+| **Car and actions** | Vehicle image, key readings, action buttons and GPS location. |
+| **Car map** | Vehicle diagram with tyre pressure and openings. |
+| **Battery** | Charge level, range, power, preheating, charging modes and limits. |
+| **Costs and savings** | Charging sources, costs and savings. |
+
+In Home Assistant, choose **Add card → VE Builder Card → Card sections**. To combine sections, select two or more and click **Add selected sections** once. For separate cards, add a new VE Builder Card for each one and select a single section. You can mix both approaches on the same dashboard.
+
+The Battery editor has three separate entries: **Battery**, **Charging modes** and **Charging limits**. Power and preheating are configured in **Battery**. Car map can use a shared pressure-drop rule based on the recommended cold pressure for each axle. Existing card configurations are supported.
+
+### Compact Battery and charging sources
 
 The **Charging sources** panel supports both live charging power (W/kW) and today's accumulated energy (kWh/Wh). In the visual editor, choose **Automatic**, **Power (W)**, or **Daily energy (kWh)** and assign solar, grid, and total entities (`sensor.*` and `input_number.*` supported).
 
@@ -38,7 +51,7 @@ In the Battery settings, choose the sensors manually or reuse the overview readi
 
 For XPengTK 0.6.49, enable **Show preheating** and select the status sensor and the vehicle target entity. The configurable services default to `xpeng.start_battery_preheating` and `xpeng.stop_battery_preheating`. Each action requires confirmation. If the state is unknown or unavailable, the controls are disabled. Leave preheating disabled on unsupported vehicles.
 
-In HACS or Marketplace, update VE Builder Card to `v1.8.1` and reload the dashboard. If you are using a beta, choose the stable release under **Redownload**.
+In HACS or Marketplace, update VE Builder Card to `v1.9.0` and reload the dashboard. If you are using a beta, choose the stable release under **Redownload**.
 
 ## Install from the Marketplace
 
@@ -70,7 +83,7 @@ The card and visual editor support **7 languages**:
 
 Choose the language separately for each card using the visual editor dropdown. **Automatic** follows Home Assistant. Standard labels follow the selected language; custom titles, names and text remain as entered.
 
-**Stable release: 1.8.1.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.1).
+**Stable release: 1.9.0.** [Release changes](https://github.com/sergey08/ve-builder-card/releases/tag/v1.9.0).
 
 ## Standard labels and card language
 
@@ -103,7 +116,7 @@ Four tyre-pressure readings, transmission state and context-aware advice.
 
 ## Build your card
 
-Select any combination of Car and actions, Battery, Map, and Costs and savings in Card sections, then add them together. Individual blocks remain available in Advanced setup. Open a field’s entity picker to select a compatible entity. The vehicle overview shows a default illustration until you choose an image.
+Open a field’s entity picker to select a compatible entity. The vehicle overview shows a default illustration until you choose an image.
 
 Set a title, add blocks and select entities. Rename blocks and fields, add or remove items, and drag fields or blocks to reorder them. Use the visual editor to choose field size, width, icons, units, decimal places and presentation as information, buttons or bars. Undo and redo are available during an editing session.
 
@@ -203,8 +216,6 @@ Select **Copy section** at the end of a block. In another card on the same page 
 
 # VE Builder Card
 
-> **Beta 1.9.0:** Elige Coche y acciones, Mapa del coche, Batería o Gastos y ahorro. Puedes combinar varios tipos en una tarjeta nueva, que empieza vacía. Configura los neumáticos y las aperturas en Mapa del coche y sube la foto y configura el localizador GPS desde Coche y acciones. Para copiar la configuración, usa el editor YAML de Home Assistant.
-
 [English](https://github.com/sergey08/ve-builder-card/blob/main/README.md) · **Español**
 
 [![Abrir en Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sergey08&repository=ve-builder-card&category=plugin)
@@ -231,7 +242,7 @@ En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar l
 
 Para XPengTK 0.6.49, activa **Mostrar precalentamiento** y selecciona el sensor de estado y la entidad objetivo del vehículo. Los servicios configurables son `xpeng.start_battery_preheating` y `xpeng.stop_battery_preheating` de forma predeterminada. Cada acción requiere confirmación. Los botones se desactivan si el estado es desconocido o no está disponible. Deja el precalentamiento desactivado si el vehículo no lo admite.
 
-En HACS o Marketplace, actualiza VE Builder Card a `v1.8.1` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
+En HACS o Marketplace, actualiza VE Builder Card a `v1.9.0` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
 
 ## Instalar desde el Marketplace
 
@@ -263,7 +274,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.8.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.1).
+**Versión estable: 1.9.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.9.0).
 
 ## Nombres estándar e idioma de la tarjeta
 
@@ -293,7 +304,7 @@ Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Diseña tu tarjeta
 
-Selecciona uno o varios apartados entre Coche y acciones, Batería, Mapa y Gastos y ahorro, y añádelos juntos. La configuración por bloques sigue disponible en Configuración avanzada. Abre el selector de un campo para elegir una entidad compatible. Inicio con imagen muestra una ilustración por defecto hasta que elijas otra imagen.
+Abre el selector de un campo para elegir una entidad compatible. Inicio con imagen muestra una ilustración por defecto hasta que elijas otra imagen.
 
 Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
 
@@ -386,3 +397,18 @@ Abre un archivo JSON o pega su contenido y pulsa **Revisar importación**. La vi
 ## Reutilizar apartados
 
 Pulsa **Copiar apartado** al final de un bloque. En otra tarjeta del mismo panel abre **Editar → Reutilizar apartados → Pegar apartado**. Conserva entidades y estilo en una copia independiente. Revisa entidades y guarda. La copia temporal desaparece al recargar la página.
+
+## Versión 1.9.0 · Cuatro tarjetas, juntas o por separado
+
+VE Builder Card ofrece cuatro tipos de tarjeta:
+
+| Tarjeta | Qué muestra |
+| --- | --- |
+| **Coche y acciones** | Imagen del coche, lecturas principales, botones de acción y ubicación GPS. |
+| **Mapa del coche** | Esquema del vehículo con la presión de los neumáticos y las aperturas. |
+| **Batería** | Nivel de carga, autonomía, potencia, precalentamiento, modos y límites de carga. |
+| **Gastos y ahorro** | Fuentes de carga, gastos y ahorro. |
+
+En Home Assistant, ve a **Añadir tarjeta → VE Builder Card → Apartados de la tarjeta**. Para combinar apartados, marca dos o más y pulsa **Añadir apartados seleccionados** una vez. Para tener tarjetas separadas, añade una VE Builder Card nueva por cada una y marca un solo apartado. Puedes combinar ambos formatos en el mismo panel.
+
+El editor de Batería tiene tres entradas independientes: **Batería**, **Modos de carga** y **Límites de carga**. La potencia y el precalentamiento se configuran en **Batería**. El Mapa del coche permite usar una regla común de caída de presión a partir de la referencia en frío de cada eje. Se admiten las configuraciones de tarjetas existentes.

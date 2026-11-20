@@ -8,7 +8,22 @@
 
 Crea tu propio panel del vehículo en Home Assistant. Combina información del coche, controles de carga, ubicación, gastos y un esquema del vehículo desde un editor visual. Utiliza las entidades que ofrecen tus integraciones; la tarjeta no requiere una cuenta del fabricante.
 
-## Versión estable 1.8.1 — Tarjeta Batería compacta
+## Versión 1.9.0 · Cuatro tarjetas, juntas o por separado
+
+VE Builder Card ofrece cuatro tipos de tarjeta:
+
+| Tarjeta | Qué muestra |
+| --- | --- |
+| **Coche y acciones** | Imagen del coche, lecturas principales, botones de acción y ubicación GPS. |
+| **Mapa del coche** | Esquema del vehículo con la presión de los neumáticos y las aperturas. |
+| **Batería** | Nivel de carga, autonomía, potencia, precalentamiento, modos y límites de carga. |
+| **Gastos y ahorro** | Fuentes de carga, gastos y ahorro. |
+
+En Home Assistant, ve a **Añadir tarjeta → VE Builder Card → Apartados de la tarjeta**. Para combinar apartados, marca dos o más y pulsa **Añadir apartados seleccionados** una vez. Para tener tarjetas separadas, añade una VE Builder Card nueva por cada una y marca un solo apartado. Puedes combinar ambos formatos en el mismo panel.
+
+El editor de Batería tiene tres entradas independientes: **Batería**, **Modos de carga** y **Límites de carga**. La potencia y el precalentamiento se configuran en **Batería**. El Mapa del coche permite usar una regla común de caída de presión a partir de la referencia en frío de cada eje. Se admiten las configuraciones de tarjetas existentes.
+
+### Batería compacta y fuentes de carga
 
 El panel de **Fuentes de carga** admite potencia instantánea (W/kW) y energía diaria acumulada (kWh/Wh). En el editor visual, selecciona **Automático**, **Potencia (W)** o **Energía diaria (kWh)** y asigna las entidades solar, red y total (se admiten `sensor.*` e `input_number.*`).
 
@@ -46,7 +61,7 @@ En los ajustes de Batería puedes elegir los sensores manualmente o reutilizar l
 
 Para XPengTK 0.6.49, activa **Mostrar precalentamiento** y selecciona el sensor de estado y la entidad objetivo del vehículo. Los servicios configurables son `xpeng.start_battery_preheating` y `xpeng.stop_battery_preheating` de forma predeterminada. Cada acción requiere confirmación. Los botones se desactivan si el estado es desconocido o no está disponible. Deja el precalentamiento desactivado si el vehículo no lo admite.
 
-En HACS o Marketplace, actualiza VE Builder Card a `v1.8.1` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
+En HACS o Marketplace, actualiza VE Builder Card a `v1.9.0` y recarga el panel. Si utilizas una beta, selecciona la versión estable en **Volver a descargar**.
 
 ## Instalar desde el Marketplace
 
@@ -78,7 +93,7 @@ La tarjeta y el editor visual admiten **7 idiomas**:
 
 El idioma se elige por separado para cada tarjeta en el desplegable del editor visual. **Automático** sigue el idioma de Home Assistant. Los nombres estándar se traducen; los títulos, nombres y textos personalizados se conservan.
 
-**Versión estable: 1.8.1.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.8.1).
+**Versión estable: 1.9.0.** [Cambios de esta versión](https://github.com/sergey08/ve-builder-card/releases/tag/v1.9.0).
 
 ## Nombres estándar e idioma de la tarjeta
 
@@ -111,7 +126,7 @@ Presiones de las cuatro ruedas, marcha y consejos según las condiciones.
 
 ## Diseña tu tarjeta
 
-Selecciona uno o varios apartados entre Coche y acciones, Batería, Mapa y Gastos y ahorro, y añádelos juntos. La configuración por bloques sigue disponible en Configuración avanzada. Abre el selector de un campo para elegir una entidad compatible. Inicio con imagen muestra una ilustración por defecto hasta que elijas otra imagen.
+Abre el selector de un campo para elegir una entidad compatible. Inicio con imagen muestra una ilustración por defecto hasta que elijas otra imagen.
 
 Pon un título, añade apartados y elige las entidades. Cambia los nombres de apartados y campos, añade o elimina elementos y arrastra campos o apartados para ordenarlos. El editor permite elegir tamaño, anchura, iconos, unidades, decimales y presentación como información, botones o barras. Puedes deshacer y rehacer durante la sesión de edición.
 
