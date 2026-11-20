@@ -2174,7 +2174,7 @@ for(const [key,labels] of Object.entries({
   ['en','de','fr','it','pt','nl'].forEach((code,index)=>{(code==='en'?EN:EXTRA[code])[key]=labels[index];});
 }
 
-const VERSION = '1.9.0-beta.15';
+const VERSION = '1.9.0-beta.16';
 const TYPES = {start:'Inicio con imagen', fields:'Datos y sensores', modes:'Botones de selección', battery:'Batería', power:'Potencia de carga', limits:'Controles deslizantes', actions:'Botones de acciones', map:'Mapa de ubicación', expenses:'Gastos y ahorro', tyres:'Estado del vehículo'};
 const BLOCK_DESCRIPTIONS = {"start": "Imagen del coche, datos destacados y estado de carga.", "fields": "Valores de sensores, información y barras de progreso.", "battery": "Nivel de batería y controles de carga.", "modes": "Opciones con estado activo o inactivo, como los modos de carga.", "power": "Potencia real de carga, escala y datos relacionados.", "limits": "Ajustes numéricos mediante input_number, como límites de carga.", "actions": "Interruptores, cerraduras y acciones mediante botones.", "map": "Posición y recorrido del vehículo sobre un mapa.", "expenses": "Precios de referencia, costes y ahorros por periodos.", "tyres": "Diagrama con neumáticos, puertas, capó, maletero y marcha."};
 const POSITIONS = {front_left:'Delantera izquierda', front_right:'Delantera derecha', rear_left:'Trasera izquierda', rear_right:'Trasera derecha'};
@@ -2988,9 +2988,9 @@ class VEBuilderEditor extends HTMLElement {
         form.computeLabel=field=>this.t(labels[field.name]);
         const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Cada rueda se compara con la presión recomendada de su eje. La caída crítica debe ser igual o mayor que la de aviso.');colors.append(hint);
       }else{
-        if(block['pressure_colors'])this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure'));
-        if(block['pressure_colors_front'])this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero'));
-        if(block['pressure_colors_rear'])this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero'));
+        if(block['pressure_colors'])this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
+        if(block['pressure_colors_front'])this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero');
+        if(block['pressure_colors_rear'])this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero');
       }
       const advice=this.panel(panel,block.id+'-advice','Consejos y perfiles de presión');
       const options={enabled:false,profile:'normal',max_temperature_age_minutes:30,temperature_mode:'fixed',home_value:'home',...block.pressure_advice};

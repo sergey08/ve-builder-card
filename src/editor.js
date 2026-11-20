@@ -360,9 +360,9 @@ export class VEBuilderEditor extends HTMLElement {
         form.computeLabel=field=>this.t(labels[field.name]);
         const hint=document.createElement('p');hint.className='muted';hint.textContent=this.t('Cada rueda se compara con la presión recomendada de su eje. La caída crítica debe ser igual o mayor que la de aviso.');colors.append(hint);
       }else{
-        if(block['pressure_colors'])this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure'));
-        if(block['pressure_colors_front'])this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero'));
-        if(block['pressure_colors_rear'])this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero'));
+        if(block['pressure_colors'])this.colorEditor(panel,block,'pressure_colors',block.id+'-pressure');
+        if(block['pressure_colors_front'])this.colorEditor(panel,block,'pressure_colors_front',block.id+'-pressure-front','Colores de presión · eje delantero');
+        if(block['pressure_colors_rear'])this.colorEditor(panel,block,'pressure_colors_rear',block.id+'-pressure-rear','Colores de presión · eje trasero');
       }
       const advice=this.panel(panel,block.id+'-advice','Consejos y perfiles de presión');
       const options={enabled:false,profile:'normal',max_temperature_age_minutes:30,temperature_mode:'fixed',home_value:'home',...block.pressure_advice};

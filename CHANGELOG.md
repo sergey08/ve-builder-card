@@ -1,4 +1,4 @@
-# VE Builder Card 1.9.0-beta.15
+# VE Builder Card 1.9.0-beta.16
 
 - EN: The car map supports one shared pressure-drop rule using each axle’s recommended cold pressure. Existing absolute thresholds remain supported.
 - ES: El mapa del coche admite una regla común de caída de presión con la referencia en frío de cada eje. Se conservan los umbrales absolutos existentes.

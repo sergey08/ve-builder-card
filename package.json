@@ -1,6 +1,6 @@
 {
   "name": "ve-builder-card",
-  "version": "1.9.0-beta.15",
+  "version": "1.9.0-beta.16",
   "private": true,
   "description": "Four configurable Home Assistant card types for electric vehicles.",
   "type": "module",
